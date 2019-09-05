@@ -1,0 +1,11 @@
+---
+title: "Lab 2"
+author: "Braden Griebel"
+date: "9/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
