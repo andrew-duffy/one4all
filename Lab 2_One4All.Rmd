@@ -27,7 +27,12 @@ To learn techniques to explore and understand data, as well as being able to pre
 Hello! I am a Math major and Biochem minor. One question I would like to answer would be what causes seeds to exit a period of dormancy. 
 
 
-Six months after graduation I hope to be in grad school, I don't know specifically for what, but hopeully something related to statistics. Five years after that I hope to be working on epidemiology for the CDC. During this career I hope my greatest accoplishment is to bring a better understanding of the most effective methods of preventing the spread of malaria. Given this, I hope to learn how to explore data to discover insights about how different variables relate, as well as being able to effectively communicate this to others. 
+Six months after graduation I hope to be in grad school, I don't know specifically for what, but hopeully something related to statistics. Five years after that I hope to be working on epidemiology for the CDC. During this career I hope my greatest accomplishment is to bring a better understanding of the most effective methods of preventing the spread of malaria. Given this, I hope to learn how to explore data to discover insights about how different variables relate, as well as being able to effectively communicate this to others. 
+
+*Feedback*:
+
+*From Luke: You definitely have an admirable goal, and one I can say with certainty we all hope you are able to achieve. With that being said, your explanation of how that goal ties to this class seems somewhat vague, and could likely be improved by simply expanding on your logic behind the exploration of "how different variables relate".*
+
 ```{}
 
 
@@ -71,4 +76,6 @@ Given these goals, I would like to learn how to manipulate and understand data t
 *Feedback*:
 
 *From Braden: How you break up your section into paragraphs makes it easy to read. I think that your section on the statistics question is confusingly structured. Specifically, it seems you kept adding qualifications to what you said and I think it might be improved by moving the "voters that vote differently" part earlier.*
+
+*From Luke: Your goals are laid out nicely and easy to read, as Braden said, with a logical progression that makes sense and seems very achievable. Are there any specific hobbies or jobs that relate to the field of Data science that you are interested in? If so, I would suggest adding them into your paragraph so we can get more of an idea of your 6 month and 5 year plans.*
 
