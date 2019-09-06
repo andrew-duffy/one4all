@@ -58,11 +58,7 @@ Six months after graduation I hope to be in grad school, I don't know specifical
 I’m a Statistics and Data Science major. When I first started at CU Boulder, I was a Civil Engineering major, but I slowly realized that it wasn’t something that I was incredibly passionate or good at and have now decided to start in a field where I actually have a strong interest in the subject matter. I am originally from Australia, but I have lived in the US for about 14 years. A non-statistics question I would love to have the answer to would be regarding lane changes during heavy periods of traffic; I would be curious to see if they do indeed slow down traffic, if there is a way to avoid these slowdowns if they are occurring, and just generally what can be done in order to negate stop and start traffic during rush hour. 
 Six months after graduation, my goal is to be in a sports-related field analyzing data and/or just getting my foot in the door for data analysis for a team or organization. With the rise of statistical analysis in baseball, made popular by the movie “Moneyball”, sports analytics and data analysis has become a much larger part of how sports teams evaluate players and understand their skill levels, and five years from now, I would love to be doing that for a living and making a tangible difference in the way sports are understood and comprehended. I would love for my greatest career accomplishment to be enabling sports to be enjoyed by a much larger audience, either by simply improving the quality of the players in the game itself or by developing a much more interesting way of watching and analyzing games to the point where there is a much broader interest in the games beyond the physical game that is being played. Given this, I would love to learn a lot of data visualization skills through R that will allow for data to be concisely presented and easily understandable while also being attractive and intriguing to look at. 
 
-<<<<<<< Updated upstream
 *Feedback*:
-=======
-<<<<<<< HEAD
->>>>>>> Stashed changes
 
 *From Braden: The way you connected your 5-year goal to a current trend made your writing more interesting. I noticed that in your "Non-statistics related question" the sentence structure is complicated, and I found it to be confusing.*
 
@@ -107,8 +103,9 @@ I hope my greatest career accomplishment will be to help in the design or creati
 
 In this course I hope to establish a solid understanding of data science that will help me in whatever path I choose.
 
-=======
->>>>>>> master
+*Feedback*:
+
+*From Luke: I think your non-statistics question is really interesting, and is something that I'm interested in as well. I think you could even ask more about the levels of pollution in our ocean systems, as there are a lot of detrimental effects caused by pollution in our ocean.*
 
 
 
