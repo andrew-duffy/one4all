@@ -79,3 +79,20 @@ Given these goals, I would like to learn how to manipulate and understand data t
 
 *From Luke: Your goals are laid out nicely and easy to read, as Braden said, with a logical progression that makes sense and seems very achievable. Are there any specific hobbies or jobs that relate to the field of Data science that you are interested in? If so, I would suggest adding them into your paragraph so we can get more of an idea of your 6 month and 5 year plans.*
 
+# Ahyo Falick
+
+## About me:
+
+![](Ahyo pic.JPG)
+
+I am an applied math major, although I have yet to figure out what I am truly passionate about.
+
+One question I have that might be solved with data science is how many tons of garbage are thrown into the ocean every day.
+
+Six months after graduation I hope to be earning a master's degree in whichever field I have come to find most interesting during my time at CU.
+Five years after graduation I would like to have a steady income in a career path that excites and challenges me.
+
+I hope my greatest career accomplishment will be to help in the design or creation of something that will make me a lot of money and also help a lot of people.
+
+In this course I hope to establish a solid understanding of data science that will help me in whatever path I choose.
+
