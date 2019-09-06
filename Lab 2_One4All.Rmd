@@ -109,3 +109,7 @@ In this course I hope to establish a solid understanding of data science that wi
 
 =======
 >>>>>>> master
+
+
+
+*From Braden: You answering in such a clear and straightforward way made your section very easy to read. Your descision to not go into great detail did make sense and did help keep your answers clear, however it also leads to some confusion about what exactly you mean. Specifically, what you hope to achieve in this course remains vague, and I think it could be improved by some detail about what you means by a "solid understanding"*
