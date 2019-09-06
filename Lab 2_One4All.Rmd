@@ -33,6 +33,8 @@ Six months after graduation I hope to be in grad school, I don't know specifical
 
 *From Luke: You definitely have an admirable goal, and one I can say with certainty we all hope you are able to achieve. With that being said, your explanation of how that goal ties to this class seems somewhat vague, and could likely be improved by simply expanding on your logic behind the exploration of "how different variables relate".*
 
+*From Ahyo: I really enjoyed how each of your answers flowed together to create an insightful paragraph. To make this even better you might try to keep either a consistently colloquial or professional tone throughout.*
+
 ```{}
 
 
@@ -57,6 +59,7 @@ Six months after graduation, my goal is to be in a sports-related field analyzin
 
 *From Braden: The way you connected your 5-year goal to a current trend made your writing more interesting. I noticed that in your "Non-statistics related question" the sentence structure is complicated, and I found it to be confusing.*
 
+*From Ahyo: I thoroughly enjoyed the detail you put into the question you pose about traffic. To make your writing even better you could try to make your ideas more concise for ease of reading.*
 
 ## Andrew Duffy
 
@@ -64,7 +67,7 @@ Six months after graduation, my goal is to be in a sports-related field analyzin
 
 I am a Statistics and Data Science major, and like Luke, was originally on the path to become a mechanical engineer. I thouroughly enjoy traveling, and just returned from a trip to China and Japan. 
 
-I would really like to know how big the change will be in the upcoming presidential election of voters that vote differently than how they did last election (specifically the difference in number of expected voters for president Trump given his approval ratings) 
+I would really like to know how big the change will be in the upcoming presidential election of voters that vote differently than how they did last election (specifically the difference in number of expected voters for president Trump given his approval ratings). 
 
 6 Months after graduation I would love to see myself working outside of the US, specifically Europe, to see what its like to live in a country that isn't the United States.
 5 Years after graduation I would hope to have a stable income with comfort to do hobbies I now enjoy or will learn to enjoy later in life.
@@ -78,6 +81,8 @@ Given these goals, I would like to learn how to manipulate and understand data t
 *From Braden: How you break up your section into paragraphs makes it easy to read. I think that your section on the statistics question is confusingly structured. Specifically, it seems you kept adding qualifications to what you said and I think it might be improved by moving the "voters that vote differently" part earlier.*
 
 *From Luke: Your goals are laid out nicely and easy to read, as Braden said, with a logical progression that makes sense and seems very achievable. Are there any specific hobbies or jobs that relate to the field of Data science that you are interested in? If so, I would suggest adding them into your paragraph so we can get more of an idea of your 6 month and 5 year plans.*
+
+*From Ahyo: I really liked how you included tidbits about your personal life and travels as well as the specificity of your question. Your writing might benefit from expanding on your goals for the class.*
 
 # Ahyo Falick
 
