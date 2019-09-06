@@ -31,6 +31,8 @@ Six months after graduation I hope to be in grad school, I don't know specifical
 
 *Feedback*:
 
+*From Andrew: Our goals are extremely similar! And I like the ASCII turtle. Could you explain what a epidemiology is next time? I haven't taken bio since high school so I'm not sure how that can be related to this course.
+
 *From Luke: You definitely have an admirable goal, and one I can say with certainty we all hope you are able to achieve. With that being said, your explanation of how that goal ties to this class seems somewhat vague, and could likely be improved by simply expanding on your logic behind the exploration of "how different variables relate".*
 
 *From Ahyo: I really enjoyed how each of your answers flowed together to create an insightful paragraph. To make this even better you might try to keep either a consistently colloquial or professional tone throughout.*
@@ -62,6 +64,8 @@ I’m a Statistics and Data Science major. When I first started at CU Boulder, I
 Six months after graduation, my goal is to be in a sports-related field analyzing data and/or just getting my foot in the door for data analysis for a team or organization. With the rise of statistical analysis in baseball, made popular by the movie “Moneyball”, sports analytics and data analysis has become a much larger part of how sports teams evaluate players and understand their skill levels, and five years from now, I would love to be doing that for a living and making a tangible difference in the way sports are understood and comprehended. I would love for my greatest career accomplishment to be enabling sports to be enjoyed by a much larger audience, either by simply improving the quality of the players in the game itself or by developing a much more interesting way of watching and analyzing games to the point where there is a much broader interest in the games beyond the physical game that is being played. Given this, I would love to learn a lot of data visualization skills through R that will allow for data to be concisely presented and easily understandable while also being attractive and intriguing to look at. 
 
 *Feedback*:
+
+*From Andrew: I enjoyed reading this as it seems we have a few similarities in what we have done in college. Next time, could you format your response so I don't have to go to the right a lot to read?
 
 *From Braden: The way you connected your 5-year goal to a current trend made your writing more interesting. I noticed that in your "Non-statistics related question" the sentence structure is complicated, and I found it to be confusing.*
 
@@ -113,6 +117,6 @@ In this course I hope to establish a solid understanding of data science that wi
 
 *From Luke: I think your non-statistics question is really interesting, and is something that I'm interested in as well. I think you could even ask more about the levels of pollution in our ocean systems, as there are a lot of detrimental effects caused by pollution in our ocean.*
 
-
+*From Andrew: It was really easy to read this, i didn't have to scroll to the right much. However, could you go into detail about what you think might excite and challenge you later in your career? Otherwise, great job.
 
 *From Braden: You answering in such a clear and straightforward way made your section very easy to read. Your descision to not go into great detail did make sense and did help keep your answers clear, however it also leads to some confusion about what exactly you mean. Specifically, what you hope to achieve in this course remains vague, and I think it could be improved by some detail about what you means by a "solid understanding"*
