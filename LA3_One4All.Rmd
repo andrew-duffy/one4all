@@ -1,0 +1,23 @@
+---
+title: "LA3 One4ALL"
+author: "Braden Griebel,Luke Fanning, Andrew Duffy, Ayho Falick"
+date: "9/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#Adding data into cdc tibble
+library(tidyverse)
+source("http://www.openintro.org/stat/data/cdc.R")
+cdc <- as_tibble(cdc)
+```
+
+```{r}
+head(cdc)
+```
+
+
