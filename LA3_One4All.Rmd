@@ -19,5 +19,18 @@ cdc <- as_tibble(cdc)
 ```{r}
 head(cdc)
 ```
+# Braden Griebel Individual Question
 
+```{r}
+ggplot(data=cdc)+geom_boxplot(mapping=aes(x=gender,y=weight-wtdesire, color=(smoke100==1)))+coord_cartesian(ylim=c(-10,50))+labs(x="Gender",y="Weight loss Desire", color="Smoked 100 Cigarettes")+facet_wrap(~genhlth)
+```
+
+
+# Team Question
+
+Question: What effect does having a health plan have on general health, when controlling for smoking and gender?
+Reason: Whether or not health plans have a noticeble effect on peoples health could reveal whether efforts to increase the number of people with a health plan would actually be useful. This could effect 
+```{r}
+ggplot(data=cdc)+geom_bar(mapping=aes(x=hlthplan, fill=genhlth),position='fill')+facet_grid(gender~smoke100)+labs(x='Health Plan',y="Proportion",title="Health and Health Plans")
+```
 
