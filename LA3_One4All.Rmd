@@ -16,9 +16,6 @@ source("http://www.openintro.org/stat/data/cdc.R")
 cdc <- as_tibble(cdc)
 ```
 
-```{r}
-head(cdc)
-```
 
 # Team Question
 
@@ -72,4 +69,4 @@ I, Luke Fanning, used the geom point function to analyze the relationship betwee
 Ahyo Falick Contribution:
 I used the geom smooth function to observe the correlation between age and weight desire among the 20,000 people surveyed. The linetype aesthetic was also used while splitting the group between those who exercised in the last month and those who did not. I added a caption detailing from where the data was acquired as well as labels for the axes and linetype to make the data easier to read. The data showed that people generally have an increasing desired weight up until the age of 50 where it decreases until their death. Additionally, people who exercise have a higher average desired weight than those who do not until around their 80's.
 
-
+Braden Griebel Contribution: I used the geom_boxplot function to explore the relationship between how much weight people want to loose and gender, general health, and smoking. These data showed that females tend to have a higher amount of desired weight loss, those in better general health categories have lower amounts of weight they want to loose, and smokers tend to want to loose more weight. I used the fill aesthetic to divide the data into those who had smoked and those who hadn't. I used a facet function to divide the data into different general health categories to make the data easier to understand in the context general health. I also adjusted the labels to make the plot easier to understand. 
