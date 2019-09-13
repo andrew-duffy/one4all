@@ -27,23 +27,35 @@ ggplot(data=cdc)+geom_boxplot(mapping=aes(x=gender,y=weight-wtdesire, fill=(smok
 
 
 ### Findings:
-*In this boxplot it can be seen that for all categories, with the single excpetion of poor health males, those who have smoked more than 100 cigarettes want to loose at least as much weight as those who didn't smoke 100 cigarettes. Also, across all categories females want to loose more weight than the males. Finally, those in better health categories have a smaller difference between their current weight and their deesired weight.*
+*In this boxplot it can be seen that for all categories, with the single excpetion of poor health males, those who have smoked more than 100 cigarettes want to lose at least as much weight as those who didn't smoke 100 cigarettes. Also, across all categories females want to loose more weight than the males. Finally, those in better health categories have a smaller difference between their current weight and their deesired weight.*
+
+# Luke Fanning Individual Plot
+
+```{r}
+ggplot(data=cdc) + geom_point(mapping = aes(x=age, y= weight, color = age), position = "jitter") + facet_grid(hlthplan ~ ., labeller = "label_both") + theme(legend.position= "bottom") + labs(x="Age", y = "Weight", color = "", title = "Weight vs. Age, controlling for Health Care Plan")
+```
+
+### Findings:
+*In this scatterplot, we are able to see a few harrowing discoveries. First, and perhaps more obvious, is that as age passes a certain limit, around 70 years or so, every respondent weighs under 250 pounds, regardless of if they have a health care plan or not, indicating just how much of an effect fitness and having a healthy lifestyle and weight have on lifespan. The second key takeaway from this graph also relates to lifespan: The number of people past 60 years of age in respondents without a health care plan is minute compared to the number of respondents with a health care plan, even in comparison to the smaller number of respondents witout a health care plan in general, and of those respondents, virtually all weigh between 100 to 200 pounds. While this could simply speak to the necessity of having a health care plan past a certain age, it more likely indicates that without a health care plan, a person must maintain a healthy weight if they wish to have a long lifespan whether or not they are unable or simply unwilling to get a health care plan.*
 
 # Team Question
 
 **Question**: What effect does having a health plan have on general health, when controlling for smoking and gender?
 
-**Reason**: Whether or not health plans have a noticeble effect on peoples health could reveal whether efforts to increase the number of people with a health plan would actually be useful. Additionaly, by controlling for smoking and gender it is possible to examine in what categories of people health plans make the most difference. Understanding this is important because it could reveal where efforts should be focused to increase the proportion of the targeted group with healthplans for maximizing the increase in health. This would be useful in maximizing the improvement of average population health per money invested into this program. This could lead to greater average health of the population.  
+**Reason**: We would like to discover whether or not health plans have a noticeable effect on people's health, as this could reveal whether efforts to increase the number of people with a health plan would actually be useful. Additionaly, by controlling for smoking and gender, it is possible to examine in what categories of people health plans make the most difference. Understanding this is important because it could reveal where efforts should be focused to increase the proportion of a specific group with healthplans in order to maximize the increase in health in society as a whole. This would also be useful in maximizing the improvement of average population health per money invested into this program, as obviously the groups that will benefit the most from health care plans will be the most cost effective when considering the overall impact on general health. This research should lead to greater average health of the population.  
+
 ```{r}
-ggplot(data=cdc)+geom_bar(mapping=aes(x=hlthplan, fill=genhlth),position='fill')+facet_grid(gender~smoke100)+labs(x='Health Plan',y="Proportion",title="Health and Health Plans")
+ggplot(data=cdc)+geom_bar(mapping=aes(x=hlthplan, fill=genhlth),position='fill')+facet_grid(gender~smoke100, labeller = label_both)+labs(x='Health Plan',y="Proportion",title="Health and Health Plans")
 ```
 
 
 ## Conclusion:
-First and formost it is clear that across all the groups, those with a health plan have a higher proportion of people in the excellent and very good health categories, and smaller amounts in the fair and poor categories. This shows that having a health plan tends to increase the health category that people are in. Since this is true across all the groups that were controlled for, it shows that this is true regardless of gender and smoking habit. However, the actual amount of the increase in those categories varies by different amounts. The change doesn't vary much between males and females, but it is a significantly smaller increase in those who have smoked 100 cigarettes. 
+First and foremost, it is clear that across all the groups, those with a health plan have a higher proportion of people in the excellent and very good health categories, and smaller amounts in the fair and poor categories. This shows that having a health plan tends to increase the health category that people are in. Since this is true across all the groups that were controlled for, it shows that this is true regardless of gender and smoking habit. However, the actual amount of the increase in those categories varies by different amounts. The change doesn't vary much between males and females, but it is a significantly smaller increase in those who have smoked 100 cigarettes in their lifetime.It is also relatively obvious that regardless of whether or not a respondent has a health plan or is male or female, there are significantly more respondents in the poor health category among smokers versus non-smokers.
 
-**Recomendation:** Due to the increase in health seen between those without healthplans and those that have healthplans, we recomend efforts be made to increase the amount of the population with health plans. Also, as the actual benefits of a healthplan vary between different groups, we recomend that more data is collected (or the data in the BRFSS we didn't have access to) and analyzed to see which groups benefit most from healthplans. Then those groups can be targeted by either campaigns to increase their desire for healthplans, or by making healthplans easier to access for those groups. 
+**Recommendation:** Due to the increase in health seen between those without healthplans and those that have healthplans, we recommend efforts be made to increase the amount of the population with health plans. Also, as the actual benefits of a healthplan vary between different groups, we recomend that more data is collected (or that the data in the BRFSS we didn't have access to be made more widely available) and analyzed to see which groups benefit most from healthplans. Then, those groups can be targeted by either campaigns to increase their desire for healthplans by displaying the potential benefits of having a health plan, or by making healthplans easier to access for those groups, most likely through reducing the cost to those in need who do not have the financial means necessary to pay for a health care plan. 
 
+## Summary of Student Contributions:
+I, Luke Fanning, used the geom point function to analyze the relationship between weight and age of respondents when controlling for health care plan. The data showed a clear positive relationship between maintaining a healthy weight and having a longer lifespan. I adjusted the color of the points as well as some of the label locations to make the graph easier to read, and used a facet grid model to display the health care plan more effectively alongside the given two variables. 
 
 
 
