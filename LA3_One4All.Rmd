@@ -22,15 +22,23 @@ head(cdc)
 # Braden Griebel Individual Question
 
 ```{r}
-ggplot(data=cdc)+geom_boxplot(mapping=aes(x=gender,y=weight-wtdesire, color=(smoke100==1)))+coord_cartesian(ylim=c(-10,50))+labs(x="Gender",y="Weight loss Desire", color="Smoked 100 Cigarettes")+facet_wrap(~genhlth)
+ggplot(data=cdc)+geom_boxplot(mapping=aes(x=gender,y=weight-wtdesire, fill=(smoke100==1)),position="dodge",alpha="0.7")+coord_cartesian(ylim=c(-10,50))+labs(x="Gender",y="Weight loss Desire", fill="Smoked 100 Cigarettes",title="Gender, Health and Weight loss Desire")+facet_wrap(~genhlth,nrow=2)
 ```
 
+
+### Findings:
+*In this boxplot it can be seen that for all categories, with the single excpetion of poor health males, those who have smoked more than 100 cigarettes want to loose at least as much weight as those who didn't smoke 100 cigarettes. Also, across all categories females want to loose more weight than the males. Finally, those in better health categories have a smaller difference between their current weight and their deesired weight.*
 
 # Team Question
 
-Question: What effect does having a health plan have on general health, when controlling for smoking and gender?
-Reason: Whether or not health plans have a noticeble effect on peoples health could reveal whether efforts to increase the number of people with a health plan would actually be useful. This could effect 
+**Question**: What effect does having a health plan have on general health, when controlling for smoking and gender?
+**Reason**: Whether or not health plans have a noticeble effect on peoples health could reveal whether efforts to increase the number of people with a health plan would actually be useful. Additionaly, by controlling for smoking and gender it is possible to examine in what categories of people health plans make the most difference. Understanding this is important because it could reveal where efforts should be focused to increase the proportion of the targeted group with healthplans for maximizing the increase in health. This would be useful in maximizing the improvement of average population health per money invested into this program. This could lead to greater average health of the population.  
 ```{r}
 ggplot(data=cdc)+geom_bar(mapping=aes(x=hlthplan, fill=genhlth),position='fill')+facet_grid(gender~smoke100)+labs(x='Health Plan',y="Proportion",title="Health and Health Plans")
 ```
+## Conclusion:
+First and formost it is clear that 
+
+
+
 
