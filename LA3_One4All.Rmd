@@ -61,15 +61,10 @@ ggplot(data=cdc) + geom_point(mapping = aes(x=age, y= weight, color = age), posi
 ggplot(data=cdc) + geom_smooth(mapping=aes(x=age,y=wtdesire,linetype=(exerany==1))) + labs(title = "Age vs. Weight Desire", caption = "Data source: The Behavioral Risk Factor Surveillance System (from a survey of 20,000 people)", linetype="Exercise", x="Age", y="Weight Desire")
 ```
 
-### Findings
-
-This graph represents the correlation between age and weight desire. It can be observed that people who exercise more regularly have a higher weight desire on average than those who don't with the exception of old age. There is a sharp decrease in weight desire among people over the age of 75 and an increase of people up to the age of 50. The data reaches a maximum at age 50, where both exercisers and non-exercisers desire a weight of about 157 pounds. The minimum weight desire occurs when people are 90+ years of age and they want to be, on average, 135 pounds.
-
+### Findings:
+*This graph represents the correlation between age and weight desire. It can be observed that people who exercise more regularly have a higher weight desire on average than those who don't with the exception of old age. There is a sharp decrease in weight desire among people over the age of 75 and an increase of people up to the age of 50. The data reaches a maximum at age 50, where both exercisers and non-exercisers desire a weight of about 157 pounds. The minimum weight desire occurs when people are 90+ years of age and they want to be, on average, 135 pounds.*
 
 
-
-
- 
 
 ## Summary of Student Contributions:
 I, Luke Fanning, used the geom point function to analyze the relationship between weight and age of respondents when controlling for health care plan. The data showed a clear positive relationship between maintaining a healthy weight and having a longer lifespan. I adjusted the color of the points as well as some of the label locations to make the graph easier to read, and used a facet grid model to display the health care plan more effectively alongside the given two variables. 
