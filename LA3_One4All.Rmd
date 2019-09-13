@@ -38,7 +38,6 @@ First and foremost, it is clear that across all the groups, those with a health 
 ggplot(data=cdc)+geom_boxplot(mapping=aes(x=gender,y=weight-wtdesire, fill=(smoke100==1)),position="dodge",alpha="0.7")+coord_cartesian(ylim=c(-10,50))+labs(x="Gender",y="Weight loss Desire", fill="Smoked 100 Cigarettes",title="Gender, Health and Weight loss Desire")+facet_wrap(~genhlth,nrow=2)
 ```
 
-
 ### Findings:
 *In this boxplot it can be seen that for all categories, with the single excpetion of poor health males, those who have smoked more than 100 cigarettes want to lose at least as much weight as those who didn't smoke 100 cigarettes. Also, across all categories females want to loose more weight than the males. Finally, those in better health categories have a smaller difference between their current weight and their deesired weight.*
 
