@@ -38,7 +38,6 @@ First and foremost, it is clear that across all the groups, those with a health 
 ggplot(data=cdc)+geom_boxplot(mapping=aes(x=gender,y=weight-wtdesire, fill=(smoke100==1)),position="dodge",alpha="0.7")+coord_cartesian(ylim=c(-10,50))+labs(x="Gender",y="Weight loss Desire", fill="Smoked 100 Cigarettes",title="Gender, Health and Weight loss Desire")+facet_wrap(~genhlth,nrow=2)
 ```
 
-
 ### Findings:
 *In this boxplot it can be seen that for all categories, with the single excpetion of poor health males, those who have smoked more than 100 cigarettes want to lose at least as much weight as those who didn't smoke 100 cigarettes. Also, across all categories females want to loose more weight than the males. Finally, those in better health categories have a smaller difference between their current weight and their deesired weight.*
 
@@ -62,11 +61,23 @@ ggplot(data=cdc) + geom_smooth(mapping=aes(x=age,y=wtdesire,linetype=(exerany==1
 *This graph represents the correlation between age and weight desire. It can be observed that people who exercise more regularly have a higher weight desire on average than those who don't with the exception of old age. There is a sharp decrease in weight desire among people over the age of 75 and an increase of people up to the age of 50. The data reaches a maximum at age 50, where both exercisers and non-exercisers desire a weight of about 157 pounds. The minimum weight desire occurs when people are 90+ years of age and they want to be, on average, 135 pounds.*
 
 
+# Andrew Duffy Individual Question
+
+```{r}
+ggplot(data=cdc)+geom_col(mapping=aes(x=gender, y=weight, fill=(smoke100==1)), position="dodge", alpha="0.7")
+```
+
+### Findings:
+In this bar graph, I determinded that for males, smoking does not have a major affect on one's weight. More precisely, the 2 columns are near identical until the upper skew of the graph. Males who have not smoked tended to be heavier than smokers. For females, the same is true but opposite. The columns for females were very similar until the upper quartile of the graph, where female smokers tended to be heavier than non-smoking females. 
+
 
 ## Summary of Student Contributions:
+
 I, Luke Fanning, used the geom point function to analyze the relationship between weight and age of respondents when controlling for health care plan. The data showed a clear positive relationship between maintaining a healthy weight and having a longer lifespan. I adjusted the color of the points as well as some of the label locations to make the graph easier to read, and used a facet grid model to display the health care plan more effectively alongside the given two variables. 
 
 Ahyo Falick Contribution:
 I used the geom smooth function to observe the correlation between age and weight desire among the 20,000 people surveyed. The linetype aesthetic was also used while splitting the group between those who exercised in the last month and those who did not. I added a caption detailing from where the data was acquired as well as labels for the axes and linetype to make the data easier to read. The data showed that people generally have an increasing desired weight up until the age of 50 where it decreases until their death. Additionally, people who exercise have a higher average desired weight than those who do not until around their 80's.
 
 Braden Griebel Contribution: I used the geom_boxplot function to explore the relationship between how much weight people want to loose and gender, general health, and smoking. These data showed that females tend to have a higher amount of desired weight loss, those in better general health categories have lower amounts of weight they want to loose, and smokers tend to want to loose more weight. I used the fill aesthetic to divide the data into those who had smoked and those who hadn't. I used a facet function to divide the data into different general health categories to make the data easier to understand in the context general health. I also adjusted the labels to make the plot easier to understand. 
+
+Andrew Duffy: I used the geom_col graph to try and show the effect smoking has on weight controlling for gender. I found that overall, smoking does not affect weight too much. Both male and female portions of the graph had very similar results, except for the top of the graphs, where male non-smokers tend to be heavier, and smoking females tended to be heavier.
