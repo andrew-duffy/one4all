@@ -5,7 +5,35 @@ date: "9/17/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE}
+library(tidyverse)
+
+babies <- read_csv("https://raw.githubusercontent.com/ervance1/Sp2018-Data-Science-repo/master/babies2a.dat")
+babies <- rename(babies, bwtoz = `bwt/oz`) #renaming `bwt/oz` because the "/" sign requires special care
+```
+
+
+
+```{r message=FALSE}
+#Smoke only has values 0 or 1 (found using 'unique' function)
+
+ggplot(data=subset(babies,!is.na(Premature)&!is.na(smoke)))+geom_bar(aes(x=Premature,y=stat(prop),fill=(smoke==1)),position="dodge")+labs(x="Premature",title="Smoking and Premature Births",fill="Smoked")+facet_wrap(~parity)
+```
+
+
+
+## Braden Griebel Individual Plot
+*Question:* How do the ages of mothers compare between premature and full term births?
+
+```{r message=FALSE,warning=FALSE}
+
+ggplot(data=subset(babies, !is.na(Premature)))+geom_bar(aes(x=mage,y=..prop.., fill=(Premature==1)),position="dodge")+labs(x="Mother's Age",y="Proportion",title="Mothers Age and Premature Births", fill="Premature")+facet_wrap(~Premature)
+
+
+
 ```
 
