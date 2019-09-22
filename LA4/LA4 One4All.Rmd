@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 title: "LA4 One4All"
 author: "Braden Griebel, Luke Fanning, Andrew Duffy, Ayho Falick"
@@ -17,3 +18,110 @@ babies <- rename(babies, bwtoz = `bwt/oz`)
 
 
 
+=======
+---
+title: "LA4 One4All"
+author: "Braden Griebel, Luke Fanning, Andrew Duffy, Ahyo Falick"
+date: "9/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE}
+library(tidyverse)
+
+babies <- read_csv("https://raw.githubusercontent.com/ervance1/Sp2018-Data-Science-repo/master/babies2a.dat")
+babies <- rename(babies, bwtoz = `bwt/oz`) #renaming `bwt/oz` because the "/" sign requires special care
+```
+
+
+## The Surgeon General claimed that Mothers who smoke have increased rates of premature delivery (Before 270 Days). Does the Data Support their claim?
+
+This question is important since it will determine what the real relationship between smoking and the rate of premature births. Whether or not a baby is born prematurely matters because if the baby has not been given sufficient time to develope it can lead to a variety of health problems, such as higher rates of lung disease, vision problems, cerebral palsy, sensory processing disorders. Thus, knowing whether smoking can lead to higher rates of premature births could lead to conclusions about the relationship between smoking and a vast array of health problems associated with premature births. 
+
+
+
+```{r message=FALSE}
+#Smoke only has values 0 or 1 (found using 'unique' function)
+
+ggplot(data=subset(babies,!is.na(Premature)&!is.na(smoke)))+geom_bar(aes(x=Premature,y=stat(prop),fill=(smoke==1)),position="dodge")+labs(x="Premature",title="Smoking and Premature Births",fill="Smoked",subtitle="Faceted Based on Income in 2500 dollar increments")+facet_wrap(~as.factor(inc))
+```
+
+## Conclusion
+Based on the above plot it can be seen that across income amounts (a variable that was different between smokers and non-smokers and also affected premature birthrates), the group of mothers that smoked had higher rates of premature births. The exception within the 2 and 7 income brakets is most likely due to a small amount of people within those brakets, and an even smaller proportion of which smoked leading to some statistical unpredictability. However, overall the trend is clear that mothers who smoked tended to have higher rates of premature birth. This supports the surgeon generals finding. 
+
+## Recomendation
+
+Since smoking tends to lead to higher rates of premature births, smoking during pregnancy should be avoided. Higher rates of premature births can lead to a plethora of health problems, and so anything that contributes significantly to rates of premature birth (such a smoking) should be avoided if at all possible. Thus, one important future action is to improve the publics knowledge of the harms smoking can cause babies. Additionally, since even if people believe that they should not be smoking that doesn't mean they will have the ability to quit, we recomend that future studies are undertaken to see the best way to assist in people quitting smoking, and then those methods being made clear, and help made available, especially to pregnant mothers. This will help to reduce the rate of smoking during pregnancy and thus reduce the rate of premature births, and more generally improve overall health of babies and thus the general population. Additionally, we recomend that more data is gathered about other possible confounding variables to strengthen the analysis of the realtionship between premature births and smoking.  
+
+
+
+
+## The Surgeon General claimed that newborns of mothers who smoke have smaller birth weights at every gestational age. Does the data support the Surgeon General's assertion?
+
+This question is incredibly important to know a definitive answer to, as having a smaller birth weight can lead to health problems for young children and can just generally be an indicator of poor health at birth. Often, children with low birth weights struggle from breathing problems such as respiitory distress syndrome, patent ductus arteriosus, which can sometimes require surgery or medicine after birth in order to address, jaundice, or even bleeding in the brain, which if serious enough, can cause brain damage to the baby. Therefore, if there is a clear indicator of this, such as smoking during pregnancy, it's vital that this cause be identified and made abundantly clear to the general public at large in order to prevent any possible negative ramifications. In my eyes, the more possible health issues we report regarding smoking during pregnancy to the public, the more likely it is that more children will be born without that influence on their life right from the beginning, as parents will be more cautious in addressing any negative factors that could cause low birth weight. 
+
+
+```{r message=FALSE, warning=FALSE}
+
+
+
+ggplot(data=subset(babies, !is.na(smoke))) + geom_smooth(mapping = aes(x=gestation, y=bwtoz, color= (smoke==1)), se = FALSE)  + labs( x = "Gestation length in days", y = "Birth weight in ounces", title = "Birth Weight vs. Gestation controlling for smoking during pregnancy", color = "Smoked during pregnancy")
+```
+
+### Conclusion
+It is clear from the graph above that for virtually every gestation age, the birth weight is much higher for children whose mothers did not smoke during pregnancy versus those who did. WHile there is some overlap past 310 gestation days, this is likely more due to a low set of data for gestation lasting that long versus any clear indicator that smoking during pregnancy is better for long gestation periods. This point is further enchanced by the unpredictability of pregnancy, where one can not simply plan when a child will be born, and so for the overwhelming amount of data for typical gestation lengths, it is better to not smoke during pregnancy. 
+
+### Recommendation
+Obviously, it should be recommended that a mother never smoke during pregnancy. While this may already be common knowledge, it is apparent from the data presented above that birth weight decreases by a large factor when a mother does smoke during pregnancy, which can lead to a myriad of health issues for the newborn, as stated above. One thing we would recommend is to make this information about health issues more apparent: often people know that they shouldn't smoke during pregnancy, but having to see examples of health problems newborns struggle with because of it would really help to drive the point home. While it is truly a saddening topic, an ad describing a child that has suffered from brain damage or jaundice due to low birth weight caused by the mother smoking during pregnancy would be very powerful and moving to the vast majority of the general public, and would likely be very influential in increasing long term health for newborns. 
+
+## Braden Griebel Individual Plot
+*Question:* How do the ages of mothers compare between premature and full term births?
+
+```{r message=FALSE,warning=FALSE}
+
+ggplot(data=subset(babies, !is.na(Premature)&!is.na(smoke)))+geom_boxplot(aes(x=(Premature==1),y=mage,alpha=as.factor(smoke) ),notch=TRUE)+labs(x="Premature",y="Mother's Age",title="Mothers Age and Premature Births",alpha="Smoked?")+coord_flip()
+
+
+
+```
+
+## Findings
+In the plot it can be seen, that whether or not the mother smoked, in cases of premature birth the mothers tended to be older. The notches show that the medians are not significantly different. However, examining the whole boxplot, those with premature births had ages that stretched farther to the right. This is indicative of an overall population with higher ages. Thus, regardless of whether or not the mother smoked, the older they were the higher likelyhood they had to have a premature birth. Also, in general it seems that the ages of mothers that had premature births were more spread out. That is, the difference between their quartiles appears higher. This could mean a varity of things, but is indicative of a large part of the older population being included in the preamture birth group. This would stretch the box out to the right as is observed. So, although a preamture birth can happen at any age, it seems to increase in likelyhood as mothers get older. A variety of other birth issues are also associated with older maternal age (such as down syndrome). Obviously we couldn't and shouldn't control the age at which people get pregnant, it would be possible to give more health support to older mothers to try and ensure healthier babies. 
+
+
+
+## Luke Fanning Individual Plot
+*Question:* How does the mother's education level compare to their likelihood to smoke during pregnancy?
+
+```{r message=FALSE, warning=FALSE}
+ggplot(data=subset(babies, !is.na(smoke)&!is.na(med))) + geom_bar(mapping = aes(x=smoke, y = stat(prop), fill = med)) + facet_grid(.~med) + labs(x= "Smoked during prenancy", y = "Proportion", title = "Smoked during pregnancy proportions for each education level", fill="Mother's education level", subtitle = "left bar = didn't smoke during pregnancy, right bar = did smoke during pregnancy" )
+```
+
+### Findings
+The numbering behind education level is as follows: 0 = finished less than eighth grade, 1 = 8th to 12th grade, did not graduate, 2 = high school graduate no other schooling, 3 = high school graduate + trade school, 4 = high school graduate + some college, 5 = college graduate, 7 = trade school but unclear if graduated from high school. Therefore, when comparing these education levels to the proportion of women who smoked during pregnancy, we don't see a clear trend one way or the other. While there is a relatively clear indicator that if you attend at least some college, you are less likely to smoke during pregnancy than someone who hasn't, beyond that, there are no clear indicators in terms of education level that point one way or the other. For example, those who didn't finish eigthth grade have a high likelihood to have not smoked during pregnancy, whereas those who finished somewhere between 8th to 12th grade but did not graduate have a much higher likelihood to have smoked during pregnancy.The data also seems to suggest that those who completed trade school but it is unclear whether or not they graduated from high school have a very high likelihood of not smoking during pregnancy, whereas those who graduated from high school and did trade school seem to be more likely to have smoked during pregnancy. Therefore, this data must have many other confounding variables at play that provide a clearer view of factors causing smoking during pregnancy, and no conclusions should be drawn from the above dataset, even though at first thought, it would make sense that there is a correlation between the two variables.
+
+## Ahyo Falick Individual Plot:
+
+```{r}
+ggplot(data=subset(babies, !is.na(smoke)&!is.na(med))) + geom_jitter(mapping=aes(x=parity, y=bwtoz, color= (Premature==1))) + labs(x="Number of Previous Pregnancies", y="Birth Weight (Ounces)", title="Number of Pregnancies vs. Birth Weight", color="Premature", caption = "Data obtained from the 'Child Health and Development Studies' between 1960 and 1967. This plot analyzes 1,236 of the 15,000 families studied")
+```
+
+
+
+### Findings
+This plot shows the effects of mothers' previous pregnancies on a child's birth weight. The x-axis is the number of previous pregnancies up to 15 and the y-axis represents the babies' birth weights going up to about 180. The data is separated between premature babies (represented by blue) and non-premature babies (in red). There is only a very slight trend downward as number of previous pregnancies go up. After about 7 pregnancies, there are no newborns above 150 ounces and the proportion of lighter newborns increases in comparison to average weight babies. Despite this, it is difficult to observe a clear correlation between number of previous pregnancies and birth weight. Even as previous pregnancies rise above 5, the majority of newborns are of average weight. When factored in with whether or not the baby was premature, it is clear that premature babies weigh less at the time of birth, but there is no strong correlation between the number of previous pregnancies and the babies premature status. 
+
+
+
+
+
+
+
+## Individual Contributions
+
+I, Braden Griebel, analysed the realtionship between maternal age and rates of premature births. Although the median age did not vary significantly between premature, and full term pregnancies, the ages of mothers of premature babies tended overall to be higher than those of mothers of full term infants. This is indicative of a higher rate of premature birth as maternal age increases. In order to analyse this realtionship more robustly I seperated the groups further by whether or not the mother smoked (a variable we know affects rates of premature birth based on the team analysis). I used notching of the boxplot to analyse whether the seperation of the medians was significant, and also seperated the smokers and non-smokers using the alpha aesthetic to make the relationship between age and premature birth easier to read. I also created the graph to answer the first team question about the relationship between smoking and premature births. I seperated the mothers into groups based on income, since this variable varied between smokers and non-smokers and also contributed to differing rates of premature births. Across all the income levels, with the exception of 2 and 7, smokers had higher rates of premature births. In 2 and 7, the population was small, as was the proportion of smokers. Additionally, the difference in proportion of premature births between smokers and non-smokers was very small, which likely indicates that this is just an anamoly, although more analysis would be needed to know for sure. Overall this plot does support the conclusion of the surgeon general. I used fill to seperate the premature and full term births so that is was easy to see how the proportion changed between smokers and non-smokers.   
+>>>>>>> master
