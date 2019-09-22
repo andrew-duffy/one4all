@@ -36,7 +36,29 @@ library(tidyverse)
 babies <- read_csv("https://raw.githubusercontent.com/ervance1/Sp2018-Data-Science-repo/master/babies2a.dat")
 babies <- rename(babies, bwtoz = `bwt/oz`) #renaming `bwt/oz` because the "/" sign requires special care
 ```
+## Preliminary Question
 
+```{r}
+
+splt <- split(babies, babies$smoke)
+
+nonsmokers <- splt[[1]]
+smokers <- splt[[2]]
+
+numvars <- colnames(babies)
+length <- length(numvars)
+
+for (i in 1:length){
+  smoking_corr <- cor(smokers$gestation, smokers[i], use = "complete.obs")
+  nonsmoking_corr <- cor(nonsmokers$gestation, nonsmokers[i], use = "complete.obs")
+  corr_diff <- nonsmoking_corr - smoking_corr
+  list[i] <- corr_diff
+}
+
+d <- ggplot()
+d <- d + geom_bar(aes(numvars, list))
+print(d)
+```
 
 ## The Surgeon General claimed that Mothers who smoke have increased rates of premature delivery (Before 270 Days). Does the Data Support their claim?
 
