@@ -24,7 +24,23 @@ babies <- rename(babies, bwtoz = `bwt/oz`) #renaming `bwt/oz` because the "/" si
 ggplot(data=subset(babies,!is.na(Premature)&!is.na(smoke)))+geom_bar(aes(x=Premature,y=stat(prop),fill=(smoke==1)),position="dodge")+labs(x="Premature",title="Smoking and Premature Births",fill="Smoked")+facet_wrap(~parity)
 ```
 
+## The Surgeon General claimed that newborns of mothers who smoke have smaller birth weights at every gestational age. Does the data support the Surgeon General's assertion?
 
+This question is incredibly important to know a definitive answer to, as having a smaller birth weight can lead to health problems for young children and can just generally be an indicator of poor health at birth. Often, children with low birth weights struggle from breathing problems such as respiitory distress syndrome, patent ductus arteriosus, which can sometimes require surgery or medicine after birth in order to address, jaundice, or even bleeding in the brain, which if serious enough, can cause brain damage to the baby. Therefore, if there is a clear indicator of this, such as smoking during pregnancy, it's vital that this cause be identified and made abundantly clear to the general public at large in order to prevent any possible negative ramifications. In my eyes, the more possible health issues we report regarding smoking during pregnancy to the public, the more likely it is that more children will be born without that influence on their life right from the beginning, as parents will be more cautious in addressing any negative factors that could cause low birth weight. 
+
+
+```{r}
+
+
+
+ggplot(data=subset(babies, !is.na(smoke))) + geom_smooth(mapping = aes(x=gestation, y=bwtoz, color= (smoke==1)), se = FALSE)  + labs( x = "Gestation length in days", y = "Birth weight in ounces", title = "Birth Weight vs. Gestation controlling for smoking during pregnancy", color = "Smoked during pregnancy")
+```
+
+### Conclusion
+It is clear from the graph above that for virtually every gestation age, the birth weight is much higher for children whose mothers did not smoke during pregnancy versus those who did. WHile there is some overlap past 310 gestation days, this is likely more due to a low set of data for gestation lasting that long versus any clear indicator that smoking during pregnancy is better for long gestation periods. This point is further enchanced by the unpredictability of pregnancy, where one can not simply plan when a child will be born, and so for the overwhelming amount of data for typical gestation lengths, it is better to not smoke during pregnancy. 
+
+### Recommendation
+Obviously, it should be recommended that a mother never smoke during pregnancy. While this may already be common knowledge, it is apparent from the data presented above that birth weight decreases by a large factor when a mother does smoke during pregnancy, which can lead to a myriad of health issues for the newborn, as stated above. One thing we would recommend is to make this information about health issues more apparent: often people know that they shouldn't smoke during pregnancy, but having to see examples of health problems newborns struggle with because of it would really help to drive the point home. While it is truly a saddening topic, an ad describing a child that has suffered from brain damage or jaundice due to low birth weight caused by the mother smoking during pregnancy would be very powerful and moving to the vast majority of the general public, and would likely be very influential in increasing long term health for newborns. 
 
 ## Braden Griebel Individual Plot
 *Question:* How do the ages of mothers compare between premature and full term births?
@@ -37,3 +53,12 @@ ggplot(data=subset(babies, !is.na(Premature)))+geom_bar(aes(x=mage,y=..prop.., f
 
 ```
 
+## Luke Fanning Individual Plot
+*Question:* How does the mother's education level compare to their likelihood to smoke during pregnancy?
+
+```{r}
+ggplot(data=subset(babies, !is.na(smoke)&!is.na(med))) + geom_bar(mapping = aes(x=smoke, y = stat(prop), fill = med)) + facet_grid(.~med) + labs(x= "Smoked during prenancy", y = "Proportion", title = "Smoked during pregnancy proportions for each education level", fill="Mother's education level", subtitle = "left bar = didn't smoke during pregnancy, right bar = did smoke during pregnancy" )
+```
+
+### Findings
+The numbering behind education level is as follows: 0 = finished less than eighth grade, 1 = 8th to 12th grade, did not graduate, 2 = high school graduate no other schooling, 3 = high school graduate + trade school, 4 = high school graduate + some college, 5 = college graduate, 7 = trade school but unclear if graduated from high school. Therefore, when comparing these education levels to the proportion of women who smoked during pregnancy, we don't see a clear trend one way or the other. While there is a relatively clear indicator that if you attend at least some college, you are less likely to smoke during pregnancy than someone who hasn't, beyond that, there are no clear indicators in terms of education level that point one way or the other. For example, those who didn't finish eigthth grade have a high likelihood to have not smoked during pregnancy, whereas those who finished somewhere between 8th to 12th grade but did not graduate have a much higher likelihood to have smoked during pregnancy.The data also seems to suggest that those who completed trade school but it is unclear whether or not they graduated from high school have a very high likelihood of not smoking during pregnancy, whereas those who graduated from high school and did trade school seem to be more likely to have smoked during pregnancy. Therefore, this data must have many other confounding variables at play that provide a clearer view of factors causing smoking during pregnancy, and no conclusions should be drawn from the above dataset, even though at first thought, it would make sense that there is a correlation between the two variables.
