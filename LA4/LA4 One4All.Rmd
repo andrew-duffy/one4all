@@ -1,23 +1,3 @@
-<<<<<<< HEAD
----
-title: "LA4 One4All"
-author: "Braden Griebel, Luke Fanning, Andrew Duffy, Ayho Falick"
-date: "9/17/2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r}
-library(tidyverse)
-babies <- read_csv("https://raw.githubusercontent.com/ervance1/Sp2018-Data-Science-repo/master/babies2a.dat")
-babies <- rename(babies, bwtoz = `bwt/oz`)
-```
-
-
-
 =======
 ---
 title: "LA4 One4All"
@@ -261,10 +241,6 @@ ggplot(data = babies) +
 
 ## Individual Contributions
 
-<<<<<<< HEAD
-I, Braden Griebel, analysed the realtionship between maternal age and rates of premature births. Although the median age did not vary significantly between premature, and full term pregnancies, the ages of mothers of premature babies tended overall to be higher than those of mothers of full term infants. This is indicative of a higher rate of premature birth as maternal age increases. In order to analyse this realtionship more robustly I seperated the groups further by whether or not the mother smoked (a variable we know affects rates of premature birth based on the team analysis). I used notching of the boxplot to analyse whether the seperation of the medians was significant, and also seperated the smokers and non-smokers using the alpha aesthetic to make the relationship between age and premature birth easier to read. I also created the graph to answer the first team question about the relationship between smoking and premature births. I seperated the mothers into groups based on income, since this variable varied between smokers and non-smokers and also contributed to differing rates of premature births. Across all the income levels, with the exception of 2 and 7, smokers had higher rates of premature births. In 2 and 7, the population was small, as was the proportion of smokers. Additionally, the difference in proportion of premature births between smokers and non-smokers was very small, which likely indicates that this is just an anamoly, although more analysis would be needed to know for sure. Overall this plot does support the conclusion of the surgeon general. I used fill to seperate the premature and full term births so that is was easy to see how the proportion changed between smokers and non-smokers.   
->>>>>>> master
-=======
 I, Braden Griebel, analysed the realtionship between maternal age and rates of premature births. Although the median age did not vary significantly between premature, and full term pregnancies, the ages of mothers of premature babies tended overall to be higher than those of mothers of full term infants. This is indicative of a higher rate of premature birth as maternal age increases. In order to analyse this realtionship more robustly I seperated the groups further by whether or not the mother smoked (a variable we know affects rates of premature birth based on the team analysis). I used notching of the boxplot to analyse whether the seperation of the medians was significant, and also seperated the smokers and non-smokers using the alpha aesthetic to make the relationship between age and premature birth easier to read. I also created the graph to answer the first team question about the relationship between smoking and premature births. I seperated the mothers into groups based on income, since this variable varied between smokers and non-smokers and also contributed to differing rates of premature births. Across all the income levels, with the exception of 2 and 7, smokers had higher rates of premature births. In 2 and 7, the population was small, as was the proportion of smokers. Additionally, the difference in proportion of premature births between smokers and non-smokers was very small, which likely indicates that this is just an anamoly, although more analysis would be needed to know for sure. Overall this plot does support the conclusion of the surgeon general. I used fill to seperate the premature and full term births so that is was easy to see how the proportion changed between smokers and non-smokers.
 
 I, Ahyo Falick, created a plot in order to determine a correlation between a number of previous pregnancies and the weight of the new born. While there was a slight downward trend in the data, it can be concluded that previous pregnancies have little to no effect on the weight of the baby. This plot was created using the jitter function in order to try to better visualize trends in the data points. A caption was added to the plot discussing what kind of data was used and from where to give the viewere a better understanding of the data and reinforce its credibility. Additionally, the data was separated into two categories: babies who were born prematurely and babies who were not. This split made it obvious that premature babies were generally born lighter than babies who were not premature. In order to make the data easier to understand, I labeled the axes, as well as gave the plot a title, using the "labs" function. In all, this plot does not provide conclusive data on any kind of correlation between amount of previous pregnancies and weight of the baby.
