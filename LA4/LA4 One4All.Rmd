@@ -38,27 +38,126 @@ babies <- rename(babies, bwtoz = `bwt/oz`) #renaming `bwt/oz` because the "/" si
 ```
 ## Preliminary Question
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
-splt <- split(babies, babies$smoke)
+ggplot(data = babies, mapping = aes(x = parity))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's # of Pregnancies, 0 = Non-Smoker, 1 = Smoker")
 
-nonsmokers <- splt[[1]]
-smokers <- splt[[2]]
 
-numvars <- colnames(babies)
-length <- length(numvars)
 
-for (i in 1:length){
-  smoking_corr <- cor(smokers$gestation, smokers[i], use = "complete.obs")
-  nonsmoking_corr <- cor(nonsmokers$gestation, nonsmokers[i], use = "complete.obs")
-  corr_diff <- nonsmoking_corr - smoking_corr
-  list[i] <- corr_diff
-}
+ggplot(data = babies, mapping = aes(x = gestation))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's Pregnancy Period, in Days, 0 = Non-Smoker, 1 = Smoker")
 
-d <- ggplot()
-d <- d + geom_bar(aes(numvars, list))
-print(d)
+
+
+ggplot(data = babies, mapping = aes(x = bwtoz))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Birth Weight, in Ounces, 0 = Non-Smoker, 1 = Smoker")
+
+ggplot(data = babies, mapping = aes(x = Premature))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Prematurity, 0 = Non-Smoker, 1 = Smoker") + 
+  labs("0 = Gesation Period 270 Days or more, 1 = Premature")
+
+
+
+ggplot(data = babies, mapping = aes(x = mrace))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's Race, 0 = Non-Smoker, 1 = Smoker") + 
+  labs("0-5=white 
+                                6=mexican 
+                                7=black 
+                                8=asian 
+                                9=mix
+                               99=unknown")
+
+ggplot(data = babies, mapping = aes(x = drace))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Father's Race, 0 = Non-Smoker, 1 = Smoker") + 
+  labs("0-5=white 
+                                6=mexican 
+                                7=black 
+                                8=asian 
+                                9=mix
+                               99=unknown")
+
+
+
+
+ggplot(data = babies, mapping = aes(x = mage))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's Age, 0 = Non-Smoker, 1 = Smoker")
+
+ggplot(data = babies, mapping=aes(x=dage))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Father's Age, 0 = Non-Smoker, 1 = Smoker")
+
+
+
+
+ggplot(data = babies, mapping = aes(x = med))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's Education, 0 = Non-Smoker, 1 = Smoker") + 
+  labs(caption = "0 =  less than 8th grade
+                                 1 =  8th to 12th grade. did not graduate high school
+                                 2 = high school graduate, no other schooling
+                                 3 = high school graduate + trade school
+                                 4 = high school graduate + some college
+                                 5 = college graduate
+                                 6,7 = trade school but unclear if graduated from high school
+                                 9 = unknown")
+
+ggplot(data = babies, mapping = aes(x = ded))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Father's Education, 0 = Non-Smoker, 1 = Smoker") + 
+  labs(caption = "0 =  less than 8th grade
+                                 1 =  8th to 12th grade. did not graduate high school
+                                 2 = high school graduate, no other schooling
+                                 3 = high school graduate + trade school
+                                 4 = high school graduate + some college
+                                 5 = college graduate
+                                 6,7 = trade school but unclear if graduated from high school
+                                 9 = unknown")
+
+
+
+ggplot(data = babies, mapping = aes(x = mht))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's Height in Inches, 0 = Non-Smoker, 1 = Smoker")
+
+ggplot(data = babies, mapping = aes(x = dht))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Father's Height in Inches, 0 = Non-Smoker, 1 = Smoker")
+
+
+
+ggplot(data = babies, mapping = aes(x = mpregwt))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Mother's Weight During Pregnancy, 0 = Non-Smoker, 1 = Smoker")
+
+ggplot(data = babies, mapping = aes(x = dwt))+
+  geom_bar(color = "black")+
+  facet_grid(~smoke) +
+  ggtitle("Father's Weight, 0 = Non-Smoker, 1 = Smoker")
 ```
+## Findings and Conclusion:
+After graphing to compare statistics controlling for whether the mother smokes or not, there were many similarities between smoking mothers and non-smoking mothers. For example, the mother's race was indifferent to whether or not the mother smoked, the graphs are extremely similar. Same with height, age and number of pregnancies. One important thing to note is that when graphing the same variable for mother's stat and father's stat, the graphs were almost always very similar. The one biggest exception to this is education. Men tended to be more educated than women, regardless of whether or not they smoked. The graphs that were very different were the Mother's Education, Mother's pregnancy weight, the Father's weight, Birth weight, and Prematurity. Non-smoking mother's had more college degrees than smoking mothers, however there seems to be a greater number of non-smoking mothers in total. Non-smoking Mother's also tended to weigh less and give birth to heavier babies. Prematurity on average was more common in smoking mothers. The father's weight graph was extremely different from the Mother's, and also varied greatly based on if the father smoked or not. There seems to be quite a few variables that are unaffected by whether or not the parents smoke, but a few that are very correlated to whether or not the parents smoke (especially the mother).
+
 
 ## The Surgeon General claimed that Mothers who smoke have increased rates of premature delivery (Before 270 Days). Does the Data Support their claim?
 
