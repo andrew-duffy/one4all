@@ -1,4 +1,3 @@
-=======
 ---
 title: "LA4 One4All"
 author: "Braden Griebel, Luke Fanning, Andrew Duffy, Ahyo Falick"
@@ -10,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r message=FALSE}
+```{r message=FALSE, include = FALSE}
 library(tidyverse)
 
 babies <- read_csv("https://raw.githubusercontent.com/ervance1/Sp2018-Data-Science-repo/master/babies2a.dat")
@@ -135,6 +134,8 @@ ggplot(data = babies, mapping = aes(x = dwt))+
   facet_grid(~smoke) +
   ggtitle("Father's Weight, 0 = Non-Smoker, 1 = Smoker")
 ```
+
+
 ## Findings and Conclusion:
 After graphing to compare statistics controlling for whether the mother smokes or not, there were many similarities between smoking mothers and non-smoking mothers. For example, the mother's race was indifferent to whether or not the mother smoked, the graphs are extremely similar. Same with height, age and number of pregnancies. One important thing to note is that when graphing the same variable for mother's stat and father's stat, the graphs were almost always very similar. The one biggest exception to this is education. Men tended to be more educated than women, regardless of whether or not they smoked. The graphs that were very different were the Mother's Education, Mother's pregnancy weight, the Father's weight, Birth weight, and Prematurity. Non-smoking mother's had more college degrees than smoking mothers, however there seems to be a greater number of non-smoking mothers in total. Non-smoking Mother's also tended to weigh less and give birth to heavier babies. Prematurity on average was more common in smoking mothers. The father's weight graph was extremely different from the Mother's, and also varied greatly based on if the father smoked or not. There seems to be quite a few variables that are unaffected by whether or not the parents smoke, but a few that are very correlated to whether or not the parents smoke (especially the mother).
 
@@ -154,7 +155,7 @@ ggplot(data=subset(babies,!is.na(Premature)&!is.na(smoke)))+geom_bar(aes(x=Prema
 ## Conclusion
 Based on the above plot it can be seen that across income amounts (a variable that was different between smokers and non-smokers and also affected premature birthrates), the group of mothers that smoked had higher rates of premature births. The exception within the 2 and 7 income brakets is most likely due to a small amount of people within those brakets, and an even smaller proportion of which smoked leading to some statistical unpredictability. However, overall the trend is clear that mothers who smoked tended to have higher rates of premature birth. This supports the surgeon generals finding. 
 
-## Recomendation
+## Recommendation
 
 Since smoking tends to lead to higher rates of premature births, smoking during pregnancy should be avoided. Higher rates of premature births can lead to a plethora of health problems, and so anything that contributes significantly to rates of premature birth (such a smoking) should be avoided if at all possible. Thus, one important future action is to improve the publics knowledge of the harms smoking can cause babies. Additionally, since even if people believe that they should not be smoking that doesn't mean they will have the ability to quit, we recomend that future studies are undertaken to see the best way to assist in people quitting smoking, and then those methods being made clear, and help made available, especially to pregnant mothers. This will help to reduce the rate of smoking during pregnancy and thus reduce the rate of premature births, and more generally improve overall health of babies and thus the general population. Additionally, we recomend that more data is gathered about other possible confounding variables to strengthen the analysis of the realtionship between premature births and smoking.  
 
@@ -173,10 +174,10 @@ This question is incredibly important to know a definitive answer to, as having 
 ggplot(data=subset(babies, !is.na(smoke))) + geom_smooth(mapping = aes(x=gestation, y=bwtoz, color= (smoke==1)), se = FALSE)  + labs( x = "Gestation length in days", y = "Birth weight in ounces", title = "Birth Weight vs. Gestation controlling for smoking during pregnancy", color = "Smoked during pregnancy")
 ```
 
-### Conclusion
+## Conclusion
 It is clear from the graph above that for virtually every gestation age, the birth weight is much higher for children whose mothers did not smoke during pregnancy versus those who did. WHile there is some overlap past 310 gestation days, this is likely more due to a low set of data for gestation lasting that long versus any clear indicator that smoking during pregnancy is better for long gestation periods. This point is further enchanced by the unpredictability of pregnancy, where one can not simply plan when a child will be born, and so for the overwhelming amount of data for typical gestation lengths, it is better to not smoke during pregnancy. 
 
-### Recommendation
+## Recommendation
 Obviously, it should be recommended that a mother never smoke during pregnancy. While this may already be common knowledge, it is apparent from the data presented above that birth weight decreases by a large factor when a mother does smoke during pregnancy, which can lead to a myriad of health issues for the newborn, as stated above. One thing we would recommend is to make this information about health issues more apparent: often people know that they shouldn't smoke during pregnancy, but having to see examples of health problems newborns struggle with because of it would really help to drive the point home. While it is truly a saddening topic, an ad describing a child that has suffered from brain damage or jaundice due to low birth weight caused by the mother smoking during pregnancy would be very powerful and moving to the vast majority of the general public, and would likely be very influential in increasing long term health for newborns. 
 
 ## Braden Griebel Individual Plot
@@ -232,10 +233,14 @@ ggplot(data = babies) +
   ggtitle("Gestation Period, in Days v. Mother's Age")
 ```
 
-##Findings: For non-smoking mothers, gestation period has a negative, linear correlation. Therefore, the older a non-smoking mother is, the shorter the gestation period. For smoking mothers, there is a very big affect on age and gestation period. If the smoking mother is a teenager, the younger the mother the shorter the gestation period. Then, the relationship is quite horizontal (gestation period stays roughly the same). Once you get into the mid-late thirties, smoking mothers have a positive trend between age and gestation period. On average, gestation period is shorter for smoking mothers as compared to non-smoking mothers.
-## Conclusion: As proven in Question 2 above, it is true that gestation period has a relationship with birth weight. Birth weight can be an indicator of a baby's health. Therefore, as found above, smoking negatively affects gestation period, so smoking plays a hand in mother's gestation period, which in turn directly impacts a baby's health.
+## Findings: 
+For non-smoking mothers, gestation period has a negative, linear correlation. Therefore, the older a non-smoking mother is, the shorter the gestation period. For smoking mothers, there is a very big affect on age and gestation period. If the smoking mother is a teenager, the younger the mother the shorter the gestation period. Then, the relationship is quite horizontal (gestation period stays roughly the same). Once you get into the mid-late thirties, smoking mothers have a positive trend between age and gestation period. On average, gestation period is shorter for smoking mothers as compared to non-smoking mothers.
 
-## Recommendation: While it is known that smoking during pregnancy is very bad for the baby's health, it is proven that mothers who smoke have a shorter gestation period, and a lighter baby. Therefore, mothers should not smoke during pregnancy to achieve a normal gestation period and birthweight, which results in a healthier baby.
+## Conclusion: 
+As proven in Question 2 above, it is true that gestation period has a relationship with birth weight. Birth weight can be an indicator of a baby's health. Therefore, as found above, smoking negatively affects gestation period, so smoking plays a hand in mother's gestation period, which in turn directly impacts a baby's health.
+
+## Recommendation: 
+While it is known that smoking during pregnancy is very bad for the baby's health, it is proven that mothers who smoke have a shorter gestation period, and a lighter baby. Therefore, mothers should not smoke during pregnancy to achieve a normal gestation period and birthweight, which results in a healthier baby.
 
 
 
@@ -246,3 +251,5 @@ I, Braden Griebel, analysed the realtionship between maternal age and rates of p
 I, Ahyo Falick, created a plot in order to determine a correlation between a number of previous pregnancies and the weight of the new born. While there was a slight downward trend in the data, it can be concluded that previous pregnancies have little to no effect on the weight of the baby. This plot was created using the jitter function in order to try to better visualize trends in the data points. A caption was added to the plot discussing what kind of data was used and from where to give the viewere a better understanding of the data and reinforce its credibility. Additionally, the data was separated into two categories: babies who were born prematurely and babies who were not. This split made it obvious that premature babies were generally born lighter than babies who were not premature. In order to make the data easier to understand, I labeled the axes, as well as gave the plot a title, using the "labs" function. In all, this plot does not provide conclusive data on any kind of correlation between amount of previous pregnancies and weight of the baby.
 
 I, Andrew Duffy, created all of the plots for the preliminary analysis. I did all of these plots with a geom_bar function, and faceted by whether or not the mother smoked. I included the NA data because it can determine things about pregnancy based on certain statistics, regardless of whether or not the mother smokes. I also created a geom_smooth plot that graphs gestational period against a mother's age, to determine if smoking during pregnancy can result in a shorter gestational period across all ages. I answered this question because I have always heard that it is less safe to get pregnant the older you get, and I was curious as to whether or not raw data would support that claim. I found this to be true.
+
+I, Luke Fanning, analyzed the relationship between mother's education level and smoking while pregnant. Although the analysis allowed for no discernable relationship to be established or analyzed, I felt it an important question to ask to help determine causes and reasons behind smoking during pregnancy. I used a geom_bar function, added a fill and facet wrap to clearly distinguish the fill and the different education labels, and also added various titles, subtitles, and labels for ease of reading and use.I also analyzed the second surgeon general's question by creating a plot of birth weight versus gestation age for those who smoked during pregnancy and those who did not using the geom smooth function. I was able to find a definitive relationship between the two for smoking versus non-smoking, and made several conclusions and recommendations based off of this fact. 
