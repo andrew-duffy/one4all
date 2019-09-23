@@ -247,10 +247,11 @@ This plot shows the effects of mothers' previous pregnancies on a child's birth 
 facetlabels = c("0" = "Non-Smokers", "1" = "Smokers")
 
 ggplot(data = babies) +
-  geom_smooth(mapping = aes(x = gestation, y = bwtoz), color = "blue") +
+  geom_smooth(mapping = aes(x = mage, y = gestation), color = "blue") +
   facet_grid(~smoke, labeller = as_labeller(facetlabels)) +
-  ggtitle("Gestation Period, in Days v. Birth Weight, in Ounces")
+  ggtitle("Gestation Period, in Days v. Mother's Age")
 ```
+
 ##Findings: For non-smoking mothers, gestation period has a negative, linear correlation. Therefore, the older a non-smoking mother is, the shorter the gestation period. For smoking mothers, there is a very big affect on age and gestation period. If the smoking mother is a teenager, the younger the mother the shorter the gestation period. Then, the relationship is quite horizontal (gestation period stays roughly the same). Once you get into the mid-late thirties, smoking mothers have a positive trend between age and gestation period. On average, gestation period is shorter for smoking mothers as compared to non-smoking mothers.
 ## Conclusion: As proven in Question 2 above, it is true that gestation period has a relationship with birth weight. Birth weight can be an indicator of a baby's health. Therefore, as found above, smoking negatively affects gestation period, so smoking plays a hand in mother's gestation period, which in turn directly impacts a baby's health.
 
