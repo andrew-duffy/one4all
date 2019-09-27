@@ -64,6 +64,11 @@ ggplot(data = milk1970, aes(x = milk_million)) +
 
 It appears that most states in 1970 produced about 2 billion pounds of milk. One state produced over 15 billion pounds of milk! Can you identify this state?
 
+```{r}
+milk1970 %>% filter(milk_million>15000) %>% print()
+```
+*The state that produced more than 15 billion pounds of milk was Wisconsin*
+
 Another similar kind of plot is a probability density plot. Here is what a density plot looks like. With a density plot, we estimate a probability density function for the data that is presented
 
 ```{r}
@@ -130,6 +135,8 @@ ggplot(data = milksub, aes(x = year, y = milk_million, color = state)) +
 
 What does this tell you about the milk production from 1970 to now?
 
+*For most of the states in the set we are examining, milk production has decreased. However, for Florida and New York it has it increased. New Yorks rate of increase was significcantly larger than for Florida. Also, across all the years of the data, the ranking of milk production by state hasn't changed, going New York, Florida, Maryland, Maine, and finally Wyoming. New York also produced a lot more than any of the other states. *
+
 Other useful plots for visualizing bivariate relationships are geom_line, geom_jitter, geom_bin2d, geom_hex, and others.
 
 # Summarising Statistics
@@ -175,4 +182,114 @@ Then using the whole dataset, report the following on the front page.
 After everyone is finished, as a team, write a few sentences in the team report in R Markdown detailing what you found to be the most helpful in learning about this data. Include all individual work in this document as well.
 
 The final task is to reflect on the ethics of this data analysis. Brainstorm with your team on who could benefit most from this analysis? Who could suffer? Write a few sentences explaining who could benefit and suffer from this analysis and why.
+
+
+# Braden Griebel
+
+
+```{r}
+milk %>% mutate(milk_million=milk_produced/1000000) %>% filter(year==1998) %>%   arrange(desc(milk_million))%>%
+  ggplot(aes(x=reorder(state,milk_million,FUN=identity),y=milk_million))+geom_col(width=1,color="white")+coord_flip(ylim=c(1100,27000))+labs(y="Milk Produced (Millions of Pounds)",x="State", title="Milk Production by State in 1998")+ theme( axis.text.y = element_text(size=5))
+```
+
+
+# Summary of Milk Production for My Birth Year (1998)
+
+
+```{r}
+milk%>% filter(year==1998) %>% mutate(milk_million=milk_produced/1000000)%>%group_by(state)%>%summarize(average=mean(milk_million),median=median(milk_million))%>%as_tibble()%>%print()
+```
+
+```{r}
+milk_ordered<-milk%>% filter(year==1998) %>% mutate(milk_million=milk_produced/1000000)%>%group_by(state)%>%arrange(milk_million)
+```
+
+# State that Produced the Least milk
+
+```{r}
+milk_ordered[1,c(2,5)]
+```
+
+# State that Produced the most milk
+```{r}
+milk_ordered[length(milk_ordered$state),c(2,5)]
+```
+
+
+
+
+# Team Section 
+
+As a team, select all of the states in which at least one of your group members has lived in. If there are less than 5, choose additional states so that you select 5 of them. For these states, plot a yearly time series for the milk production (in millions of pounds). **On this plot, display a line showing the average milk produced each year for all states.** Display this plot on the front page and comment on what information the plot conveys.
+
+Then using the whole dataset, report the following on the front page.
+
+- The year when the most milk was produced in the United States.
+- The year when the least milk was produced in the United States.
+- In 2017, report the 5 states that produced the most milk. (Hint: Use arrange)
+- In 2017, report the 5 states that produced the least milk. (Hint: Use arrange)
+
+After everyone is finished, as a team, write a few sentences in the team report in R Markdown detailing what you found to be the most helpful in learning about this data. Include all individual work in this document as well.
+
+```{r}
+states<-c("Colorado", "Nevada", "Utah", "Wyoming", "California")
+```
+
+```{r}
+milk_mod<-milk%>%mutate(milk_million=milk_produced/1000000)
+milk_states<- milk_mod %>% filter(state %in% states)
+milk_sum <- milk_mod%>% group_by(year)%>% summarise(milk_average=mean(milk_million))
+ggplot()+geom_point(data=milk_states,aes(x=year,y=milk_million,color=state))+
+  geom_smooth(data=milk_sum,mapping=aes(x=year,y=milk_average,color="Average all States"),se=FALSE)+
+  labs(xlab="Year",y="Milk Produced (Millions of Pounds)",title="Milk Production by Year")
+
+```
+
+
+
+
+```{r}
+milk_by_year<-milk_mod%>%group_by(year)%>%summarise(milk_total_million=sum(milk_million))%>%
+  arrange(milk_total_million)
+```
+
+# Year Most Milk Produced
+
+```{r}
+milk_by_year[length(milk_by_year$year),]
+```
+
+# Year Least Milk Produced
+
+```{r}
+milk_by_year[1,]
+```
+
+
+```{r}
+milk2017<-milk_mod%>%filter(year==2017)
+milk2017_bottom<-milk2017%>%group_by(state)%>%summarise(milk_produced=milk_million)%>%
+  filter(rank(milk_produced)<=5)%>%arrange(milk_produced)
+milk2017_top<-milk2017%>%group_by(state)%>%summarise(milk_produced=milk_million)%>%
+  filter(rank(desc(milk_produced))<=5)%>%arrange(milk_produced)
+milk2017_top
+milk2017_bottom
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
