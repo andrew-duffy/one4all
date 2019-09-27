@@ -596,27 +596,27 @@ ggplot()+geom_point(data=milk_states,aes(x=year,y=milk_million,color=state))+
 ## 1  1975             115398</code></pre>
 <pre class="r"><code>milk2017&lt;-milk_mod%&gt;%filter(year==2017)
 milk2017_bottom&lt;-milk2017%&gt;%group_by(state)%&gt;%summarise(milk_produced=milk_million)%&gt;%
-  filter(rank(milk_produced)&lt;=5)%&gt;%arrange(milk_produced)
+  filter(rank(milk_produced)&lt;=5)%&gt;%arrange(desc(milk_produced))
 milk2017_top&lt;-milk2017%&gt;%group_by(state)%&gt;%summarise(milk_produced=milk_million)%&gt;%
-  filter(rank(desc(milk_produced))&lt;=5)%&gt;%arrange(milk_produced)
+  filter(rank(desc(milk_produced))&lt;=5)%&gt;%arrange(desc(milk_produced))
 milk2017_top</code></pre>
 <pre><code>## # A tibble: 5 x 2
 ##   state      milk_produced
 ##   &lt;fct&gt;              &lt;dbl&gt;
-## 1 Texas              12054
-## 2 Idaho              14627
+## 1 California         39798
+## 2 Wisconsin          30320
 ## 3 New York           14912
-## 4 Wisconsin          30320
-## 5 California         39798</code></pre>
+## 4 Idaho              14627
+## 5 Texas              12054</code></pre>
 <pre class="r"><code>milk2017_bottom</code></pre>
 <pre><code>## # A tibble: 5 x 2
 ##   state        milk_produced
 ##   &lt;fct&gt;                &lt;dbl&gt;
-## 1 Alaska                   3
-## 2 Rhode Island            13
+## 1 Alabama                 89
+## 2 Arkansas                79
 ## 3 Hawaii                  39
-## 4 Arkansas                79
-## 5 Alabama                 89</code></pre>
+## 4 Rhode Island            13
+## 5 Alaska                   3</code></pre>
 </div>
 
 

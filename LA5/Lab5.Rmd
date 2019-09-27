@@ -269,9 +269,9 @@ milk_by_year[1,]
 ```{r}
 milk2017<-milk_mod%>%filter(year==2017)
 milk2017_bottom<-milk2017%>%group_by(state)%>%summarise(milk_produced=milk_million)%>%
-  filter(rank(milk_produced)<=5)%>%arrange(milk_produced)
+  filter(rank(milk_produced)<=5)%>%arrange(desc(milk_produced))
 milk2017_top<-milk2017%>%group_by(state)%>%summarise(milk_produced=milk_million)%>%
-  filter(rank(desc(milk_produced))<=5)%>%arrange(milk_produced)
+  filter(rank(desc(milk_produced))<=5)%>%arrange(desc(milk_produced))
 milk2017_top
 milk2017_bottom
   
