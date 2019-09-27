@@ -232,7 +232,7 @@ Then using the whole dataset, report the following on the front page.
 After everyone is finished, as a team, write a few sentences in the team report in R Markdown detailing what you found to be the most helpful in learning about this data. Include all individual work in this document as well.
 
 ```{r}
-states<-c("Colorado", "Nevada", "Utah", "Wyoming", "California")
+states<-c("Colorado", "New Jersey","Massachusetts", "Utah", "Washington", "California","Maryland")
 ```
 
 ```{r}
