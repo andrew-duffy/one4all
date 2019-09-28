@@ -215,8 +215,34 @@ milk_ordered[1,c(2,5)]
 milk_ordered[length(milk_ordered$state),c(2,5)]
 ```
 
+# Ahyo Falick
+
+```{r}
+milk %>% mutate(mm=(milk_produced/1000000)) %>% filter(year==1999) %>% ggplot(aes(x = mm, color = state)) +
+  geom_histogram(bins = 20) + theme(legend.position = "none") +
+  labs(title = "Histogram of Milk Produced in 1999 by State", y = "Count", x = "Milk Produced (Millions)")
+```
+
+# Summary of Average Milk Production by State in 1999
+
+```{r}
+milk %>% mutate(mm = milk_produced/1000000) %>% filter(year == 1999) %>% group_by(state) %>% summarize(average=mean(mm),median=median(mm))%>%as_tibble()%>%print()
+```
+
+# State That Produced the Most Amount of Milk
+
+```{r}
+milk %>% filter(year == 1999) %>% arrange(desc(milk_million)) %>% filter(state == "California")
+
+```
+
+# State That Produced the Least Amount of Milk
 
 
+```{r}
+milk %>% filter(year == 1999) %>% arrange(desc(milk_million)) %>% filter(state == "Alaska")
+
+```
 
 # Team Section 
 
