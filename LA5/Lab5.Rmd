@@ -183,8 +183,9 @@ After everyone is finished, as a team, write a few sentences in the team report 
 
 The final task is to reflect on the ethics of this data analysis. Brainstorm with your team on who could benefit most from this analysis? Who could suffer? Write a few sentences explaining who could benefit and suffer from this analysis and why.
 
+# Individual Sections
 
-# Braden Griebel
+## Braden Griebel
 
 
 ```{r}
@@ -193,7 +194,7 @@ milk %>% mutate(milk_million=milk_produced/1000000) %>% filter(year==1998) %>%  
 ```
 
 
-# Summary of Milk Production for My Birth Year (1998)
+### Summary of Milk Production for My Birth Year (1998)
 
 
 ```{r}
@@ -204,18 +205,18 @@ milk%>% filter(year==1998) %>% mutate(milk_million=milk_produced/1000000)%>%grou
 milk_ordered<-milk%>% filter(year==1998) %>% mutate(milk_million=milk_produced/1000000)%>%group_by(state)%>%arrange(milk_million)
 ```
 
-# State that Produced the Least milk
+### State that Produced the Least milk
 
 ```{r}
 milk_ordered[1,c(2,5)]
 ```
 
-# State that Produced the most milk
+### State that Produced the most milk
 ```{r}
 milk_ordered[length(milk_ordered$state),c(2,5)]
 ```
 
-# Ahyo Falick
+## Ahyo Falick
 
 ```{r}
 milk %>% mutate(mm=(milk_produced/1000000)) %>% filter(year==1999) %>% ggplot(aes(x = mm, color = state)) +
@@ -223,26 +224,57 @@ milk %>% mutate(mm=(milk_produced/1000000)) %>% filter(year==1999) %>% ggplot(ae
   labs(title = "Histogram of Milk Produced in 1999 by State", y = "Count", x = "Milk Produced (Millions)")
 ```
 
-# Summary of Average Milk Production by State in 1999
+### Summary of Average Milk Production by State in 1999
 
 ```{r}
 milk %>% mutate(mm = milk_produced/1000000) %>% filter(year == 1999) %>% group_by(state) %>% summarize(average=mean(mm),median=median(mm))%>%as_tibble()%>%print()
 ```
 
-# State That Produced the Most Amount of Milk
+### State That Produced the Most Amount of Milk
 
 ```{r}
 milk %>% filter(year == 1999) %>% arrange(desc(milk_million)) %>% filter(state == "California")
 
 ```
 
-# State That Produced the Least Amount of Milk
+### State That Produced the Least Amount of Milk
 
 
 ```{r}
 milk %>% filter(year == 1999) %>% arrange(desc(milk_million)) %>% filter(state == "Alaska")
 
 ```
+
+## Luke Fanning
+
+### Distribution of milk production in 1997
+
+```{r}
+milk %>% filter(year == 1997) %>%  mutate(milk_millions=(milk_produced/1000000)) %>% group_by(state) %>% arrange(milk_millions) %>% ggplot(mapping = aes(x=reorder(state,milk_millions), y=milk_millions, fill = milk_millions, color = state)) + geom_col() + coord_flip() + scale_fill_gradient( low = "red", high = "blue") +  labs(x= "State", y = "Milk produced, in millions of pounds", title = "Milk produced by state in 1997") + theme(legend.position = "none", axis.text.y = element_text(size=6))
+
+```
+
+
+### Average Milk production by state in 1997
+
+```{r}
+milk %>% filter(year == 1997) %>% mutate(milk_millions=(milk_produced/1000000)) %>% summarize (mean(milk_millions), median(milk_millions))
+```
+As seen from the data above, the average milk produced per state in 1997 was 3121.82 million pounds of milk and the median amount of milk produced was 1436 million pounds of milk.
+
+### State that produced the most milk in 1997
+
+```{r}
+milk %>% filter(year == 1997) %>% mutate(milk_millions=(milk_produced/1000000)) %>% group_by(state) %>% summarise(milk_produced_millions=max(milk_millions)) %>% arrange(desc(milk_produced_millions))
+```
+As seen from the data above, California produced the most milk in 1997, producing 27,582 million pounds.
+
+### State that produced the least milk in 1997
+
+```{r}
+milk %>% filter(year == 1997) %>% mutate(milk_millions=(milk_produced/1000000)) %>% group_by(state) %>% summarise(milk_produced_millions=max(milk_millions)) %>% arrange(milk_produced_millions)
+```
+As seen from the data above, Alaska produced the least amount of milk in 1997, producing 15 million pounds.
 
 # Team Section 
 
@@ -256,6 +288,9 @@ Then using the whole dataset, report the following on the front page.
 - In 2017, report the 5 states that produced the least milk. (Hint: Use arrange)
 
 After everyone is finished, as a team, write a few sentences in the team report in R Markdown detailing what you found to be the most helpful in learning about this data. Include all individual work in this document as well.
+The final task is to reflect on the ethics of this data analysis. Brainstorm with your team on who could benefit most from this analysis? Who could suffer? Write a few sentences explaining who could benefit and suffer from this analysis and why.
+
+## Milk production across states our group has lived in 
 
 ```{r}
 states<-c("Colorado", "New Jersey","Massachusetts", "Utah", "Washington", "California","Maryland")
@@ -271,7 +306,7 @@ ggplot()+geom_point(data=milk_states,aes(x=year,y=milk_million,color=state))+
 
 ```
 
-
+This plot shows a clear difference between California's milk production and every other state shown above, with California having by far the most milk production compared to any of the other states. This can also be seen by the average across all of the states lived in by our group, as the line would be much closer to the center of the other 6 states if not for California's massive amount of production. This plot also shows a clear upwards trend in milk production across most states as time goes on, displaying the growing demand for milk that comes with a growing population and growing US exports of milk to other countries. 
 
 
 ```{r}
@@ -279,18 +314,19 @@ milk_by_year<-milk_mod%>%group_by(year)%>%summarise(milk_total_million=sum(milk_
   arrange(milk_total_million)
 ```
 
-# Year Most Milk Produced
+## The year in which the most milk was produced
 
 ```{r}
 milk_by_year[length(milk_by_year$year),]
 ```
 
-# Year Least Milk Produced
+## The year in which the least milk was produced
 
 ```{r}
 milk_by_year[1,]
 ```
 
+## The top 5 and bottom 5 milk producers in 2017 by state
 
 ```{r}
 milk2017<-milk_mod%>%filter(year==2017)
@@ -299,13 +335,15 @@ milk2017_bottom<-milk2017%>%group_by(state)%>%summarise(milk_produced=milk_milli
 milk2017_top<-milk2017%>%group_by(state)%>%summarise(milk_produced=milk_million)%>%
   filter(rank(desc(milk_produced))<=5)%>%arrange(desc(milk_produced))
 milk2017_top
-milk2017_bottom
   
 ```
 
 
+```{r}
+milk2017_bottom
+```
 
-
+## Final Discussion
 
 
 
