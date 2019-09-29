@@ -345,6 +345,8 @@ milk2017_bottom
 
 ## Final Discussion
 
+*Luke Fanning:* I found the in class activities relating to DIA incredibly helpful in learning how to perfomr tasks related to this data. I also found that this data allowed us to use a large amount of dplyr functions, which personally helped me gain a deeper understanding of how each one worked and allowed me to better understand how the functions connect to each other and work together. In my individual section, I separated the data down to 1997 milk production, created a new variable that represented the milk production in millions of pounds, and then used a geom_col function to display the data. I reordered the states by the variable I created, and then graphed them against each other while flipping the axes to better display the labels for each state. Finally, I added labels, reduced the font size along the y axis, and added fill and color options to better differentiate each states individual milk production
+I believe that the most beneficial use of this data would be for larger milk production companies, as many can see firstly which states are most successful at producing milk (and therefore have the most productive space available for cows), and secondly which areas lack milk production of their own in order to expand markets for shipping in those regions. However, this does have a downside of hurting smaller farmers and ranchers in these lower production states, as with expanded shipping from larger companies, it will much harder for ranchers in Alaska to produce milk at all without being undercut by larger competition. 
 
 
 
