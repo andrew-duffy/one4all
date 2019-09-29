@@ -37,7 +37,7 @@ ggplot()+geom_point(data=milk_states,aes(x=year,y=milk_million,color=state))+
 
 ```
 
-This plot shows a clear difference between California's milk production and every other state shown above, with California having by far the most milk production compared to any of the other states. This can also be seen by the average across all of the states lived in by our group, as the line would be much closer to the center of the other 6 states if not for California's massive amount of production. This plot also shows a clear upwards trend in milk production across most states as time goes on, displaying the growing demand for milk that comes with a growing population and growing US exports of milk to other countries. 
+This plot shows a clear difference between California's milk production and every other state shown above, with California having by far the most milk production compared to any of the other states. This can also be seen by the average across all of the states, as California produced much much more milk than the average across all of the years shown. This plot also shows a clear upwards trend in milk production across most states as time goes on, displaying the growing demand for milk that comes with a growing population and growing US exports of milk to other countries. 
 
 
 ```{r warning=FALSE, message=FALSE}
@@ -84,12 +84,14 @@ milk2017_bottom
 
 ## Final Discussion
 
+**Most Useful:** In Learning about the data, we found the time series representatoions the most useful. They showed trends across the years, and also across states (when we had the lines for each state, even though it was a small sample of states it was still very useful). It showed how across the years the amount of milk production had generally been increasing, but also that the ordering of (at least our sample of) the states had stayed relatively constant. Looking at all of the states would have given more data, but it would have been too busy of a graph to make much sense. Thus, taking a small sample (that was not random, people obviously tend to live in states with higher population, but still was useful) allowed us to make the data clearer, and so see general trends across time and across certain states.Although the boxplots did show how variability increased over the years, and this was also useful in seeing how the median milk production had remained mostly constant across the years, it didn't say much about the individual states, or even most of the years as it was restricted to three years.   
+
 *Luke Fanning:* I found the in class activities relating to DIA incredibly helpful in learning how to perfomr tasks related to this data. I also found that this data allowed us to use a large amount of dplyr functions, which personally helped me gain a deeper understanding of how each one worked and allowed me to better understand how the functions connect to each other and work together. In my individual section, I separated the data down to 1997 milk production, created a new variable that represented the milk production in millions of pounds, and then used a geom_col function to display the data. I reordered the states by the variable I created, and then graphed them against each other while flipping the axes to better display the labels for each state. Finally, I added labels, reduced the font size along the y axis, and added fill and color options to better differentiate each states individual milk production
 
 
 ## Ethics Discussion
 
-I believe that the most beneficial use of this data would be for larger milk production companies, as many can see firstly which states are most successful at producing milk (and therefore have the most productive space available for cows), and secondly which areas lack milk production of their own in order to expand markets for shipping in those regions. However, this does have a downside of hurting smaller farmers and ranchers in these lower production states, as with expanded shipping from larger companies, it will much harder for ranchers in Alaska to produce milk at all without being undercut by larger competition. 
+We believe that the most beneficial use of this data would be for larger milk production companies, as many can see firstly which states are most successful at producing milk (and therefore have the most productive space available for cows), and secondly which areas lack milk production of their own in order to expand markets for shipping in those regions. However, this does have a downside of hurting smaller farmers and ranchers in these lower production states, as with expanded shipping from larger companies, it will much harder for ranchers in Alaska to produce milk at all without being undercut by larger competition. 
 
 # Individual Section
 
