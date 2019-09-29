@@ -110,10 +110,17 @@ milk%>%filter(year==1998)%>% group_by(state)%>% summarise(milk_million=milk_mill
 
 ### Summary of Milk Production for My Birth Year (1998)
 
-
+Average and median across all states
 ```{r warning=FALSE, message=FALSE}
-milk%>% filter(year==1998) %>% mutate(milk_million=milk_produced/1000000)%>%group_by(year)%>%summarize(average=mean(milk_million),median=median(milk_million))%>%as_tibble()%>%print()
+milk%>% filter(year==1998) %>% group_by(year)%>%summarize(average=mean(milk_million),median=median(milk_million))%>%as_tibble()%>%print()
 ```
+
+Average and median for each state during my birthyear, which since its for a single year is just the amount of milk produced by the state
+```{r}
+milk%>% filter(year==1998) %>% group_by(state)%>%summarize(average=mean(milk_million),median=median(milk_million))%>%as_tibble()%>%print()
+```
+
+
 
 ```{r warning=FALSE, message=FALSE}
 milk_ordered<-milk%>% filter(year==1998) %>% mutate(milk_million=milk_produced/1000000)%>%group_by(state)%>%arrange(milk_million)
