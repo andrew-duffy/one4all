@@ -88,6 +88,8 @@ milk2017_bottom
 
 *Luke Fanning:* I found the in class activities relating to DIA incredibly helpful in learning how to perfomr tasks related to this data. I also found that this data allowed us to use a large amount of dplyr functions, which personally helped me gain a deeper understanding of how each one worked and allowed me to better understand how the functions connect to each other and work together. In my individual section, I separated the data down to 1997 milk production, created a new variable that represented the milk production in millions of pounds, and then used a geom_col function to display the data. I reordered the states by the variable I created, and then graphed them against each other while flipping the axes to better display the labels for each state. Finally, I added labels, reduced the font size along the y axis, and added fill and color options to better differentiate each states individual milk production
 
+*Braden Griebel:* First I filtered the data down to my birth year, and then I used the milk_million column to display the milk production by state, both in a table and a graph (using the geom_col function in ggplot). I reordered the graph so it was easier to read. Also, I rotated the axis, and decreased the text size so that it was actually possible to read the labels. Additionally, in the team section I used dplyr to first filter down the data to out states and graph them over the years using ggplot. I also grouped the whole data set by year, and then added a new column for the average milk production in order to graph the average across all 50 states. Adding it to the already existing legend to make it clear what the line meant. 
+
 
 ## Ethics Discussion
 
