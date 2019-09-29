@@ -192,4 +192,24 @@ milk %>% filter(year == 1997) %>% mutate(milk_millions=(milk_produced/1000000)) 
 ```
 As seen from the data above, Alaska produced the least amount of milk in 1997, producing 15 million pounds.
 
+## Andrew Duffy
 
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+manipulated_data <- milk %>% filter(year == 1999) %>% group_by(state)  %>% arrange(desc(milk_million))
+
+ggplot(data = manipulated_data)  + geom_col(mapping = aes(x = state, y = milk_million, color = state)) + coord_flip() + ggtitle("Milk Produced by State in 1999, in millions of pounds") + labs(x = "State", y = "Milk Produced, in Millions of Pounds")
+
+```
+
+### State that produced the most milk in 1999
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+milk %>% filter(year == 1999) %>% group_by(state) %>% summarise(most_milk = (max(milk_million))) %>% arrange(desc(most_milk))
+
+```
+
+### State that produced the least milk in 1999
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+milk %>% filter(year == 1999) %>% group_by(state) %>% summarise(least_milk = (min(milk_million))) %>% arrange(least_milk)
+```
