@@ -1,0 +1,210 @@
+---
+title: "One4All LA6"
+author: "Braden Griebel, Andrew Duffy, Luke Fanning, Ahyo Falick"
+date: "2019-10-2"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+COflights <- read_csv("https://files.osf.io/v1/resources/3z5as4pej8/providers/osfstorage/5a8ca28f57103100104584db")
+```
+
+
+```{r}
+COflights<-COflights%>%mutate(late= ARR_DELAY>=15)
+COflights_arrived<-COflights%>%filter(!is.na(ARR_TIME))
+COflights_arrived_na.rm<-COflights_arrived%>%filter(!is.na(late))
+delayed_flights<-COflights%>%filter(DEP_DELAY>=15)
+```
+
+Probability of Late Flight:
+```{r}
+p_late<-mean(COflights_arrived_na.rm$late)
+p_late
+```
+
+```{r, cache=TRUE}
+ggplot(data=COflights,mapping=aes(x=NAS_DELAY,y=DEP_DELAY))+geom_point()
+ggplot(data=COflights,mapping=aes(x=CARRIER_DELAY,y=DEP_DELAY))+geom_point()
+ggplot(data=COflights,mapping=aes(x=WEATHER_DELAY,y=DEP_DELAY))+geom_point()
+ggplot(data=COflights,mapping=aes(x=SECURITY_DELAY,y=DEP_DELAY))+geom_point()
+```
+
+
+```{r, cahe=TRUE}
+ggplot(data=COflights)+geom_smooth(aes(x=NAS_DELAY,y=DEP_DELAY),color="blue")+
+  geom_smooth(aes(x=CARRIER_DELAY,y=DEP_DELAY),color="red")+
+  geom_smooth(aes(x=WEATHER_DELAY,y=DEP_DELAY),color="purple")+
+  geom_smooth(aes(x=SECURITY_DELAY,y=DEP_DELAY),color="yellow")
+
+```
+
+Correlation bewteen DEP_DELAY and NAS_DELAY
+```{r}
+useful_data_NAS<-COflights%>%filter(!is.na(NAS_DELAY)&!is.na(DEP_DELAY))
+corNAS<-cor(useful_data_NAS$DEP_DELAY,useful_data_NAS$NAS_DELAY)
+
+```
+
+Correlation bewteen DEP_DELAY and WEATHER_DELAY
+```{r}
+useful_data_WEATHER<-COflights%>%filter(!is.na(WEATHER_DELAY)&!is.na(DEP_DELAY))
+corWEATHER<-cor(useful_data_WEATHER$DEP_DELAY,useful_data_WEATHER$WEATHER_DELAY)
+
+```
+
+Correlation bewteen DEP_DELAY and SECURITY_DELAY
+```{r}
+useful_data_SECURITY<-COflights%>%filter(!is.na(SECURITY_DELAY)&!is.na(DEP_DELAY))
+corSECURITY<-cor(useful_data_SECURITY$DEP_DELAY,useful_data_SECURITY$SECURITY_DELAY)
+
+```
+
+Correlation bewteen DEP_DELAY and CARRIER_DELAY
+```{r}
+useful_data_CARRIER<-COflights%>%filter(!is.na(CARRIER_DELAY)&!is.na(DEP_DELAY))
+corCARRIER<-cor(useful_data_CARRIER$DEP_DELAY,useful_data_CARRIER$CARRIER_DELAY)
+
+```
+
+
+```{r}
+correlations<-data.frame(security=c(corSECURITY),carrier=c(corCARRIER),nas=c(corNAS), weather=c(corWEATHER))
+cor2<-data.frame(name=c("security","carrier","NAS","weather"),value=c(corSECURITY,corCARRIER,corNAS,corWEATHER))
+correlations
+cor2
+cor2%>%arrange(desc(value))
+ggplot(data=cor2)+geom_col(aes(x=reorder(name,value),y=value))
+```
+
+
+
+Probability that you were delayed by NAS given you were delayed
+```{r}
+nas_delayed<-COflights%>%filter(NAS_DELAY>0&DEP_DELAY>=15)
+nrow(nas_delayed)/nrow(delayed_flights)
+
+```
+
+Probability that you were delayed by WEATHER given you were delayed
+```{r}
+WEATHER_delayed<-COflights%>%filter(WEATHER_DELAY>0&DEP_DELAY>=15)
+nrow(WEATHER_delayed)/nrow(delayed_flights)
+
+```
+
+Probability that you were delayed by CARRIER given you were delayed
+```{r}
+carrier_delayed<-COflights%>%filter(CARRIER_DELAY>0&DEP_DELAY>=15)
+nrow(carrier_delayed)/nrow(delayed_flights)
+
+```
+
+Probability that you were delayed by SECURITY given you were delayed
+```{r}
+security_delayed<-COflights%>%filter(SECURITY_DELAY>0&DEP_DELAY>=15)
+nrow(security_delayed)/nrow(delayed_flights)
+
+```
+
+Probability that you were delayed given you were delayed by SECURITY
+```{r}
+DELAY_SECURITY<-COflights%>%filter(SECURITY_DELAY>0)
+late_security<-DELAY_SECURITY%>%filter(DEP_DELAY>=15)
+(plategSECURITY<-nrow(late_security)/nrow(DELAY_SECURITY))
+```
+
+Probability that you were delayed given you were delayed by CARRIER
+```{r}
+DELAY_CARRIER<-COflights%>%filter(CARRIER_DELAY>0)
+late_carrier<-DELAY_CARRIER%>%filter(DEP_DELAY>=15)
+(plategCARRIER<-nrow(late_carrier)/nrow(DELAY_CARRIER))
+```
+
+Probability that you were delayed given you were delayed by WEATHER
+```{r}
+DELAY_WEATHER<-COflights%>%filter(WEATHER_DELAY>0)
+late_weather<-DELAY_WEATHER%>%filter(DEP_DELAY>=15)
+(plategWEATHER<-nrow(late_weather)/nrow(DELAY_WEATHER))
+```
+
+Probability that you were delayed given you were delayed by NAS
+```{r}
+DELAY_NAS<-COflights%>%filter(NAS_DELAY>0)
+late_NAS<-DELAY_NAS%>%filter(DEP_DELAY>=15)
+(plategNAS<-nrow(late_NAS)/nrow(DELAY_NAS))
+```
+
+Probability Dataframe 
+```{r}
+
+```
+
+
+## Braden Griebel Individual Section 
+
+Question: What is the relationship between size of an airport and the types of delays it experiences?
+
+```{r}
+airport_size<-COflights%>%group_by(ORIGIN)%>%summarize(size=n(), tot_del=mean(DEP_DELAY,
+                                                                              na.rm=T),
+                                                       sec_del=mean(SECURITY_DELAY,
+                                                                             na.rm=T),
+                                                       nas_del=mean(NAS_DELAY,
+                                                                    na.rm=T),
+                                                       wthr_del=mean(WEATHER_DELAY,
+                                                                     na.rm=T),
+                                                       car_del=mean(CARRIER_DELAY,
+                                                                    na.rm=T))%>%
+  rename(airport=ORIGIN)
+airport_size
+```
+
+```{r, warning=F,message=F}
+ggplot(data=airport_size,aes(x=size))+
+  geom_smooth(aes(y=tot_del),color="darkred",method=lm,se=F)+
+  geom_smooth(aes(y=sec_del),color="blue1",method=lm,se=F)+
+  geom_smooth(aes(y=nas_del),color="plum4",method=lm,se=F)+
+  geom_smooth(aes(y=wthr_del),color=614,method=lm,se=F)+
+  geom_smooth(aes(y=car_del),color="aquamarine",method=lm,se=F)+
+  xlim(0,25000)
+ggplot(data=airport_size,aes(size))+geom_bar()+xlim(0,15000)
+sort(unique(airport_size$size))
+airport_size%>%filter(size>15000)
+```
+
+Since the large outlier represents Denver, and this is biased by the fact that this airport is where our data is from 
+
+```{r}
+airport_size<-airport_size%>%filter(airport!="DEN")
+airport_size%>%arrange(desc(size))
+mean(airport_size$size)
+```
+
+Lets say that a small airport is anything with less than 1000 flights a year (around the median for the size of an airport), and large airport is anything with more than 1000 flights a year (no airport has exactly 1000 flights)
+
+```{r}
+airport_size<-airport_size%>%
+  mutate(small= size<1000)
+delay_by_size<-airport_size%>%
+  group_by(small)%>%
+  summarize(num=n(),
+            sec_del=mean(sec_del),
+            nas_del=mean(nas_del),
+            wthr_del=mean(wthr_del),
+            car_del=mean(car_del),
+            tot_del=mean(tot_del))
+ggplot(data=delay_by_size)+geom_col(aes(small,sec_del,color="Security Delay"),alpha=0.3)+
+  geom_col(aes(small,nas_del,color="NAS Delay"),alpha=0.3)+
+  geom_col(aes(small,car_del,color="Carrier Delay"),alpha=0.3)+
+  geom_col(aes(small,wthr_del,color="Weather Delay"),alpha=0.3)+
+  geom_col(aes(small,tot_del,color="Total Delay"),alpha=0.3)+
+  labs(title="Airport Size and Delay Type",x="Is the Airport Small",
+       y='Delay in Minutes')
+  
+small_airports<-airport_size%>%filter(small==T)
+large_airports<-airport_size%>%filter(small==F)
+```
+
