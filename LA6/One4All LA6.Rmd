@@ -317,7 +317,8 @@ Time of day and Probability of a late flight
 DENflights_arrived_late<-DENflights_arrived_late%>%mutate(hour=as.numeric(DEP_TIME)%/%100)
 hour_late<-DENflights_arrived_late%>%group_by(CARRIER,hour)%>%
   summarize(prob=mean(late))
-ggplot(hour_late)+geom_smooth(aes(hour,prob,color=CARRIER),se=F)+
+ggplot(hour_late)+geom_jitter(aes(hour,prob,shape=CARRIER))+
+  geom_smooth(aes(hour,prob,color=CARRIER),se=F)
   labs(title="Time of Day and Probability of a late Flight",
        x="Time of Day (24 hr)",y="Probability of a late flight")+theme(legend.position="bottom")
 
