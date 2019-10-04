@@ -61,7 +61,7 @@ plane_del_prob<-DENflights_arrived_late%>%group_by(LATE_AIRCRAFT_DELAY)%>%summar
 
 var_prob<-data.frame("Variable"=c('month','day','carrier','origin',
                             'destination','scheduled arrival','Actual arrival Time',
-                            'scheduled departure timme','Actual departure time',
+                            'scheduled departure time','Actual departure time',
                             'Departure Delay','Taxi in time','Taxi out time',
                             'Scheduled Flight Time','Actual Flight Time','Distance',
                             'carrier delay','security delay','nas delay',
@@ -125,6 +125,13 @@ ggplot(data=dep_del_prob,aes(DEP_DELAY,prob))+geom_smooth(se=F)+
 
 Flight Time:
 ```{r}
+
+DENflights_arrived_late%>%group_by(CARRIER,ACTUAL_ELAPSED_TIME)%>%
+  summarize(late_prob=mean(late))%>%
+  ggplot()+geom_smooth(aes(ACTUAL_ELAPSED_TIME,late_prob,color=CARRIER),se=F)+
+  facet_wrap(~CARRIER)+labs(title="Flight time and Probability of a Late flight by Carrier",
+                            x="Flight time (Minutes)",y="Probability of a late flight")
+
 ggplot(data=actual_flight_time_prob,aes(ACTUAL_ELAPSED_TIME,prob))+geom_smooth(se=F)+
   labs(title="Flight Time and Probability of a late flight",
        x="Flight Time in Minutes",
@@ -136,7 +143,7 @@ ggplot(data=actual_flight_time_prob,aes(ACTUAL_ELAPSED_TIME,prob))+geom_smooth(s
 
 
 ## Conclusion:
-In the above graphs, it is clear that Taxi time (both in and out), Departure Time, flight time, Departure delay have large effects on the probability of a late flight. For Taxi time (again, both in and out) the probability of a late flight increases with the time until it reaches its maximum (1) at around 75 minutes for both, and then stays there as taxi time increases. Obviously, this is directly lengthening the time it takes for a plane to actually go between its Origin and Destination, and thus the longer it takes to taxi the more likely a flight is to be delayed by 15 minutes or more. This ia also true about departure delay, namely the probability of a late flight increases to the maximum possible probability at around 250 minutes. For flight time, the probability of a late flight generally increases with flight time, except for a dip between 350 and 450 minutes, where the probability of a late flight decreases. Over the course of a day, the probability of a late flight starts high at midnight, then decreases till 9 a.m. then starts to increase again. Tthe likely explanation for this is that more delays occur as the airport is opening, and isn't fully ready to handle flights. Although the airport is open 24 hours a day, early in the morning they are transitioning between the two days, and there is significantly less staff. This lack of preparedness, and staff both contribute to higher than normal delays. Once the airport has reached its state of full preparedness the delays and thus the probability of a late flight reach their minimum. Following this, delays begin to add up again, a small delay earlier on leads to more delays later as things have to be shuffled around (if a runway is occupied by a plane late in leaving, then the next plane is delayed) and all these small delays begin to add until all the planes leave, and the cycle starts over again. 
+In the above graphs, it is clear that Taxi time (both in and out), Departure Time, flight time, Departure delay have large effects on the probability of a late flight. For Taxi time (again, both in and out) the probability of a late flight increases with the time until it reaches its maximum (1) at around 75 minutes for both, and then stays there as taxi time increases. Obviously, this is directly lengthening the time it takes for a plane to actually go between its Origin and Destination, and thus the longer it takes to taxi the more likely a flight is to be delayed by 15 minutes or more. This ia also true about departure delay, namely the probability of a late flight increases to the maximum possible probability at around 250 minutes. For flight time, the probability of a late flight generally increases with flight time, except for a dip between 350 and 450 minutes, where the probability of a late flight decreases. This dip is mainly due to the influence of carrier over the probability of a late flight. UA is the main carrier for this length of flight, and has well below average probability of flight delays. Over the course of a day, the probability of a late flight starts high at midnight, then decreases till 9 a.m. then starts to increase again. The likely explanation for this is that more delays occur as the airport is opening, and isn't fully ready to handle flights. Although the airport is open 24 hours a day, early in the morning they are transitioning between the two days, and there is significantly less staff. This lack of preparedness, and staff both contribute to higher than normal delays. Once the airport has reached its state of full preparedness the delays and thus the probability of a late flight reach their minimum. Following this, delays begin to add up again, a small delay earlier on leads to more delays later as things have to be shuffled around (if a runway is occupied by a plane late in leaving, then the next plane is delayed) and all these small delays begin to add until all the planes leave, and the cycle starts over again. 
 
 
 
@@ -250,13 +257,50 @@ ggplot(data=prob_delay,aes(reorder(Delay_Type,Probability_late_Given),
        y="Probability Late Given Delay Type")
 ```
 
+Delay Proportions:
+
+```{r}
+delay_proportions<-DENflights_arrived_late%>%mutate(prop_NAS=NAS_DELAY/ARR_DELAY,
+                                                    prop_SEC=SECURITY_DELAY/ARR_DELAY,
+                                                    prop_WTHR=WEATHER_DELAY/ARR_DELAY,
+                                                    prop_CAR=CARRIER_DELAY/ARR_DELAY)
+delay_prop_sum<-delay_proportions%>%summarize(NAS=mean(prop_NAS,na.rm=T),
+                                              SECURITY=mean(prop_SEC,na.rm=T),
+                                              WEATHER=mean(prop_WTHR,na.rm=T),
+                                              CARRIER=mean(prop_CAR,na.rm=T))
+
+df<-data.frame("Delay_type"=c("NAS","SECURITY","WEATHER","CARRIER"),
+              "Proportion"=c(delay_prop_sum$NAS,delay_prop_sum$SECURITY,
+                             delay_prop_sum$WEATHER,delay_prop_sum$CARRIER))
+
+
+ggplot(df)+geom_col(aes(Delay_type, Proportion),fill="blue")+
+  labs(title="Proportion of Delay From Different Delay Types",x="Delay Type",
+       y="Average Proportion of Total Delay")
+```
+
+Carrier and Flight Length and Late flight Probability by Carrier
+```{r}
+ggplot(data=DENflights_arrived_late)+geom_bar(aes(ACTUAL_ELAPSED_TIME))+facet_wrap(~CARRIER)+
+  labs(x="Actual Length of Flight",y="Count",title="Length of Flight and Carrier")+xlim(350,450)
+
+DENflights_arrived_late%>%group_by(CARRIER)%>%summarize(late_prob=mean(late))%>%
+  arrange(desc(late_prob))
+```
+
+
 ## Conclusion:
 
-From the above calculations it can be seen that if a flight is delayed, then the most likely cause of this is a carrier delay. The second most common cause of a flight delay is a NAS delay, and then weather, and finally security delays. However, if you are delayed by weather, you will almost certainly have a late flight, with a probability of 87%, so although weather isn't overall a large contributor to late flights, it is the one that if experienced is most likely to ensure a late flight. And although the NAS contributes to a lot of late flights, there is only a 56% chance that you will have a late flight if you experience an NAS delay. 
+From the above calculations it can be seen that if a flight is delayed, then the most likely cause of this is a carrier delay. The second most common cause of a flight delay is a NAS delay, and then weather, and finally security delays. However, if you are delayed by weather, you will almost certainly have a late flight, with a probability of 87%, so although weather isn't overall a large contributor to late flights, it is the one that if experienced is most likely to ensure a late flight. And although the NAS contributes to a lot of late flights, there is only a 56% chance that you will have a late flight if you experience an NAS delay. Thus flights are mostly delayed due to carrier delays, which also are fairly certain to delay if it is experienced, while weather is the most certain to make a flight late, it only makes a relatively small proportion of flights late. From the final graph it can be see what proportion of a delay on average comes from each type of delay. Here, almost all of the delay comes from NAS and Carrier. By yet another metric, NAS and carrier are the most problematic delays. Clearly then, measures to reduce carrier and NAS delays would be the most significant in reducing the overall delay time. 
 
 ## Recomendation:
 
-Since taxi time has one of the greatest affects on the probability of a late flight. This area is an important place to attack in reducing delays. 
+Since taxi time has one of the greatest affects on the probability of a late flight. This area is an important place to attack in reducing delays. There are a variety of ways to reduce taxi time. One would be to add more runways, so that planes have more places to leave from, which would reduce the amount of time that each plane is taxiing, both when leaving and landing at an airport. Additionally, if the airport was able to spread the amount of planes out more evenly over the course of the day, at most times there would be less planes waiting on a runway, so planes wouldn't have to wait as long to land or take off. Also, we would recomend further investigation of the taxiing time, examining what factors influence it the most, and then use that data to reduce these times, and thus reduce the time that they are taxiing. 
+
+Next, The length of the flight has a large impact on the probability of a late flight. The airport could try to maximize the number of flights that are either short, or between 350 and 450 minutes. Longer flights have more arrival delay than average, since as the length of the flight increases, so does the probability that something happens during the flight that delays it. The decrease in probability of a late flight is due mainly to the effect carriers have on this probability. UA is the main carrier of flights in this range, and has well below average probabilities of a late flight. This means that the airport managers could try to reduce the average length of flights leaving DIA, perhaps by lowering the fees on planes that are flying those shorter distances, to encourage more flights to be in the range of flight times with low probabilities of having a late flight. They could also encourage UA to be the carrier for the longer flights by reducing these fees for UA (or whichever airline has lowest probability of a late flight during a certain time). 
+
+Flight arrival delay is obviously affected by departure delay, and so departure delays should be reduced. The specific causes of departure delay could be further investigated, and are likely mainly caused by the Security, Weather, NAS, and carrier delays which are analyzed later. 
+
 
 ## Braden Griebel Individual Section 
 
@@ -330,7 +374,9 @@ From the above it can be seen that if you are late, it is most likely you were f
 
 
 
+#Individual Contributions:
 
+**Braden Griebel:** I investigated how time of day, and carrier affect the probability of a late flight. I first calculated the probability of a late flight across the values of both of these (i.e. whats the probability of a late flight when flying UA or whats the probability of a late flight at 9:00 a.m.). I did this by taking the mean of the late flights logical variable that was created at the begining, which took the number of times a flight was late and divided it by the number of flights (in a specific group). 
 
 
 
