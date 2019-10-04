@@ -9,74 +9,156 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 COflights <- read_csv("https://files.osf.io/v1/resources/3z5as4pej8/providers/osfstorage/5a8ca28f57103100104584db")
+DENflights <- COflights %>% filter(ORIGIN=="DEN" | DEST =="DEN")
+```
+
+```{r}
+DENflights<-DENflights%>%mutate(late= ARR_DELAY>=15)
+DENflights_arrived<-DENflights%>%filter(!is.na(ARR_TIME))
+DENflights_arrived_late<-DENflights_arrived%>%filter(!is.na(late))
+delayed_flights<-DENflights%>%filter(DEP_DELAY>=15)
+DENflights_arrived_late<-DENflights_arrived_late%>%
+  mutate(sched_dep_hour=as.numeric(CRS_DEP_TIME)%/%100)%>%
+  mutate(sched_arr_time=as.numeric(CRS_ARR_TIME)%/%100)%>%
+  mutate(act_arr_hour=as.numeric(ARR_TIME)%/%100)%>%
+  mutate(act_dep_hour=as.numeric(DEP_TIME)%/%100)
+  
+```
+
+# Overall Question:
+**What factors affect whether a flight is delayed?** 
+
+**Are more flights delayed because of NAS, Security, Weather or Carrier delays?**
+
+## Importance:
+
+The first question matters because it will determine what are important factors to consider when looking at why flights are getting delayed. This will help the airport managers determine what policies could be implemented to minimize the number of late flights. If someone is late, it can cause them to miss a connceting flight, and thus lead to even further delays. The lateness, either regular or excacerbated by missing connections, in turn is important because there is a lot of affects that delayed flights can have, from bussinesses loosing money, to people missing oportunities to say goodbye to their loved ones.
+
+Whether more flights are delayed because of NAS, Weather, Carrier, or Security would be important to know for the DIA managers so they could understand how to predict
+
+
+```{r}
+month_prob<-DENflights_arrived_late%>%group_by(MONTH)%>%summarize(prob=mean(late))
+day_prob<-DENflights_arrived_late%>%group_by(DAY_OF_MONTH)%>%summarize(prob=mean(late))
+carrier_prob<-DENflights_arrived_late%>%group_by(CARRIER)%>%summarize(prob=mean(late))
+origin_prob<-DENflights_arrived_late%>%group_by(ORIGIN)%>%summarize(prob=mean(late))
+dest_prob<-DENflights_arrived_late%>%group_by(DEST)%>%summarize(prob=mean(late))
+sched_arr_prob<-DENflights_arrived_late%>%group_by(sched_arr_time)%>%summarize(prob=mean(late))
+arr_prob<-DENflights_arrived_late%>%group_by(act_arr_hour)%>%summarize(prob=mean(late))
+sched_dep_prob<-DENflights_arrived_late%>%group_by(sched_dep_hour)%>%summarize(prob=mean(late))
+dep_prob<-DENflights_arrived_late%>%group_by(act_dep_hour)%>%summarize(prob=mean(late))
+dep_del_prob<-DENflights_arrived_late%>%group_by(DEP_DELAY)%>%summarize(prob=mean(late))
+taxi_in_prob<-DENflights_arrived_late%>%group_by(TAXI_IN)%>%summarize(prob=mean(late))
+taxi_out_prob<-DENflights_arrived_late%>%group_by(TAXI_OUT)%>%summarize(prob=mean(late))
+flight_time_prob<-DENflights_arrived_late%>%group_by(AIR_TIME)%>%summarize(prob=mean(late))
+actual_flight_time_prob<-DENflights_arrived_late%>%group_by(ACTUAL_ELAPSED_TIME)%>%summarize(prob=mean(late))
+distance_prob<-DENflights_arrived_late%>%group_by(DISTANCE)%>%summarize(prob=mean(late))
+carrier_del_prob<-DENflights_arrived_late%>%group_by(CARRIER_DELAY)%>%summarize(prob=mean(late))
+security_del_prob<-DENflights_arrived_late%>%group_by(SECURITY_DELAY)%>%summarize(prob=mean(late))
+nas_del_prob<-DENflights_arrived_late%>%group_by(NAS_DELAY)%>%summarize(prob=mean(late))
+weather_del_prob<-DENflights_arrived_late%>%group_by(WEATHER_DELAY)%>%summarize(prob=mean(late))
+plane_del_prob<-DENflights_arrived_late%>%group_by(LATE_AIRCRAFT_DELAY)%>%summarize(prob=mean(late))
+
+var_prob<-data.frame("Variable"=c('month','day','carrier','origin',
+                            'destination','scheduled arrival','Actual arrival Time',
+                            'scheduled departure timme','Actual departure time',
+                            'Departure Delay','Taxi in time','Taxi out time',
+                            'Scheduled Flight Time','Actual Flight Time','Distance',
+                            'carrier delay','security delay','nas delay',
+                            'weather delay','Aircraft Arrival Delay'),
+"Variation"=c(sd(month_prob$prob),sd(day_prob$prob),sd(carrier_prob$prob),sd(origin_prob$prob),
+              sd(dest_prob$prob),sd(sched_arr_prob$prob),sd(arr_prob$prob),
+              sd(sched_dep_prob$prob),sd(dep_prob$prob),sd(dep_del_prob$prob),
+              sd(taxi_in_prob$prob),sd(taxi_out_prob$prob),sd(flight_time_prob$prob),
+              sd(actual_flight_time_prob$prob),sd(distance_prob$prob),sd(carrier_del_prob$prob),
+              sd(security_del_prob$prob),sd(nas_del_prob$prob),sd(weather_del_prob$prob),
+              sd(plane_del_prob$prob)
+)
+)
+
 ```
 
 
 ```{r}
-COflights<-COflights%>%mutate(late= ARR_DELAY>=15)
-COflights_arrived<-COflights%>%filter(!is.na(ARR_TIME))
-COflights_arrived_na.rm<-COflights_arrived%>%filter(!is.na(late))
-delayed_flights<-COflights%>%filter(DEP_DELAY>=15)
+arrange(var_prob,desc(Variation))
+```
+
+Based on the data above, the TAXI_IN, TAXI_OUT, DEP_TIME, DEP_DELAY, ACTUAL_ELAPSED_TIME, ARR_TIME, AIR_TIME, SECURITY_DELAY variables have the greatest variation between probabilities of late flights (across their values). We will further analyze the top 5 of these variables. 
+
+Taxi in Time:
+```{r}
+ggplot(data=taxi_in_prob,aes(TAXI_IN,prob))+geom_point()+
+  labs(title="Taxi in Time and Probability of a late flight",
+       x="Taxi in time in minutes",
+       y='Probability')
+
+```
+
+Taxi out Time:
+```{r}
+ggplot(data=taxi_out_prob,aes(TAXI_OUT,prob))+geom_point()+
+  labs(title="Taxi out Time and Probability of a late flight",
+       x="Taxi out time in minutes",
+       y='Probability')
+
+```
+
+
+Departure Time:
+```{r}
+ggplot(data=dep_prob,aes(act_dep_hour,prob))+geom_smooth(se=F)+
+  labs(title="Departure time and Probability of a late flight",
+       x="Departure time hour (24 hrs)",
+       y='Probability')
+
+```
+
+Departure Delay:
+```{r}
+ggplot(data=dep_del_prob,aes(DEP_DELAY,prob))+geom_smooth(se=F)+
+  labs(title="Departure Delay and Probability of a late flight",
+       x="Departure Delay in minutes",
+       y='Probability',caption="Probabilities in excess of 1 are an artefact of the smoothing")
+
+```
+
+
+Flight Time:
+```{r}
+ggplot(data=actual_flight_time_prob,aes(ACTUAL_ELAPSED_TIME,prob))+geom_smooth(se=F)+
+  labs(title="Flight Time and Probability of a late flight",
+       x="Flight Time in Minutes",
+       y='Probability')
+
 ```
 
 Probability of Late Flight:
 ```{r}
-p_late<-mean(COflights_arrived_na.rm$late)
+p_late<-mean(DENflights_arrived_late$late)
 p_late
 ```
 
-```{r, cache=TRUE}
-ggplot(data=COflights,mapping=aes(x=NAS_DELAY,y=DEP_DELAY))+geom_point()
-ggplot(data=COflights,mapping=aes(x=CARRIER_DELAY,y=DEP_DELAY))+geom_point()
-ggplot(data=COflights,mapping=aes(x=WEATHER_DELAY,y=DEP_DELAY))+geom_point()
-ggplot(data=COflights,mapping=aes(x=SECURITY_DELAY,y=DEP_DELAY))+geom_point()
-```
 
 
-```{r, cahe=TRUE}
-ggplot(data=COflights)+geom_smooth(aes(x=NAS_DELAY,y=DEP_DELAY),color="blue")+
-  geom_smooth(aes(x=CARRIER_DELAY,y=DEP_DELAY),color="red")+
-  geom_smooth(aes(x=WEATHER_DELAY,y=DEP_DELAY),color="purple")+
-  geom_smooth(aes(x=SECURITY_DELAY,y=DEP_DELAY),color="yellow")
 
-```
 
-Correlation bewteen DEP_DELAY and NAS_DELAY
+
 ```{r}
 useful_data_NAS<-COflights%>%filter(!is.na(NAS_DELAY)&!is.na(DEP_DELAY))
 corNAS<-cor(useful_data_NAS$DEP_DELAY,useful_data_NAS$NAS_DELAY)
-
-```
-
-Correlation bewteen DEP_DELAY and WEATHER_DELAY
-```{r}
 useful_data_WEATHER<-COflights%>%filter(!is.na(WEATHER_DELAY)&!is.na(DEP_DELAY))
 corWEATHER<-cor(useful_data_WEATHER$DEP_DELAY,useful_data_WEATHER$WEATHER_DELAY)
-
-```
-
-Correlation bewteen DEP_DELAY and SECURITY_DELAY
-```{r}
 useful_data_SECURITY<-COflights%>%filter(!is.na(SECURITY_DELAY)&!is.na(DEP_DELAY))
 corSECURITY<-cor(useful_data_SECURITY$DEP_DELAY,useful_data_SECURITY$SECURITY_DELAY)
-
-```
-
-Correlation bewteen DEP_DELAY and CARRIER_DELAY
-```{r}
 useful_data_CARRIER<-COflights%>%filter(!is.na(CARRIER_DELAY)&!is.na(DEP_DELAY))
 corCARRIER<-cor(useful_data_CARRIER$DEP_DELAY,useful_data_CARRIER$CARRIER_DELAY)
 
-```
 
-
-```{r}
 correlations<-data.frame(security=c(corSECURITY),carrier=c(corCARRIER),nas=c(corNAS), weather=c(corWEATHER))
 cor2<-data.frame(name=c("security","carrier","NAS","weather"),value=c(corSECURITY,corCARRIER,corNAS,corWEATHER))
-correlations
-cor2
-cor2%>%arrange(desc(value))
-ggplot(data=cor2)+geom_col(aes(x=reorder(name,value),y=value))
+ggplot(data=cor2)+geom_col(aes(x=reorder(name,value),y=value),fill="blue")+
+  labs(title="Correlations Between Total Delay and Various Delay Types",
+       x="Delay Type",y="Correlation between Total Delay and Delay Type")
 ```
 
 
@@ -84,28 +166,28 @@ ggplot(data=cor2)+geom_col(aes(x=reorder(name,value),y=value))
 Probability that you were delayed by NAS given you were delayed
 ```{r}
 nas_delayed<-COflights%>%filter(NAS_DELAY>0&DEP_DELAY>=15)
-nrow(nas_delayed)/nrow(delayed_flights)
+NAS_del<-nrow(nas_delayed)/nrow(delayed_flights)
 
 ```
 
 Probability that you were delayed by WEATHER given you were delayed
 ```{r}
 WEATHER_delayed<-COflights%>%filter(WEATHER_DELAY>0&DEP_DELAY>=15)
-nrow(WEATHER_delayed)/nrow(delayed_flights)
+weather_del<-nrow(WEATHER_delayed)/nrow(delayed_flights)
 
 ```
 
 Probability that you were delayed by CARRIER given you were delayed
 ```{r}
 carrier_delayed<-COflights%>%filter(CARRIER_DELAY>0&DEP_DELAY>=15)
-nrow(carrier_delayed)/nrow(delayed_flights)
+carrier_del<-nrow(carrier_delayed)/nrow(delayed_flights)
 
 ```
 
 Probability that you were delayed by SECURITY given you were delayed
 ```{r}
 security_delayed<-COflights%>%filter(SECURITY_DELAY>0&DEP_DELAY>=15)
-nrow(security_delayed)/nrow(delayed_flights)
+security_del<-nrow(security_delayed)/nrow(delayed_flights)
 
 ```
 
@@ -139,72 +221,122 @@ late_NAS<-DELAY_NAS%>%filter(DEP_DELAY>=15)
 
 Probability Dataframe 
 ```{r}
-
+prob_delay<-data.frame("Delay_Type"=c("NAS","Security","Weather","Carrier"),
+                       "Probability_Given_Late"=c(NAS_del,security_del,weather_del,carrier_del),
+                       "Probability_late_Given"=c(plategNAS,plategSECURITY,plategWEATHER,
+                                                  plategCARRIER)
+                       
+                       )
+ggplot(data=prob_delay,aes(reorder(Delay_Type,Probability_Given_Late),
+                           Probability_Given_Late))+geom_col(fill="red")+
+  labs(title="Probability Delay is Caused By Delay Type",
+       x="Type of Delay",
+       y="Probability Delay Type COntributed to Late Arrival")
 ```
+
+```{r}
+ggplot(data=prob_delay,aes(reorder(Delay_Type,Probability_late_Given),
+                           Probability_late_Given))+geom_col(fill="purple")+
+  labs(title="Probability you are Delayed if Delayed by Delay Type",
+       x="Type of Delay",
+       y="Probability Late Given Delay Type")
+```
+```
+
 
 
 ## Braden Griebel Individual Section 
 
-Question: What is the relationship between size of an airport and the types of delays it experiences?
+Question: How does the time of day and carrier affect probability of a late flight?
+
+Time of day and Probability of a late flight
+```{r}
+
+DENflights_arrived_late<-DENflights_arrived_late%>%mutate(hour=as.numeric(DEP_TIME)%/%100)
+hour_late<-DENflights_arrived_late%>%group_by(CARRIER,hour)%>%
+  summarize(prob=mean(late))
+ggplot(hour_late)+geom_smooth(aes(hour,prob,color=CARRIER),se=F)+
+  labs(title="Time of Day and Probability of a late Flight",
+       x="Time of Day (24 hr)",y="Probability of a late flight")+theme(legend.position="bottom")
+
+```
+
+**Finding 1:** The above graph clearly shows that the time of day can affect the probablity of a late flight. With the highest probablity around midnight, descreasing during the middle of the day. This is true across all carriers with the exception of B6 and AS. For B6 the probability of a late flight actually peaks around 3pm, in the middle of the day. For AS the proabability of a late flight roughly increases (by varying rates) during all of their hours of operation (between about 5 am and 10 pm). 
+
+Carrier and Probability of a Late flight:
 
 ```{r}
-airport_size<-COflights%>%group_by(ORIGIN)%>%summarize(size=n(), tot_del=mean(DEP_DELAY,
-                                                                              na.rm=T),
-                                                       sec_del=mean(SECURITY_DELAY,
-                                                                             na.rm=T),
-                                                       nas_del=mean(NAS_DELAY,
-                                                                    na.rm=T),
-                                                       wthr_del=mean(WEATHER_DELAY,
-                                                                     na.rm=T),
-                                                       car_del=mean(CARRIER_DELAY,
-                                                                    na.rm=T))%>%
-  rename(airport=ORIGIN)
-airport_size
+carrier_prob<-DENflights_arrived_late%>%group_by(MONTH,CARRIER)%>%
+  summarize(prob=mean(late))
+
+ggplot(data=carrier_prob)+geom_col(aes(reorder(CARRIER,prob),prob,fill=CARRIER))+
+  facet_wrap(~MONTH,nrow=3)+
+  labs(title="Carrier and Probablity of a late flight",
+       x="Carrier",y="Probability",subtitle = "Faceted by Month")
 ```
 
-```{r, warning=F,message=F}
-ggplot(data=airport_size,aes(x=size))+
-  geom_smooth(aes(y=tot_del),color="darkred",method=lm,se=F)+
-  geom_smooth(aes(y=sec_del),color="blue1",method=lm,se=F)+
-  geom_smooth(aes(y=nas_del),color="plum4",method=lm,se=F)+
-  geom_smooth(aes(y=wthr_del),color=614,method=lm,se=F)+
-  geom_smooth(aes(y=car_del),color="aquamarine",method=lm,se=F)+
-  xlim(0,25000)
-ggplot(data=airport_size,aes(size))+geom_bar()+xlim(0,15000)
-sort(unique(airport_size$size))
-airport_size%>%filter(size>15000)
-```
+**Finding 2:** From the above graph it can be seen that across most months there is a difference in the probability of a late flight between the various carriers in terms of the probablity of a late flight. Additionally, which month it is greatly affects the variation in probabilities of late arrivals between the carriers. For example in November it can be seen that the variation is relatively small between the carriers, while in June there is a significant variation across the carriers. 
 
-Since the large outlier represents Denver, and this is biased by the fact that this airport is where our data is from 
-
+**Given that you were late, what is the most likely carrier you used**
 ```{r}
-airport_size<-airport_size%>%filter(airport!="DEN")
-airport_size%>%arrange(desc(size))
-mean(airport_size$size)
+late_by_carrier<-data.frame("Carrier","Probability")
+late_by_carrier<-data.frame("carrier"=c("AA","AS","B6","DL","OO","UA","VX","WN","EV","F9","NK"),
+                            "prob"=c(
+                              ((nrow(filter(DENflights,CARRIER=="AA"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="AS"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="B6"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="DL"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="OO"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="UA"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="VX"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="WN"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="EV"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="F9"&late))/nrow(DENflights))/
+                                p_late),
+                              ((nrow(filter(DENflights,CARRIER=="NK"&late))/nrow(DENflights))/
+                                p_late)
+
+                            ))
+arrange(late_by_carrier,desc(prob))
+                            
+
 ```
 
-Lets say that a small airport is anything with less than 1000 flights a year (around the median for the size of an airport), and large airport is anything with more than 1000 flights a year (no airport has exactly 1000 flights)
+From the above it can be seen that if you are late, it is most likely you were flying WN (Southwest)
 
-```{r}
-airport_size<-airport_size%>%
-  mutate(small= size<1000)
-delay_by_size<-airport_size%>%
-  group_by(small)%>%
-  summarize(num=n(),
-            sec_del=mean(sec_del),
-            nas_del=mean(nas_del),
-            wthr_del=mean(wthr_del),
-            car_del=mean(car_del),
-            tot_del=mean(tot_del))
-ggplot(data=delay_by_size)+geom_col(aes(small,sec_del,color="Security Delay"),alpha=0.3)+
-  geom_col(aes(small,nas_del,color="NAS Delay"),alpha=0.3)+
-  geom_col(aes(small,car_del,color="Carrier Delay"),alpha=0.3)+
-  geom_col(aes(small,wthr_del,color="Weather Delay"),alpha=0.3)+
-  geom_col(aes(small,tot_del,color="Total Delay"),alpha=0.3)+
-  labs(title="Airport Size and Delay Type",x="Is the Airport Small",
-       y='Delay in Minutes')
-  
-small_airports<-airport_size%>%filter(small==T)
-large_airports<-airport_size%>%filter(small==F)
-```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
