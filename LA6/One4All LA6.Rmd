@@ -368,6 +368,7 @@ arrange(late_by_carrier,desc(prob))
 
 ```
 
+<<<<<<< Updated upstream
 From the above it can be seen that if you are late, it is most likely you were flying WN (Southwest)
 
 
@@ -396,6 +397,12 @@ From the above it can be seen that if you are late, it is most likely you were f
 
 
 
+=======
+
+##Andrew Duffy Individual Question
+
+#Does seasonality affect the probability of a delay for flights out of Denver?
+>>>>>>> Stashed changes
 
 
 
