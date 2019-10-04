@@ -326,16 +326,151 @@ arrange(late_by_carrier,desc(prob))
 
 From the above it can be seen that if you are late, it is most likely you were flying WN (Southwest)
 
+## Luke Fanning Individual Section
 
+Question: How does the month of the year and length of flight affect the probability of a delayed arrival into Denver?
 
+### Probability that a flight arrived late given the month of the year it arrived in:
+```{r}
+JAN_flights <- DENflights %>% filter(MONTH == "1" & CANCELLED != 1)
+FEB_flights <- DENflights %>% filter(MONTH == "2" & CANCELLED != 1)
+MAR_flights <- DENflights %>% filter(MONTH == "3" & CANCELLED != 1)
+APR_flights <- DENflights %>% filter(MONTH == "4" & CANCELLED != 1)
+MAY_flights <- DENflights %>% filter(MONTH == "5" & CANCELLED != 1)
+JUN_flights <- DENflights %>% filter(MONTH == "6" & CANCELLED != 1)
+JUL_flights <- DENflights %>% filter(MONTH == "7" & CANCELLED != 1)
+AUG_flights <- DENflights %>% filter(MONTH == "8" & CANCELLED != 1)
+SEP_flights <- DENflights %>% filter(MONTH == "9" & CANCELLED != 1)
+OCT_flights <- DENflights %>% filter(MONTH == "10" & CANCELLED != 1)
+NOV_flights <- DENflights %>% filter(MONTH == "11" & CANCELLED != 1)
+DEC_flights <- DENflights %>% filter(MONTH == "12" & CANCELLED != 1)
+Late_arrival_JAN <- DENflights %>% filter(MONTH == "1" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_FEB <- DENflights %>% filter(MONTH == "2" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_MAR <- DENflights %>% filter(MONTH == "3" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_APR <- DENflights %>% filter(MONTH == "4" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_MAY <- DENflights %>% filter(MONTH == "5" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_JUN <- DENflights %>% filter(MONTH == "6" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_JUL <- DENflights %>% filter(MONTH == "7" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_AUG <- DENflights %>% filter(MONTH == "8" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_SEP <- DENflights %>% filter(MONTH == "9" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_OCT <- DENflights %>% filter(MONTH == "10" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_NOV <- DENflights %>% filter(MONTH == "11" & CANCELLED != 1 & ARR_DELAY > 15)
+Late_arrival_DEC <- DENflights %>% filter(MONTH == "12" & CANCELLED != 1 & ARR_DELAY > 15)
+```
+#### Probability that a flight arrived late given that it arrived in January:
+```{r}
+nrow(Late_arrival_JAN)/nrow(JAN_flights)
+```
+#### Probability that a flight arrived late given that it arrived in February:
+```{r}
+nrow(Late_arrival_FEB)/nrow(FEB_flights)
+```
+#### Probability that a flight arrived late given that it arrived in March:
+```{r}
+nrow(Late_arrival_MAR)/nrow(MAR_flights)
+```
+#### Probability that a flight arrived late given that it arrived in April:
+```{r}
+nrow(Late_arrival_APR)/nrow(APR_flights)
+```
+#### Probability that a flight arrived late given that it arrived in May:
+```{r}
+nrow(Late_arrival_MAY)/nrow(MAY_flights)
+```
+#### Probability that a flight arrived late given that it arrived in June:
+```{r}
+nrow(Late_arrival_JUN)/nrow(JUN_flights)
+```
+#### Probability that a flight arrived late given that it arrived in July:
+```{r}
+nrow(Late_arrival_JUL)/nrow(JUL_flights)
+```
+#### Probability that a flight arrived late given that it arrived in August:
+```{r}
+nrow(Late_arrival_AUG)/nrow(AUG_flights)
+```
+#### Probability that a flight arrived late given that it arrived in September:
+```{r}
+nrow(Late_arrival_SEP)/nrow(SEP_flights)
+```
+#### Probability that a flight arrived late given that it arrived in October:
+```{r}
+nrow(Late_arrival_OCT)/nrow(OCT_flights)
+```
+#### Probability that a flight arrived late given that it arrived in November:
+```{r}
+nrow(Late_arrival_NOV)/nrow(NOV_flights)
+```
+#### Probability that a flight arrived late given that it arrived in December:
+```{r}
+nrow(Late_arrival_DEC)/nrow(DEC_flights)
+```
+```{r}
+month_prob<-DENflights_arrived_late%>%group_by(MONTH)%>%
+  summarize(prob=mean(late))
 
+ggplot(data=month_prob)+geom_col(aes(reorder(MONTH,prob),prob,fill=MONTH)) + labs(title = "Probability of a flight being late given the month of the flight" , x ="Months" , y ="Probability" ) + scale_fill_distiller(palette = "Reds")
+```
 
+#### Findings:
+As seen in the above graph and calculations, there is a wide variety of late probabilities just based off of the month alone. It is clear that traveling over the summer or at the start or end of the year gives you the largest chance that your flight will have a delayed arrival, whereas travelling in the fall months gives a significantly reduced chance of having a delayed arrival compared to the rest of the data. 
 
+### Probability that a flight arrived late given the length of the flight:
+```{r}
+TWO_HOUR_OR_LESS_FLIGHTS <- DENflights %>% filter(ACTUAL_ELAPSED_TIME <= 120 & CANCELLED != 1)
+TWO_TO_THREE_HOUR_FLIGHTS <-DENflights %>% filter(ACTUAL_ELAPSED_TIME > 120 & ACTUAL_ELAPSED_TIME <= 180 & CANCELLED != 1)
+THREE_TO_FOUR_HOUR_FLIGHTS <-DENflights %>% filter(ACTUAL_ELAPSED_TIME > 180 & ACTUAL_ELAPSED_TIME <= 240 & CANCELLED != 1)
+FOUR_TO_FIVE_HOUR_FLIGHTS <-DENflights %>% filter(ACTUAL_ELAPSED_TIME > 240 & ACTUAL_ELAPSED_TIME <= 300 & CANCELLED != 1)
+FIVE_TO_SIX_HOUR_FLIGHTS <-DENflights %>% filter(ACTUAL_ELAPSED_TIME > 300 & ACTUAL_ELAPSED_TIME <= 360 & CANCELLED != 1)
+SIX_TO_SEVEN_HOUR_FLIGHTS <-DENflights %>% filter(ACTUAL_ELAPSED_TIME > 360 & ACTUAL_ELAPSED_TIME <= 420 & CANCELLED != 1)
+SEVEN_HOUR_OR_MORE_FLIGHTS <-DENflights %>% filter(ACTUAL_ELAPSED_TIME > 420 & CANCELLED != 1)
 
+LATE_ARRIVAL_TWO_OR_LESS <- DENflights %>% filter(ACTUAL_ELAPSED_TIME <= 120 & CANCELLED != 1 & ARR_DELAY > 15)
+LATE_ARRIVAL_TWO_TO_THREE<- DENflights %>% filter(ACTUAL_ELAPSED_TIME > 120 & ACTUAL_ELAPSED_TIME <= 180 & CANCELLED != 1 & ARR_DELAY >15)
+LATE_ARRIVAL_THREE_TO_FOUR<- DENflights %>% filter(ACTUAL_ELAPSED_TIME > 180 & ACTUAL_ELAPSED_TIME <= 240 & CANCELLED != 1 & ARR_DELAY >15)
+LATE_ARRIVAL_FOUR_TO_FIVE<- DENflights %>% filter(ACTUAL_ELAPSED_TIME > 240 & ACTUAL_ELAPSED_TIME <= 300 & CANCELLED != 1 & ARR_DELAY >15)
+LATE_ARRIVAL_FIVE_TO_SIX<- DENflights %>% filter(ACTUAL_ELAPSED_TIME > 300 & ACTUAL_ELAPSED_TIME <= 360 & CANCELLED != 1 & ARR_DELAY >15)
+LATE_ARRIVAL_SIX_TO_SEVEN<- DENflights %>% filter(ACTUAL_ELAPSED_TIME > 360 & ACTUAL_ELAPSED_TIME <= 420 & CANCELLED != 1 & ARR_DELAY >15)
+LATE_ARRIVAL_SEVEN_OR_MORE<- DENflights %>% filter(ACTUAL_ELAPSED_TIME > 420 & CANCELLED != 1 & ARR_DELAY >15)
+```
 
+#### Probability that a flight arrived late given that it was two hours or less long:
+```{r}
+nrow(LATE_ARRIVAL_TWO_OR_LESS) / nrow(TWO_HOUR_OR_LESS_FLIGHTS)
+```
+#### Probability that a flight arrived late given that it was two to three hours long:
+```{r}
+nrow(LATE_ARRIVAL_TWO_TO_THREE) / nrow(TWO_TO_THREE_HOUR_FLIGHTS)
+```
+#### Probability that a flight arrived late given that it was three to four hours long:
+```{r}
+nrow(LATE_ARRIVAL_THREE_TO_FOUR) / nrow(THREE_TO_FOUR_HOUR_FLIGHTS) 
+```
+#### Probability that a flight arrived late given that it was four to five hours long:
+```{r}
+nrow(LATE_ARRIVAL_FOUR_TO_FIVE) / nrow(FOUR_TO_FIVE_HOUR_FLIGHTS) 
+```
+#### Probability that a flight arrived late given that it was five to six hours long:
+```{r}
+nrow(LATE_ARRIVAL_FIVE_TO_SIX) / nrow(FIVE_TO_SIX_HOUR_FLIGHTS)
+```
+#### Probability that a flight arrived late given that it was six to seven hours long:
+```{r}
+nrow(LATE_ARRIVAL_SIX_TO_SEVEN)/ nrow(SIX_TO_SEVEN_HOUR_FLIGHTS) 
+```
+#### Probability that a flight arrived late given that it was longer than seven hours:
+```{r}
+nrow(LATE_ARRIVAL_SEVEN_OR_MORE) / nrow(SEVEN_HOUR_OR_MORE_FLIGHTS)
+```
 
+```{r}
+length_prob<-DENflights%>%mutate(late= ARR_DELAY>=15)%>%filter(!is.na(ARR_TIME))%>%filter(!is.na(late))%>%group_by(ACTUAL_ELAPSED_TIME)%>%summarize(prob=mean(late))
 
+ggplot(data=length_prob)+geom_col(aes(ACTUAL_ELAPSED_TIME,prob,fill=ACTUAL_ELAPSED_TIME))+ labs(title = "Probability of a flight being late given the length of the flight" , x ="Length of Flight" , y ="Probability" ) + scale_fill_distiller(palette = "Reds")
+```
 
+#### Findings:
+As seen in the graph above, there is a relatively clear linear progression of the chance of a flight being delayed when compared against the length of that flight. While there are definitely outliers in them, the calculated probabilities also display this, ranging from around 13 percent for flights two hours or less to 52 percent for flights lasting five to six hours. The probabilities that are seemingly outliers for longer flight lengths can be explained most clearly through looking at the above graph, where it can be seen that there is simply not enough data for flights longer than about 360 minutes, or 6 hours, for the final few categories to really be considered statistically relevant when compared to the earlier categories. The most notable finding from this data is the clear and dramatic spike of flights with delayed arrivals starting at around 270 minutes, or 4.5 hours. Both the probabilities and the graph above display that flights 4.5 hours or long are much more likely to arrive late, which does make sense considering the variability in conditions and flight patterns for those long distance flights, but it still notable simply due to how large of an increase the dataset displays. 
 
 
 
