@@ -521,6 +521,32 @@ ggplot(data=length_prob)+geom_col(aes(ACTUAL_ELAPSED_TIME,prob,fill=ACTUAL_ELAPS
 #### Findings:
 As seen in the graph above, there is a relatively clear linear progression of the chance of a flight being delayed when compared against the length of that flight. While there are definitely outliers in them, the calculated probabilities also display this, ranging from around 13 percent for flights two hours or less to 52 percent for flights lasting five to six hours. The probabilities that are seemingly outliers for longer flight lengths can be explained most clearly through looking at the above graph, where it can be seen that there is simply not enough data for flights longer than about 360 minutes, or 6 hours, for the final few categories to really be considered statistically relevant when compared to the earlier categories. The most notable finding from this data is the clear and dramatic spike of flights with delayed arrivals starting at around 270 minutes, or 4.5 hours. Both the probabilities and the graph above display that flights 4.5 hours or long are much more likely to arrive late, which does make sense considering the variability in conditions and flight patterns for those long distance flights, but it still notable simply due to how large of an increase the dataset displays. 
 
+## Ahyo Falick Individual Section
+
+Question 1: How does the origin of the flight affect the probability of its lateness?
+
+```{r}
+Orgn<-DENflights_arrived_late%>%group_by(ORIGIN)%>%summarise(prob=mean(late))
+Orgn<-Orgn%>%filter(rank(prob)<=15| rank(desc(prob))<=15)
+
+ggplot(Orgn) + geom_point(aes(reorder(ORIGIN,prob), prob, color = prob>0.2)) + coord_flip() + labs(title = "Flight Origin vs. Probability of Late Flight", y = "Probability of Late Flight", x = "Flight Origin", color = "High Probability") + theme(axis.text.y = element_text(size = 8))
+```
+
+**Findings 1:**The plot above depicts a clear correlation between where the flight originated and the probability the flight is late. There is a wide range in probability from less than 5% late flights to nearly 50% late flights. TWF Airport in Idaho has the largest chance of late flights and LIH Airport in Hawaii has the smallest. While the above plot only shows 30 of the many origin airports, it is clear that where one flies out of has a substantial affect on late arrival time.
+>>>>>>> Stashed changes
+
+Question 2: How does the origin of the flight affect the probability of its lateness?
+
+```{r}
+Dest<-DENflights_arrived_late%>%group_by(DEST)%>%summarise(prob=mean(late))
+Dest<-Dest%>%filter(rank(prob)<=15| rank(desc(prob))<=15)
+
+ggplot(Dest) + geom_point(aes(reorder(DEST,prob), prob, color = prob>0.2)) + coord_flip() + labs(title = "Flight Destination vs. Probability of Late Flight", y = "Probability of Late Flight", x = "Flight Destination", color = "High Probability") + theme(axis.text.y = element_text(size = 8))
+```
+
+**Findings 2:**It is clear from the above plot that a flight's destination also has a strong correlation to the probability of its tardiness. These probabilites range from 0% to just over 40%. COD airport has surprisingly never had a late flight whereas EGE airport in Colorado has the most late arrival flights out of this data set. Another interesting note is that AMA airport in Texas is second in both late departure flights and late arrival flights.
+
+
 
 
 
@@ -531,6 +557,8 @@ As seen in the graph above, there is a relatively clear linear progression of th
 In the team section I examined the variation in probability of a late flight in the variables of the dataset, and found that Taxxing time (in and out), Flight time, Departure delay, and Time of day had the largest variation in the probability of a late flight. I also analyzed the probability of certain types of delay contributing to the probability of a late flight, finding that NAS and Carrier delays had the highest probability of being involved in causing a late flight. I displayed the probabilities using geom_col, and reordered the types of delay by the probabilities so the graphs were easier to understand. 
 
 
+## Ahyo Falick Individual Contribution
+I, Ahyo Falick, created two geom_point plots in order to analyze the correlation between late flights and both the origin and destination airports. First, I grouped the flights by either origin or destination respectively and took data from this filtered data only. Next, I filtered the data further to only the top and bottom 15 points of data because graphing all of the airports resulted in a jumbled, illegible mess. Finally, I created a geom_point plot and faceted the data further into high or low probability. From the plots, it was easy to draw the conclusion that specific airports do have an affect on whether or not the flight arrives late. The data in both plots showed a range from close to no late flights to nearly 50% late flights depending on the airport. In order to make the graphs easier to read, I decided to switch the x and y axes so that probability was on the x axis and destinations/origins were on the y axis. Additionally, each of the axes were labeled and color was added for better plot distinction.
 
 
 
