@@ -34,7 +34,7 @@ DENflights_arrived_late<-DENflights_arrived_late%>%
 
 The first question matters because it will determine what are important factors to consider when looking at why flights are getting delayed. This will help the airport managers determine what policies could be implemented to minimize the number of late flights. If someone is late, it can cause them to miss a connceting flight, and thus lead to even further delays. The lateness, either regular or excacerbated by missing connections, in turn is important because there is a lot of affects that delayed flights can have, from bussinesses loosing money, to people missing oportunities to say goodbye to their loved ones.
 
-Whether more flights are delayed because of NAS, Weather, Carrier, or Security would be important to know for the DIA managers so they could understand how to predict
+Whether more flights are delayed because of NAS, Weather, Carrier, or Security would be important to know for the DIA managers so they could understand how to predict when flights will be delayed. Over these factors they don't have a lot of control (you can't control the weather), but they might be able to use this to predict when there is a greater change of late flights, and so adapt to that. For the ones they do have some influence over (for example Carrier Delay) they could focus policies on reducing these delays (like having penalties for carriers that are cronically late, charging them extra money for using the airport in proportion to how often they are causing delays if carriers are a significant source of delays). This all matters because it would allow the airport to better predict when delays may occur, and also focus policies on reducing delays that they know cause the most late flights. This in turn would allow them to adapt to changes, or reduce the delays meaning that fewer people would be late. 
 
 
 ```{r}
@@ -131,6 +131,14 @@ ggplot(data=actual_flight_time_prob,aes(ACTUAL_ELAPSED_TIME,prob))+geom_smooth(s
        y='Probability')
 
 ```
+
+
+
+
+## Conclusion:
+In the above graphs, it is clear that Taxi time (both in and out), Departure Time, flight time, Departure delay have large effects on the probability of a late flight. For Taxi time (again, both in and out) the probability of a late flight increases with the time until it reaches its maximum (1) at around 75 minutes for both, and then stays there as taxi time increases. Obviously, this is directly lengthening the time it takes for a plane to actually go between its Origin and Destination, and thus the longer it takes to taxi the more likely a flight is to be delayed by 15 minutes or more. This ia also true about departure delay, namely the probability of a late flight increases to the maximum possible probability at around 250 minutes. For flight time, the probability of a late flight generally increases with flight time, except for a dip between 350 and 450 minutes, where the probability of a late flight decreases. Over the course of a day, the probability of a late flight starts high at midnight, then decreases till 9 a.m. then starts to increase again. Tthe likely explanation for this is that more delays occur as the airport is opening, and isn't fully ready to handle flights. Although the airport is open 24 hours a day, early in the morning they are transitioning between the two days, and there is significantly less staff. This lack of preparedness, and staff both contribute to higher than normal delays. Once the airport has reached its state of full preparedness the delays and thus the probability of a late flight reach their minimum. Following this, delays begin to add up again, a small delay earlier on leads to more delays later as things have to be shuffled around (if a runway is occupied by a plane late in leaving, then the next plane is delayed) and all these small delays begin to add until all the planes leave, and the cycle starts over again. 
+
+
 
 Probability of Late Flight:
 ```{r}
@@ -241,9 +249,14 @@ ggplot(data=prob_delay,aes(reorder(Delay_Type,Probability_late_Given),
        x="Type of Delay",
        y="Probability Late Given Delay Type")
 ```
-```
 
+## Conclusion:
 
+From the above calculations it can be seen that if a flight is delayed, then the most likely cause of this is a carrier delay. The second most common cause of a flight delay is a NAS delay, and then weather, and finally security delays. However, if you are delayed by weather, you will almost certainly have a late flight, with a probability of 87%, so although weather isn't overall a large contributor to late flights, it is the one that if experienced is most likely to ensure a late flight. And although the NAS contributes to a lot of late flights, there is only a 56% chance that you will have a late flight if you experience an NAS delay. 
+
+## Recomendation:
+
+Since taxi time has one of the greatest affects on the probability of a late flight. This area is an important place to attack in reducing delays. 
 
 ## Braden Griebel Individual Section 
 
