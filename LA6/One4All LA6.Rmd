@@ -377,9 +377,13 @@ arrange(late_by_carrier,desc(prob))
 From the above it can be seen that if you are late, it is most likely you were flying WN (Southwest)
 
 
+##Andrew Duffy Individual Question
 
+#Does seasonality affect the probability of a delay for flights out of Denver?
 
+Let's check the probabilities of flights going out of Denver in January, April, July, and October.
 
+<<<<<<< Updated upstream
 #Individual Contributions:
 
 **Braden Griebel:** I investigated how time of day, and carrier affect the probability of a late flight. I first calculated the probability of a late flight across the values of both of these (i.e. whats the probability of a late flight when flying UA or whats the probability of a late flight at 9:00 a.m.). I did this by taking the mean of the late flights logical variable that was created at the begining, which took the number of times a flight was late and divided it by the number of flights (in a specific group). I graphed the probability of a late flight against the possible values of the variable, controlling for month in the case of carriers, and for carrier in the case of time of day. I used a geom_smooth for the time of day, and geom_col for the carrier. I added labels, and color/fill variation to make the graphs more easy to read. I faceted by month when looking at the probability of a late flight by carrier, so that the time of year wouldn't be a contributing factor the the variation between the probabilities of the carriers. I controlled for carrier when examining how time of day influenced probability of a late flight since carriers have different operating hours (which can be seen on the graph) and have a significant influence over the probability of a late flight.
@@ -395,21 +399,23 @@ In the team section I examined the variation in probability of a late flight in 
 
 
 
-
-
-
-
-
-
-
-
-
 =======
-
-##Andrew Duffy Individual Question
-
-#Does seasonality affect the probability of a delay for flights out of Denver?
+totalwinterflights <- COflights %>% filter(MONTH == "January", origin == "DEN") %>% summarize(count=n())
+delayedwinterflights <-
 >>>>>>> Stashed changes
+
+
+
+
+#Individual Contributions:
+
+**Braden Griebel:** I investigated how time of day, and carrier affect the probability of a late flight. I first calculated the probability of a late flight across the values of both of these (i.e. whats the probability of a late flight when flying UA or whats the probability of a late flight at 9:00 a.m.). I did this by taking the mean of the late flights logical variable that was created at the begining, which took the number of times a flight was late and divided it by the number of flights (in a specific group). 
+
+
+
+
+
+
 
 
 
