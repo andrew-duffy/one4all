@@ -377,9 +377,45 @@ arrange(late_by_carrier,desc(prob))
 From the above it can be seen that if you are late, it is most likely you were flying WN (Southwest)
 
 
+##Andrew Duffy Individual Question
+
+#Does seasonality affect the probability of a delay for flights out of Denver? Specifically, does the peak month of each season vary in the probability of having a delayed flight? Does flight length affect probability of delayed flight?
+
+Let's check the probabilities of flights going out of Denver in January, April, July, and October.
+```{r, setup = FALSE, warning = FALSE, message = FALSE}
+totalwinterflights <- DENflights %>% filter(MONTH == "1")
+delayedwinterflights <- totalwinterflights %>% filter(ARR_DELAY >= 15) %>% count()
+
+totalspringflights <- DENflights %>% filter(MONTH == "4")
+delayedspringflights <- totalspringflights %>% filter(ARR_DELAY >= 15) %>% count()
+
+totalsummerflights <- DENflights %>% filter(MONTH == "7") 
+delayedsummerflights <- totalsummerflights %>% filter(ARR_DELAY >= 15) %>% count()
+
+totalfallflights <- DENflights %>% filter(MONTH == "10")
+delayedfallflights <- totalfallflights %>% filter(ARR_DELAY >= 15) %>% count()
+
+probwinter <- delayedwinterflights[1,1]/totalwinterflights[1,1]
+probspring <- delayedspringflights[1,1]/totalspringflights[1,1]
+probsummer <- delayedsummerflights[1,1]/totalsummerflights[1,1]
+probwinter <- delayedfallflights[1,1]/totalfallflights[1,1]
 
 
 
+ggplot(data = totalwinterflights) + geom_bar(aes(x = count(totalwinterflights))) + ggtitle("")
+
+```
+
+```{r, setup = FALSE, warning = FALSE, message = FALSE}
+totalshortflights <- DENflights %>% filter(air_time <= 180) %>% summarize(total = n())
+totallongflights <- DENflights %>% filter(air_time>= 180) %>% summarize(total = n())
+
+delayedshort <- totalshortflights %>% filter(arr_delay >= 15) %>% summarize(total = n())
+delayedlong <- totallongflights %>% filter(arr_delay >= 15) %>% summarize(total = n())
+
+```
+
+<<<<<<< Updated upstream
 #Individual Contributions:
 
 **Braden Griebel:** I investigated how time of day, and carrier affect the probability of a late flight. I first calculated the probability of a late flight across the values of both of these (i.e. whats the probability of a late flight when flying UA or whats the probability of a late flight at 9:00 a.m.). I did this by taking the mean of the late flights logical variable that was created at the begining, which took the number of times a flight was late and divided it by the number of flights (in a specific group). I graphed the probability of a late flight against the possible values of the variable, controlling for month in the case of carriers, and for carrier in the case of time of day. I used a geom_smooth for the time of day, and geom_col for the carrier. I added labels, and color/fill variation to make the graphs more easy to read. I faceted by month when looking at the probability of a late flight by carrier, so that the time of year wouldn't be a contributing factor the the variation between the probabilities of the carriers. I controlled for carrier when examining how time of day influenced probability of a late flight since carriers have different operating hours (which can be seen on the graph) and have a significant influence over the probability of a late flight.
@@ -398,18 +434,15 @@ In the team section I examined the variation in probability of a late flight in 
 
 
 
+#Individual Contributions:
+
+**Braden Griebel:** I investigated how time of day, and carrier affect the probability of a late flight. I first calculated the probability of a late flight across the values of both of these (i.e. whats the probability of a late flight when flying UA or whats the probability of a late flight at 9:00 a.m.). I did this by taking the mean of the late flights logical variable that was created at the begining, which took the number of times a flight was late and divided it by the number of flights (in a specific group). 
 
 
 
 
 
 
-=======
-
-##Andrew Duffy Individual Question
-
-#Does seasonality affect the probability of a delay for flights out of Denver?
->>>>>>> Stashed changes
 
 
 
