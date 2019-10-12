@@ -1,0 +1,273 @@
+---
+title: "Individual Section_Luke_Lab7"
+author: "Luke Fanning"
+date: "10/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+power_data <- read_delim(file = "household_power_consumption.txt", delim=';', na = c('', '?'),
+                    col_types = cols(
+                      Date = col_date(format="%d/%m/%Y"),
+                      Time = col_time(format="%H:%M:%S"),
+                      Global_active_power = col_double(),
+                      Global_reactive_power = col_double(),
+                      Voltage = col_double(),
+                      Global_intensity = col_double(),
+                      Sub_metering_1 = col_double(),
+                      Sub_metering_2 = col_double(),
+                      Sub_metering_3 = col_double()
+                    ))
+
+power_data <- power_data %>% mutate(year=substr(Date,1,4), month=substr(Date, 6,7), day=substr(Date, 9,10))
+
+power_data <- power_data %>% mutate(hour=substr(Time,1,2), minute=substr(Time, 4,5), second=substr(Time, 7,8))
+
+power_data <- power_data %>% mutate( day=as.integer(day),
+                           month=as.integer(month),
+                           year=as.integer(year),
+                           hour=as.integer(hour),
+                           minute=as.integer(minute),
+                           second=as.integer(second))
+
+
+```
+```{r}
+power_data
+library(lubridate)
+power_data <- power_data %>% mutate(datetime=make_datetime(year, month, day, hour, minute, second))
+```
+### Question: Across the data set, what hour of the day does the household typically have the highest global intensity of power usage? Does this usage change or vary at all depending on the year?
+
+#### Answer:
+
+*To begin, let's observe the global intensity of power usage at each given hour of the day for a single year. We'll use 2007 as this starting point, as 2007 is the first full year of data observation.*
+
+```{r}
+power_data_2007_0 = power_data %>% filter( year == 2007, hour == 0)
+power_data_2007_01 = power_data %>% filter( year == 2007, hour == 1)
+power_data_2007_02 = power_data %>% filter( year == 2007, hour == 2)
+power_data_2007_03 = power_data %>% filter( year == 2007, hour == 3)
+power_data_2007_04 = power_data %>% filter( year == 2007, hour == 4)
+power_data_2007_05 = power_data %>% filter( year == 2007, hour == 5)
+power_data_2007_06 = power_data %>% filter( year == 2007, hour == 6)
+power_data_2007_07 = power_data %>% filter( year == 2007, hour == 7)
+power_data_2007_08 = power_data %>% filter( year == 2007, hour == 8)
+power_data_2007_09 = power_data %>% filter( year == 2007, hour == 9)
+power_data_2007_10 = power_data %>% filter( year == 2007, hour == 10)
+power_data_2007_11 = power_data %>% filter( year == 2007, hour == 11)
+power_data_2007_12 = power_data %>% filter( year == 2007, hour == 12)
+power_data_2007_13 = power_data %>% filter( year == 2007, hour == 13)
+power_data_2007_14 = power_data %>% filter( year == 2007, hour == 14)
+power_data_2007_15 = power_data %>% filter( year == 2007, hour == 15)
+power_data_2007_16 = power_data %>% filter( year == 2007, hour == 16)
+power_data_2007_17 = power_data %>% filter( year == 2007, hour == 17)
+power_data_2007_18 = power_data %>% filter( year == 2007, hour == 18)
+power_data_2007_19 = power_data %>% filter( year == 2007, hour == 19)
+power_data_2007_20 = power_data %>% filter( year == 2007, hour == 20)
+power_data_2007_21 = power_data %>% filter( year == 2007, hour == 21)
+power_data_2007_22 = power_data %>% filter( year == 2007, hour == 22)
+power_data_2007_23 = power_data %>% filter( year == 2007, hour == 23)
+
+```
+```{r}
+mean_0_07 <- summarise(power_data_2007_0, mean_0 = mean(Global_intensity, na.rm = TRUE))
+mean_01_07 <- summarise(power_data_2007_01, mean_1 = mean(Global_intensity, na.rm = TRUE))
+mean_02_07 <- summarise(power_data_2007_02, mean_2 = mean(Global_intensity, na.rm = TRUE))
+mean_03_07 <- summarise(power_data_2007_03, mean_3 = mean(Global_intensity, na.rm = TRUE))
+mean_04_07 <- summarise(power_data_2007_04, mean_4 = mean(Global_intensity, na.rm = TRUE))
+mean_05_07 <- summarise(power_data_2007_05, mean_5 = mean(Global_intensity, na.rm = TRUE))
+mean_06_07 <- summarise(power_data_2007_06, mean_6 = mean(Global_intensity, na.rm = TRUE))
+mean_07_07 <- summarise(power_data_2007_07, mean_7 = mean(Global_intensity, na.rm = TRUE))
+mean_08_07 <- summarise(power_data_2007_08, mean_8 = mean(Global_intensity, na.rm = TRUE))
+mean_09_07 <- summarise(power_data_2007_09, mean_9 = mean(Global_intensity, na.rm = TRUE))
+mean_10_07 <- summarise(power_data_2007_10, mean_10 = mean(Global_intensity, na.rm = TRUE))
+mean_11_07 <- summarise(power_data_2007_11, mean_11 = mean(Global_intensity, na.rm = TRUE))
+mean_12_07 <- summarise(power_data_2007_12, mean_12 = mean(Global_intensity, na.rm = TRUE))
+mean_13_07 <- summarise(power_data_2007_13, mean_13 = mean(Global_intensity, na.rm = TRUE))
+mean_14_07 <- summarise(power_data_2007_14, mean_14 = mean(Global_intensity, na.rm = TRUE))
+mean_15_07 <- summarise(power_data_2007_15, mean_15 = mean(Global_intensity, na.rm = TRUE))
+mean_16_07 <- summarise(power_data_2007_16, mean_16 = mean(Global_intensity, na.rm = TRUE))
+mean_17_07 <- summarise(power_data_2007_17, mean_17 = mean(Global_intensity, na.rm = TRUE))
+mean_18_07 <- summarise(power_data_2007_18, mean_18 = mean(Global_intensity, na.rm = TRUE))
+mean_19_07 <- summarise(power_data_2007_19, mean_19 = mean(Global_intensity, na.rm = TRUE))
+mean_20_07 <- summarise(power_data_2007_20, mean_20 = mean(Global_intensity, na.rm = TRUE))
+mean_21_07 <- summarise(power_data_2007_21, mean_21 = mean(Global_intensity, na.rm = TRUE))
+mean_22_07 <- summarise(power_data_2007_22, mean_22 = mean(Global_intensity, na.rm = TRUE))
+mean_23_07 <- summarise(power_data_2007_23, mean_23 = mean(Global_intensity, na.rm = TRUE))
+```
+```{r}
+means_2007 <- c(mean_0_07, mean_01_07, mean_02_07, mean_03_07, mean_04_07, mean_05_07, mean_06_07, mean_07_07, mean_08_07, mean_09_07, mean_10_07, mean_11_07, mean_12_07, mean_13_07, mean_14_07, mean_15_07, mean_16_07, mean_17_07, mean_18_07, mean_19_07, mean_20_07, mean_21_07, mean_22_07, mean_23_07)
+
+times <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23)
+
+means_times_2007 <- tibble( means = as.double(means_2007), times = times)
+
+means_times_2007
+```
+
+```{r}
+ggplot(data = means_times_2007) + geom_point(mapping = aes(x= times, y = means)) + labs(title = "Average global intensity per hour in 2007", x = "Hour of day", y = "Global intensity in ampere")
+```
+
+*As seen in the plot above, the global intensity spikes around 7-9 PM every evening, displaying clearly the time in which all members of this household were likely at home and using electricity, either through watching TV, using kitchen appliances or other power consuming devices, or simply having lights on around the house. There is also a smaller spike around 7 AM, likely showing the time in which the household is waking up and preparing for the day.*
+*Next, we'll check to see whether this power consumption changes based on the year.*
+
+```{r}
+power_data_2008_0 = power_data %>% filter( year == 2008, hour == 0)
+power_data_2008_01 = power_data %>% filter( year == 2008, hour == 1)
+power_data_2008_02 = power_data %>% filter( year == 2008, hour == 2)
+power_data_2008_03 = power_data %>% filter( year == 2008, hour == 3)
+power_data_2008_04 = power_data %>% filter( year == 2008, hour == 4)
+power_data_2008_05 = power_data %>% filter( year == 2008, hour == 5)
+power_data_2008_06 = power_data %>% filter( year == 2008, hour == 6)
+power_data_2008_07 = power_data %>% filter( year == 2008, hour == 7)
+power_data_2008_08 = power_data %>% filter( year == 2008, hour == 8)
+power_data_2008_09 = power_data %>% filter( year == 2008, hour == 9)
+power_data_2008_10 = power_data %>% filter( year == 2008, hour == 10)
+power_data_2008_11 = power_data %>% filter( year == 2008, hour == 11)
+power_data_2008_12 = power_data %>% filter( year == 2008, hour == 12)
+power_data_2008_13 = power_data %>% filter( year == 2008, hour == 13)
+power_data_2008_14 = power_data %>% filter( year == 2008, hour == 14)
+power_data_2008_15 = power_data %>% filter( year == 2008, hour == 15)
+power_data_2008_16 = power_data %>% filter( year == 2008, hour == 16)
+power_data_2008_17 = power_data %>% filter( year == 2008, hour == 17)
+power_data_2008_18 = power_data %>% filter( year == 2008, hour == 18)
+power_data_2008_19 = power_data %>% filter( year == 2008, hour == 19)
+power_data_2008_20 = power_data %>% filter( year == 2008, hour == 20)
+power_data_2008_21 = power_data %>% filter( year == 2008, hour == 21)
+power_data_2008_22 = power_data %>% filter( year == 2008, hour == 22)
+power_data_2008_23 = power_data %>% filter( year == 2008, hour == 23)
+
+```
+```{r}
+mean_0_08 <- summarise(power_data_2008_0, mean_0 = mean(Global_intensity, na.rm = TRUE))
+mean_01_08 <- summarise(power_data_2008_01, mean_1 = mean(Global_intensity, na.rm = TRUE))
+mean_02_08 <- summarise(power_data_2008_02, mean_2 = mean(Global_intensity, na.rm = TRUE))
+mean_03_08 <- summarise(power_data_2008_03, mean_3 = mean(Global_intensity, na.rm = TRUE))
+mean_04_08 <- summarise(power_data_2008_04, mean_4 = mean(Global_intensity, na.rm = TRUE))
+mean_05_08 <- summarise(power_data_2008_05, mean_5 = mean(Global_intensity, na.rm = TRUE))
+mean_06_08 <- summarise(power_data_2008_06, mean_6 = mean(Global_intensity, na.rm = TRUE))
+mean_07_08 <- summarise(power_data_2008_07, mean_7 = mean(Global_intensity, na.rm = TRUE))
+mean_08_08 <- summarise(power_data_2008_08, mean_8 = mean(Global_intensity, na.rm = TRUE))
+mean_09_08 <- summarise(power_data_2008_09, mean_9 = mean(Global_intensity, na.rm = TRUE))
+mean_10_08 <- summarise(power_data_2008_10, mean_10 = mean(Global_intensity, na.rm = TRUE))
+mean_11_08 <- summarise(power_data_2008_11, mean_11 = mean(Global_intensity, na.rm = TRUE))
+mean_12_08 <- summarise(power_data_2008_12, mean_12 = mean(Global_intensity, na.rm = TRUE))
+mean_13_08 <- summarise(power_data_2008_13, mean_13 = mean(Global_intensity, na.rm = TRUE))
+mean_14_08 <- summarise(power_data_2008_14, mean_14 = mean(Global_intensity, na.rm = TRUE))
+mean_15_08 <- summarise(power_data_2008_15, mean_15 = mean(Global_intensity, na.rm = TRUE))
+mean_16_08 <- summarise(power_data_2008_16, mean_16 = mean(Global_intensity, na.rm = TRUE))
+mean_17_08 <- summarise(power_data_2008_17, mean_17 = mean(Global_intensity, na.rm = TRUE))
+mean_18_08 <- summarise(power_data_2008_18, mean_18 = mean(Global_intensity, na.rm = TRUE))
+mean_19_08 <- summarise(power_data_2008_19, mean_19 = mean(Global_intensity, na.rm = TRUE))
+mean_20_08 <- summarise(power_data_2008_20, mean_20 = mean(Global_intensity, na.rm = TRUE))
+mean_21_08 <- summarise(power_data_2008_21, mean_21 = mean(Global_intensity, na.rm = TRUE))
+mean_22_08 <- summarise(power_data_2008_22, mean_22 = mean(Global_intensity, na.rm = TRUE))
+mean_23_08 <- summarise(power_data_2008_23, mean_23 = mean(Global_intensity, na.rm = TRUE))
+```
+```{r}
+means_2008 <- c(mean_0_08, mean_01_08, mean_02_08, mean_03_08, mean_04_08, mean_05_08, mean_06_08, mean_07_08, mean_08_08, mean_09_08, mean_10_08, mean_11_08, mean_12_08, mean_13_08, mean_14_08, mean_15_08, mean_16_08, mean_17_08, mean_18_08, mean_19_08, mean_20_08, mean_21_08, mean_22_08, mean_23_08)
+
+times <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23)
+
+means_times_2008 <- tibble( means = as.double(means_2008), times = times)
+```
+
+```{r}
+power_data_2009_0 = power_data %>% filter( year == 2009, hour == 0)
+power_data_2009_01 = power_data %>% filter( year == 2009, hour == 1)
+power_data_2009_02 = power_data %>% filter( year == 2009, hour == 2)
+power_data_2009_03 = power_data %>% filter( year == 2009, hour == 3)
+power_data_2009_04 = power_data %>% filter( year == 2009, hour == 4)
+power_data_2009_05 = power_data %>% filter( year == 2009, hour == 5)
+power_data_2009_06 = power_data %>% filter( year == 2009, hour == 6)
+power_data_2009_07 = power_data %>% filter( year == 2009, hour == 7)
+power_data_2009_08 = power_data %>% filter( year == 2009, hour == 8)
+power_data_2009_09 = power_data %>% filter( year == 2009, hour == 9)
+power_data_2009_10 = power_data %>% filter( year == 2009, hour == 10)
+power_data_2009_11 = power_data %>% filter( year == 2009, hour == 11)
+power_data_2009_12 = power_data %>% filter( year == 2009, hour == 12)
+power_data_2009_13 = power_data %>% filter( year == 2009, hour == 13)
+power_data_2009_14 = power_data %>% filter( year == 2009, hour == 14)
+power_data_2009_15 = power_data %>% filter( year == 2009, hour == 15)
+power_data_2009_16 = power_data %>% filter( year == 2009, hour == 16)
+power_data_2009_17 = power_data %>% filter( year == 2009, hour == 17)
+power_data_2009_18 = power_data %>% filter( year == 2009, hour == 18)
+power_data_2009_19 = power_data %>% filter( year == 2009, hour == 19)
+power_data_2009_20 = power_data %>% filter( year == 2009, hour == 20)
+power_data_2009_21 = power_data %>% filter( year == 2009, hour == 21)
+power_data_2009_22 = power_data %>% filter( year == 2009, hour == 22)
+power_data_2009_23 = power_data %>% filter( year == 2009, hour == 23)
+
+```
+```{r}
+mean_0_09 <- summarise(power_data_2009_0, mean_0 = mean(Global_intensity, na.rm = TRUE))
+mean_01_09 <- summarise(power_data_2009_01, mean_1 = mean(Global_intensity, na.rm = TRUE))
+mean_02_09 <- summarise(power_data_2009_02, mean_2 = mean(Global_intensity, na.rm = TRUE))
+mean_03_09 <- summarise(power_data_2009_03, mean_3 = mean(Global_intensity, na.rm = TRUE))
+mean_04_09 <- summarise(power_data_2009_04, mean_4 = mean(Global_intensity, na.rm = TRUE))
+mean_05_09 <- summarise(power_data_2009_05, mean_5 = mean(Global_intensity, na.rm = TRUE))
+mean_06_09 <- summarise(power_data_2009_06, mean_6 = mean(Global_intensity, na.rm = TRUE))
+mean_07_09 <- summarise(power_data_2009_07, mean_7 = mean(Global_intensity, na.rm = TRUE))
+mean_08_09 <- summarise(power_data_2009_08, mean_8 = mean(Global_intensity, na.rm = TRUE))
+mean_09_09 <- summarise(power_data_2009_09, mean_9 = mean(Global_intensity, na.rm = TRUE))
+mean_10_09 <- summarise(power_data_2009_10, mean_10 = mean(Global_intensity, na.rm = TRUE))
+mean_11_09 <- summarise(power_data_2009_11, mean_11 = mean(Global_intensity, na.rm = TRUE))
+mean_12_09 <- summarise(power_data_2009_12, mean_12 = mean(Global_intensity, na.rm = TRUE))
+mean_13_09 <- summarise(power_data_2009_13, mean_13 = mean(Global_intensity, na.rm = TRUE))
+mean_14_09 <- summarise(power_data_2009_14, mean_14 = mean(Global_intensity, na.rm = TRUE))
+mean_15_09 <- summarise(power_data_2009_15, mean_15 = mean(Global_intensity, na.rm = TRUE))
+mean_16_09 <- summarise(power_data_2009_16, mean_16 = mean(Global_intensity, na.rm = TRUE))
+mean_17_09 <- summarise(power_data_2009_17, mean_17 = mean(Global_intensity, na.rm = TRUE))
+mean_18_09 <- summarise(power_data_2009_18, mean_18 = mean(Global_intensity, na.rm = TRUE))
+mean_19_09 <- summarise(power_data_2009_19, mean_19 = mean(Global_intensity, na.rm = TRUE))
+mean_20_09 <- summarise(power_data_2009_20, mean_20 = mean(Global_intensity, na.rm = TRUE))
+mean_21_09 <- summarise(power_data_2009_21, mean_21 = mean(Global_intensity, na.rm = TRUE))
+mean_22_09 <- summarise(power_data_2009_22, mean_22 = mean(Global_intensity, na.rm = TRUE))
+mean_23_09 <- summarise(power_data_2009_23, mean_23 = mean(Global_intensity, na.rm = TRUE))
+```
+```{r}
+means_2009 <- c(mean_0_09, mean_01_09, mean_02_09, mean_03_09, mean_04_09, mean_05_09, mean_06_09, mean_07_09, mean_08_09, mean_09_09, mean_10_09, mean_11_09, mean_12_09, mean_13_09, mean_14_09, mean_15_09, mean_16_09, mean_17_09, mean_18_09, mean_19_09, mean_20_09, mean_21_09, mean_22_09, mean_23_09)
+
+times <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23)
+
+means_times_2009 <- tibble( means = as.double(means_2009), times = times)
+```
+
+```{r}
+means_times_total <- tibble( Hour_of_Day = times, Means_2007 = as.double(means_2007), Means_2008 = as.double(means_2008), Means_2009 = as.double(means_2009))
+```
+
+```{r}
+ggplot(data = means_times_total) + geom_point(mapping = aes(x= Hour_of_Day, y = Means_2007), color = "blue") + geom_point(mapping = aes(x= Hour_of_Day, y = Means_2008), color = "green") + geom_point(mapping = aes(x= Hour_of_Day, y = Means_2009), color = "red") + labs(title = "Average global intensity per hour in 2007-2009", x = "Hour of day", y = "Global intensity in amperes", caption = "Blue = 2007, Green = 2008, Red = 2009")
+```
+
+
+*The plot above shows then that the power usage intensity pattern for the household across an average day is virtually identical for each of the three years, with only minor variations. While perhaps not the most exciting observation in the world, it is interesting that the household is so remarkably consistent over the course of the three years, as one would expect a job layoff, a behavior change, or any other of a thousand factors to influence their power usage into some sort of noticeable difference. As such, the only true visible difference is that usage at 7PM dropped off in 2008 and 2009 compared to usage in 2007, perhaps symbolizing that the household arrived home later in the following two years compared to the first year of data observation. Displayed below is a tibble of all three year's global intensity means for each hour wo allow for a closer numerical comparison between the three years.*
+
+```{r}
+
+print.data.frame(means_times_total, row.names = FALSE)
+```
+
+#### Discussion
+
+##### Why this question is interesting:
+
+*I think this question is interesting because it displays a snapshot of the average day for this household over multiple years. You can see their daily routine through their usage patterns, and though it doesn't change much from year to year, there are some slight variations which show changes in their daily patterns over time. I think this question and analysis truly allows you to see the human side of the data, a side which can sometimes be ignored when searching for specific patterns in data analysis.*
+
+##### How I came up with this question:
+
+*I came up with this question by exploring the covaration of different variables in the datset. I first wanted to see how laundry usage varied and if there were specific patterns to laundry usage, but was unable to display the data in a satisfactory way. My mind then drifted to simply exloring the daoily patterns of the household, and thus the analysis of global intensity vs hour of day was born.*
+
+##### Who benefits from this data analysis:
+
+*I think one clear benefactor of this data analysis is power companies, as it really works to show when power usage is at its highest intensitities and when it's at its lowest for a typical household. This can be useful in discovering typical times of power outages due to overuse, and can help the power company better determine when their prime hours of usage are.*
+
+
