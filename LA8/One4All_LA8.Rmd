@@ -1,0 +1,10 @@
+---
+title: "One4All_LA8"
+author: "Braden Griebel, Luke Fanning, Andrew Duffy, Ahyo Falick"
+date: "10/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
