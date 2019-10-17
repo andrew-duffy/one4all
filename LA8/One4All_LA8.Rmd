@@ -5,6 +5,62 @@ date: "10/16/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
 ```
+
+
+
+
+
+
+
+# Braden Griebel Individual Section: 
+
+## East Africa Lake Data Lake Malawi
+
+*It is unclear whether the BSi MAR is two seperate values. It seems that they are mostly different years, but there are some overlap of years with different values. So I graphed it two ways, first treating them as seperate vaariables then treating it as a single variable after I combined them. When combining them, I used the left most columns value when the two columns had different values that disagreed. There were not many of these values so it doesn't affect the overall trend significantly. I graphed the BSi against calander year since that made the graph more intuitive to understand. Graphing it against age would mean having time go from right to left, which is more confusing. *
+
+```{r, warning=FALSE, message=FALSE}
+malawi<-read_excel(path="East Africa lake data.xlsx",sheet="Malawi")
+malawi<-malawi[-c(4,5)]
+malawi1<-malawi[c(1:3)]
+malawi2<-malawi[c(4:6)]
+malawi1<-malawi1%>%select("age"=`Age, ybp`,"calender"=`Age (calender)...2`,"Bsi1"=`BSi MAR (mgSiO2/cm2y)...3`)
+malawi2<-malawi2%>%select("age"=`Age, cal ybp`,"calender"=`Age (calender)...7`,"Bsi2"=`BSi MAR (mgSiO2/cm2y)...8`)
+malawi1$age<-as.integer(malawi1$age)
+malawi1$calender<-as.integer(malawi1$calender)
+malawi2$age<-as.integer(malawi2$age)
+malawi2$calender<-as.integer(malawi2$calender)
+malawi1<-malawi1%>%filter(!is.na(age))
+malawi2<-malawi2%>%filter(!is.na(age))
+
+
+malawi<-full_join(malawi1,malawi2,by=c("calender","age"))
+
+
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(malawi,aes(calender))+geom_point(aes(y=Bsi1),color="red")+geom_point(aes(y=Bsi2),color="blue")+geom_smooth(aes(y=Bsi1,color="Bsi1"))+
+  geom_smooth(aes(y=Bsi2,color="Bsi2"))+labs(x="Year",y="BSi MAR (mgSiO2/cm2y)",title="BSi Over Time",caption="Taking BSi as seperate Variables")
+```
+
+```{r, warning=FALSE, message=FALSE}
+
+
+malawi2<-malawi%>%unite(Bsi1,Bsi2,col="BSi",sep='_',na.rm=T)
+malawi3<-malawi2[917:1655,]%>%separate(BSi,into=c(NA,"BSi"),sep="_")
+malawi4<-malawi2[1:916,]%>%separate(BSi,into=c("BSi",NA),sep="_")
+malawi2<-full_join(malawi3,malawi4)
+malawi2$BSi<-as.double(malawi2$BSi)
+malawi2<-malawi2%>%filter(!is.na(BSi))
+ggplot(data=malawi2,aes(calender,BSi))+geom_point()+geom_smooth()+labs(x="Year",y="BSi MAR (mgSiO2/cm2y)",title="BSi Over Time", 
+                                                                       caption="Combined BSi")
+
+```
+
+
