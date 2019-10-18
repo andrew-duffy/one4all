@@ -13,6 +13,9 @@ library(readxl)
 
 # Team Question: 
 
+We were highered by an public health specialist to determine the relationship between the level of industrialization (measured by electricity, natural gas, and oil consumption as well as industrial production growth rate) affect various measures of population health, such as death rate, infant mortality and life expectancy. This will help illuminate the relationship between industrialization and health. Understanding this relationship will help to guide policies about how indistrialization is encouraged or discouraged in different areas, in order to increase the general health of the populace. 
+
+A data set that could help answer this question is loaded below, it is a factbook with data on 160 countries, and ~100 non-country political entities. Across these countries it has 44 measurements, including debt, resource consumtion/production, internet users, life expectancy, fertility rates, and many more. 
 
 dataset:
 
@@ -73,6 +76,12 @@ factbook
 
 # Braden Griebel Individual Section: 
 
+## Question I will Answer Next Week
+**Question 1**: What Factors have the greatest affect on the rate of HIV/AIDS in adults between various countries. 
+This is interesting because it will show 
+
+**Backup Question**: 
+
 ## East Africa Lake Data Lake Malawi
 
 *It is unclear whether the BSi MAR is two seperate values. It seems that they are mostly different years, but there are some overlap of years with different values. So I graphed it two ways, first treating them as seperate vaariables then treating it as a single variable after I combined them. When combining them, I used the left most columns value when the two columns had different values that disagreed. There were not many of these values so it doesn't affect the overall trend significantly. I graphed the BSi against calander year since that made the graph more intuitive to understand. Graphing it against age would mean having time go from right to left, which is more confusing. *
@@ -104,9 +113,7 @@ ggplot(malawi,aes(calender))+geom_point(aes(y=Bsi1),color="red")+geom_point(aes(
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-
-
-malawi2<-malawi%>%unite(Bsi1,Bsi2,col="BSi",sep='_',na.rm=T)
+malawi2<-malawi%>%unite(Bsi1,Bsi2,col="BSi",sep='_')
 malawi3<-malawi2[917:1655,]%>%separate(BSi,into=c(NA,"BSi"),sep="_")
 malawi4<-malawi2[1:916,]%>%separate(BSi,into=c("BSi",NA),sep="_")
 malawi2<-full_join(malawi3,malawi4)
