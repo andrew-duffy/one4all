@@ -78,9 +78,10 @@ factbook
 
 ## Question I will Answer Next Week
 **Question 1**: What Factors have the greatest affect on the rate of HIV/AIDS in adults between various countries. 
-This is interesting because it will show 
+This is interesting because understanding what affects the rate of HIV/AIDS will allow for a greater understanding of how it tends to be spread, and so institute policies that will reduce its spread. Not neccesarily by reducing something positively correlated with the rate, but by understanding why that variable is positively correlated with the rate of HIV/AIDS and instituting policies to decrease that factors relationship with HIV/AIDS. Thus, this is mostly just a jumpting off point in seeing what affects the rate of HIV/AIDS, and then using that to further explore why exactly this this affect this rate.  
 
-**Backup Question**: 
+**Backup Question**: What is the relationship between length of highways and railroads, when controlling for land area and wealth measured by GDP per capita, and what affect does the ratio have with the oil consumption of the country?
+This is interesting because it will show if increasing the ratio of railways to higways has a significant affect on oil consumption, since trains and trucks have a significantly different fuel per ton of freight requirements so maybe the amount of railways would change the overall oil consumption of a country. This would possibly allow for countries to focus on constructing more of one or the other to reduce their overall oil consumption, which would both mean the country is spending less money on fuel, and producing lower amounts of carbon dioxide production. Reducing the carbon dioxide released could help with meeting emmision goals, and thus hopefully help reduce the rate of global climate change. 
 
 ## East Africa Lake Data Lake Malawi
 
