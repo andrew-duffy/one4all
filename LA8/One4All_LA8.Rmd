@@ -152,3 +152,36 @@ Rainfall_data_2 <- arrange(mutate(Rainfall_data, Month = factor(Month, levels = 
 ggplot(data = Rainfall_data_2) + geom_point(mapping = aes(x = Year, y = Rainfall_in_cm, color = Month)) + facet_wrap(~Month) + theme(text = element_text(size=10), axis.text.x = element_text(angle=90, hjust=1)) + labs(title = "VOI Rainfall Data vs. Month", y = "Rainfall in CM")
 ```
 
+
+
+##Andrew Duffy Individual Section
+
+##Question and backup question for next week:
+
+**Question 1**
+How does a countries life expectancy at birth vary based on a countries GDP per Capita? I find this to be interesting because there are many variables you can compare to GDP per capita to make assumptions of how money affect people's lives in different ways. Especially, how do people in developing countries have different lives from people living in developed countries? But, the most valuable thing for us humans is life, So I wonder how does one's wealth and income affect their life expectancy? Do people in developing countries live shorter or longer? 
+
+**Backup Question**
+Are there any variables in this factbook that affect fertility rate? How about a countries production, exports, and consumption of oil or natura gas. Does HIV/AIDS rates in that country affect fertility rate? I find this interesting because I have heard often of certain ethnic groups or places where there is a low fertility rate, despite that country/ethnic group being very developed and modern. So I wonder, what truly affects fertility rate? Is there any certain variable that makes it more difficult to get pregnant? Or is it something not measured in this list, like genetic mutations or other chemical exposure not listed in this factbook?
+
+
+#CRU and MAM Rainfall Data Visualisation:
+
+```{r, setup = FALSE, warning = FALSE, message = FALSE}
+
+lakedf <- read_excel("East Africa Lake Data.xlsx", sheet = "CRU and MAM rainfall data")
+
+
+
+lakedf <- lakedf %>% subset(select = c(1,2,3,4,5))
+
+colnames(lakedf)[colnames(lakedf)=="GPCC MAM Normalized"] <- "GPCC_MAM"
+colnames(lakedf)[colnames(lakedf)=="CRU MAM Normalized"] <- "CRU_MAM"
+colnames(lakedf)[colnames(lakedf)=="GPCC OND Normalized"] <- "GPCC_OND"
+colnames(lakedf)[colnames(lakedf)=="CRU OND Normalized"] <- "CRU_OND"
+
+ggplot(data = lakedf) + geom_smooth(aes(x = Year, y = GPCC_MAM, color = 'GPCC MAM'), se = FALSE) + geom_smooth(aes(x = Year, y = GPCC_OND, color = 'GPCC OND'), se = FALSE) + ggtitle("Change in GPCC MAM and OND (normalized) Over Time") + labs(y = "GPCC (Normalized)") + theme(legend.title = element_blank())
+
+ggplot(data = lakedf) + geom_smooth(aes(x = Year, y = CRU_MAM, color = 'CRU MAM'), se = FALSE) + geom_smooth(aes(x = Year, y = CRU_OND, color = 'CRU OND'), se = FALSE) + ggtitle("Change in CRU MAM and OND (normalized) Over Time") + labs(y = "GPCC MAM (Normalized)") + theme(legend.title = element_blank())
+
+```
