@@ -13,6 +13,9 @@ library(readxl)
 
 # Team Question: 
 
+We were hired by an public health specialist to determine the relationship between the level of industrialization (measured by electricity, natural gas, and oil consumption as well as industrial production growth rate) and the various measures of population health, such as death rate, infant mortality and life expectancy. This will help illuminate the relationship between industrialization and health. Understanding this relationship will help to guide policies about how indistrialization is encouraged or discouraged in different areas, in order to increase the general health of the populace. 
+
+A data set that could help answer this question is loaded below, it is a factbook with data on 160 countries, and ~100 non-country political entities. Across these countries it has 44 measurements, including debt, resource consumtion/production, internet users, life expectancy, fertility rates, and many more. 
 
 dataset:
 
@@ -73,6 +76,13 @@ factbook
 
 # Braden Griebel Individual Section: 
 
+## Question I will Answer Next Week
+**Question 1**: What Factors have the greatest affect on the rate of HIV/AIDS in adults between various countries?
+This is interesting because understanding what affects the rate of HIV/AIDS will allow for a greater understanding of how it tends to be spread, and so institute policies that will reduce its spread. Not neccesarily by reducing something positively correlated with the rate, but by understanding why that variable is positively correlated with the rate of HIV/AIDS and instituting policies to decrease that factors relationship with HIV/AIDS. Thus, this is mostly just a jumpting off point in seeing what affects the rate of HIV/AIDS, and then using that to further explore why exactly this this affect this rate.  
+
+**Backup Question**: What is the relationship between length of highways and railroads, when controlling for land area and wealth measured by GDP per capita, and what affect does the ratio have with the oil consumption of the country?
+This is interesting because it will show if increasing the ratio of railways to higways has a significant affect on oil consumption, since trains and trucks have a significantly different fuel per ton of freight requirements so maybe the amount of railways would change the overall oil consumption of a country. This would possibly allow for countries to focus on constructing more of one or the other to reduce their overall oil consumption, which would both mean the country is spending less money on fuel, and producing lower amounts of carbon dioxide production. Reducing the carbon dioxide released could help with meeting emmision goals, and thus hopefully help reduce the rate of global climate change. 
+
 ## East Africa Lake Data Lake Malawi
 
 *It is unclear whether the BSi MAR is two seperate values. It seems that they are mostly different years, but there are some overlap of years with different values. So I graphed it two ways, first treating them as seperate vaariables then treating it as a single variable after I combined them. When combining them, I used the left most columns value when the two columns had different values that disagreed. There were not many of these values so it doesn't affect the overall trend significantly. I graphed the BSi against calander year since that made the graph more intuitive to understand. Graphing it against age would mean having time go from right to left, which is more confusing. *
@@ -104,9 +114,7 @@ ggplot(malawi,aes(calender))+geom_point(aes(y=Bsi1),color="red")+geom_point(aes(
 ```
 
 ```{r, warning=FALSE, message=FALSE}
-
-
-malawi2<-malawi%>%unite(Bsi1,Bsi2,col="BSi",sep='_',na.rm=T)
+malawi2<-malawi%>%unite(Bsi1,Bsi2,col="BSi",sep='_')
 malawi3<-malawi2[917:1655,]%>%separate(BSi,into=c(NA,"BSi"),sep="_")
 malawi4<-malawi2[1:916,]%>%separate(BSi,into=c("BSi",NA),sep="_")
 malawi2<-full_join(malawi3,malawi4)
@@ -117,4 +125,30 @@ ggplot(data=malawi2,aes(calender,BSi))+geom_point()+geom_smooth()+labs(x="Year",
 
 ```
 
+# Luke Fanning Individual Section
+
+## Question I will answer next week
+
+**Question 1**
+How does the rate of military expenditures, both in terms of dollar value and GDP, affect various measures of economic success, such as GDP, unemployment rate, public debt, as well as various import and export variables? This is interesting as it's a well known fact that military funding during war times has a tendency to stimulate the economy, so I would be curious to examine the various trends related to this in both peace time and war time for various countires. This also has interesting implications simply in the variation of military expenditures in terms of GDP in many countries, as based off of personal knowledge, there are many countries in a state of semi-peace that may outspend countries in states of war. It's important to find an answer to this question as it can help answer deeper economic implications of war time and peace time spending on military versus spending on various aspects of public welfare and how these spending habits can help or hurt the economy.  
+
+**Backup Question**
+How are factors such as debt and unemployment rate affected by the usage of internet, analyzed through both hosts and users, in both developing and developed countries? This is interesting as the results may be relatively surprising, either by indicating a clear trend towards one of theze factors creating an incredibly high or low trend in either unemployment or debt, or may be indicative of no trend one way or the other. This is worth answering as there are a large variation of biases and sterotypes related to internet usage in this day and age, and this may help to indicate whether these biases have a foundation and are worth considering in society. Many people may be swayed away from a specific bias if confronted with clear statistical evidence disproving their beliefs, and this is important in an age of misinformation and deceit. 
+
+
+## East Africa Data VOI Rainfall
+
+```{r}
+Rainfall_data <- read_excel("East Africa lake data.xlsx", sheet = "VOI rainfall station data")
+
+Rainfall_data <- Rainfall_data %>% select(-c(14, 15)) %>% gather(2:13, key = "Month", value = "Rainfall_in_cm") 
+
+Rainfall_data
+
+neworder <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+Rainfall_data_2 <- arrange(mutate(Rainfall_data, Month = factor(Month, levels = neworder)), Month)
+
+ggplot(data = Rainfall_data_2) + geom_point(mapping = aes(x = Year, y = Rainfall_in_cm, color = Month)) + facet_wrap(~Month) + theme(text = element_text(size=10), axis.text.x = element_text(angle=90, hjust=1)) + labs(title = "VOI Rainfall Data vs. Month", y = "Rainfall in CM")
+```
 
