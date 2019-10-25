@@ -61,104 +61,6 @@ factbook<-read_delim("factbook.csv",delim=";",col_types = cols(
 factbook<-factbook[2:264,]
 colnames(factbook)
 ```
-These data comes from the CIA, however they don't provide an csv file download, so the actual csv file was obtained from https://perso.telecom-paristech.fr/eagan/class/igr204/datasets
-
-# Codebook:
-  * Country=Name of country
-  
-  * Area(sq km)=Country area in square kilometers
-  
-  * Birth rate(births/1000 population)=Number of births in a year per 1000 people in country,
-  
-  * Current account balance=Current account balance compares a country's net trade in goods and services, plus net earnings, and net transfer payments to and from the rest of the world during the period specified. These figures are calculated on an exchange rate basis.
-  
-  * Death rate(deaths/1000 population)=Deaths per year per 1000 population,
-  
-  * Debt - external=Debt owed to creditors outside country,
-  
-  * Electricity - consumption(kWh)=Electricity consumed by country kilowatt hours,
-  
-  * Electricity - production(kWh)=Electricity produced in kilowatt hours,
-  
-  * Exports=Total value of exports in USD,
-  
-  * GDP=Gross domestic product in USD,
-  
-  * GDP - per capita=GDP per person in USD,
-  
-  * GDP - real growth rate(%)=Inflation adjusted rate of GDP growth per year,
-  
-  * HIV/AIDS - adult prevalence rate(%)=Percent of Adults with HIV,
-  
-  * HIV/AIDS - deaths=Number of deaths per year from HIV/AIDS,
-  
-  * HIV/AIDS - people living with HIV/AIDS=Number of adults with HIV/AIDS,
-  
-  * Highways(km)=Total length of highways in kilometers,
-  
-  * Imports=Total value of imports in USD,
-  
-  * Industrial production growth rate(%)=Industrial production growth rate compares the annual percentage increase in industrial production (includes manufacturing, mining, and construction).,
-  
-  * Infant mortality rate(deaths/1000 live births)=Infant death per 1000 live births,
-  
-  * Inflation rate (consumer prices)(%)=Rate of inflation in cost of consumer products,
-  
-  * Internet hosts=Number of internet hosts in country,
-  
-  * Internet users=Number of internet users in country,
-  
-  * Investment (gross fixed)(% of GDP)=This entry records total business spending on fixed assets, such as factories, machinery, equipment, dwellings, and inventories of raw materials, which provide the basis for future production. It is measured gross of the depreciation of the assets, i.e., it includes investment that merely replaces worn-out or scrapped                  capital.,
-  
-  * Labor force=This entry contains the total labor force figure.,
-  
-  * Life expectancy at birth(years)=This entry contains the average number of years to be lived by a group of people born in the same year, if mortality at each age remains constant in the future. Life expectancy at birth is also a measure of overall quality of life in a country and summarizes the mortality at all ages. It can also be thought of as indicating the potential return on investment in human capital and is necessary for the calculation of various actuarial measures.,
-  * Military expenditures - dollar figure=total military expenditure,
-  
-  * Military expenditures - percent of GDP(%)=This entry gives spending on defense programs for the most recent year available as a percent of gross domestic product (GDP); the GDP is calculated on an exchange rate basis, i.e., not in terms of purchasing power parity (PPP). For countries with no military forces, this figure can include expenditures on public security and police.,
-  
-  * Natural Gas and Oil
-      + consumption=amount of oil or natural gas consumed, cubic meters for natural gas, billion barrels/day for Oil
-      + exports=amount sent to other countries, in same units
-      + imports=amount brought in from other countries, in same units
-      + production=amount produced
-      + proved reserves=This entry is the stock of proved reserves of natural gas in cubic meters (cu m) or oil in billions of barrels. Proved reserves are those quantities of natural gas or oil, which, by analysis of geological and engineering data, can be estimated with a high degree of confidence to be commercially recoverable from a given date forward, from known reservoirs and under current economic conditions.
-        
-      + Natural gas - consumption(cu m)
-      
-      + Natural gas - exports(cu m)
-      
-      + Natural gas - imports(cu m)
-      
-      + Natural gas - production(cu m)
-      
-      + Natural gas - proved reserves(cu m)
-      
-      + Oil - consumption(bbl/day)
-      
-      + Oil - exports(bbl/day)
-      
-      + Oil - imports(bbl/day)
-      
-      + Oil - production(bbl/day)
-      
-      + Oil - proved reserves(bbl)
-      
-  * Population=This entry gives an estimate from the US Bureau of the Census based on statistics from population censuses, vital statistics registration systems, or sample surveys pertaining to the recent past and on assumptions about future trends. The total population presents one overall measure of the potential impact of the country on the world and   within its region. Note: Starting with the 1993 Factbook, demographic estimates for some countries (mostly African) have explicitly taken into account the effects of the growing impact of the HIV/AIDS epidemic. These countries are currently: The Bahamas, Benin, Botswana, Brazil, Burkina Faso, Burma, Burundi, Cambodia, Cameroon, Central African Republic, Democratic Republic of the Congo, Republic of the Congo, Cote d'Ivoire, Ethiopia, Gabon, Ghana, Guyana, Haiti, Honduras, Kenya, Lesotho, Malawi, Mozambique, Namibia, Nigeria, Rwanda, South Africa, Swaziland, Tanzania, Thailand, Togo, Uganda, Zambia, and Zimbabwe.,
-  
-  * Railways(km)=This entry states the total route length of the railway network and of its component parts by gauge, which is the measure of the distance between the inner sides of the load-bearing rails. The four typical types of gauges are: broad, standard, narrow, and dual. Other gauges are listed under note. Some 60% of the world's railways use the standard gauge of 1.4 m (4.7 ft). Gauges vary by country and sometimes within countries. The choice of gauge during initial construction was mainly in response to local conditions and the intent of the builder. Narrow-gauge railways were cheaper to build and could negotiate sharper curves, broad-gauge railways gave greater stability and permitted higher speeds. Standard-gauge railways were a compromise between narrow and broad gauges.,
-  
-  * Public debt(% of GDP)=This entry records the cumulative total of all government borrowings less repayments that are denominated in a country's home currency. Public debt should not be confused with external debt, which reflects the foreign currency liabilities of both the private and public sector and must be financed out of foreign exchange earnings.,
-  
-  * Reserves of foreign exchange & gold=This entry gives the dollar value for the stock of all financial assets that are available to the central monetary authority for use in meeting a country's balance of payments needs as of the end-date of the period specified. This category includes not only foreign currency and gold, but also a country's holdings of Special            Drawing Rights in the International Monetary Fund, and its reserve position in the Fund.,
-  
-  * Telephones - main lines in use=This entry gives the total number of fixed telephone lines in use,
-  
-  * Telephones - mobile cellular=This entry gives the total number of mobile cellular telephone subscribers,
-  
-  * Total fertility rate(children born/woman)=This entry gives a figure for the average number of children that would be born per woman if all women lived to the end of their childbearing years and bore children according to a given fertility rate at each age. The total fertility rate (TFR) is a more direct measure of the level of fertility than the crude birth rate,           since it refers to births per woman. This indicator shows the potential for population change in the country. A rate of two children per woman is considered the replacement rate for a population, resulting in relative stability in terms of total numbers. Rates above two children indicate populations growing in size and whose median age is declining. Higher rates may also indicate difficulties for families, in some situations, to feed and educate their children and for women to enter the labor force. Rates below two children indicate populations decreasing in size and growing older. Global fertility rates are in general decline and this trend is most pronounced in industrialized countries, especially Western Europe, where populations are projected to decline dramatically over the next 50 years.,
-  
-  * Unemployment rate(%)=This entry contains the percent of the labor force that is without jobs. Substantial underemployment might be noted.
   
 ## Team Question
 We were hired by an public health specialist to determine the relationship between the level of industrialization (measured by electricity, natural gas, and oil consumption as well as industrial production growth rate) and the various measures of population health, such as death rate, infant mortality and life expectancy. This will help illuminate the relationship between industrialization and health. Understanding this relationship will help to guide policies about how indistrialization is encouraged or discouraged in different areas in order to increase the general health of the populace. Obviously, a public health specialist would find this question extremely important in this day and age, as our world is becoming increasingly industrialized and reliant on production of various methods of power creation, and any positive or negative trend between levels of indutrialization and general population health could be extremely influential in determining which regions of industrial production and consumption should be supported and accelerated in developing and developed countries. These findings would also be incredibly influential in determining public policy in developed countries, as if any findings turn out to be conclusive, it is important that all government officials are aware so that the best policies can be put in place in order to both help the plant's general health as well as each country's general population health. However, without the help of a public health specialist, who has the power to work with lobbyists to make publicly elected officials aware of these issues, the data may simply fall on deaf ears and lead to little or no impact in governmental policymaking and decisions.
@@ -288,6 +190,109 @@ ggplot(data = factbook7_3)+ geom_point(aes(x= `Industrial production growth rate
 
 All of the above graphs suggest little to no trend between levels of industrialization and overall population health. In some cases, there may be a minimal positive trend towards increasing a specific part of population health with increasing levels of industrial production in specific areas, but these positive trends are often contradicted by negative trends by other factors of population health, suggesting that these trends are more than likely outliers in the overall set of data. It is clear from all the above graphs that any increase in population health with incresaing levels of industrialization is caused by other factors not requested to be studied by the public health specialist. Therefore, we would recommend that no action be taken from the above data. There is simply no way to tell that any relationship exists between levels of industrialization and population health, and it would be incredibly foolhardy to then recommend action knowing this. We would, however, recommend that the public health specialist explore other factors that may have a greater impact on population health, such as level of GDP per capita and other factors related to economic prosperity in a country, as a higher level of economic prosperity is much more likely to indicate a country's successin development, and is therefore much more likely to correlate stringly with population health. Industrialization is simply too varied in its levels across both developing and developed countries, and is just not a reliable measure of a country's prosperity and overall population health. 
 
+## Brief Description of the dataset
+
+The datset being used is a factbook with data on 160 countries, and ~100 non-country political entities. Across these countries it has 44 measurements, including debt, resource consumtion/production, internet users, life expectancy, fertility rates, and many more.
+
+These data comes from the CIA, however they don't provide an csv file download, so the actual csv file was obtained from https://perso.telecom-paristech.fr/eagan/class/igr204/datasets
+
+# Codebook:
+  * Country=Name of country
+  
+  * Area(sq km)=Country area in square kilometers
+  
+  * Birth rate(births/1000 population)=Number of births in a year per 1000 people in country,
+  
+  * Current account balance=Current account balance compares a country's net trade in goods and services, plus net earnings, and net transfer payments to and from the rest of the world during the period specified. These figures are calculated on an exchange rate basis.
+  
+  * Death rate(deaths/1000 population)=Deaths per year per 1000 population,
+  
+  * Debt - external=Debt owed to creditors outside country,
+  
+  * Electricity - consumption(kWh)=Electricity consumed by country kilowatt hours,
+  
+  * Electricity - production(kWh)=Electricity produced in kilowatt hours,
+  
+  * Exports=Total value of exports in USD,
+  
+  * GDP=Gross domestic product in USD,
+  
+  * GDP - per capita=GDP per person in USD,
+  
+  * GDP - real growth rate(%)=Inflation adjusted rate of GDP growth per year,
+  
+  * HIV/AIDS - adult prevalence rate(%)=Percent of Adults with HIV,
+  
+  * HIV/AIDS - deaths=Number of deaths per year from HIV/AIDS,
+  
+  * HIV/AIDS - people living with HIV/AIDS=Number of adults with HIV/AIDS,
+  
+  * Highways(km)=Total length of highways in kilometers,
+  
+  * Imports=Total value of imports in USD,
+  
+  * Industrial production growth rate(%)=Industrial production growth rate compares the annual percentage increase in industrial production (includes manufacturing, mining, and construction).,
+  
+  * Infant mortality rate(deaths/1000 live births)=Infant death per 1000 live births,
+  
+  * Inflation rate (consumer prices)(%)=Rate of inflation in cost of consumer products,
+  
+  * Internet hosts=Number of internet hosts in country,
+  
+  * Internet users=Number of internet users in country,
+  
+  * Investment (gross fixed)(% of GDP)=This entry records total business spending on fixed assets, such as factories, machinery, equipment, dwellings, and inventories of raw materials, which provide the basis for future production. It is measured gross of the depreciation of the assets, i.e., it includes investment that merely replaces worn-out or scrapped                  capital.,
+  
+  * Labor force=This entry contains the total labor force figure.,
+  
+  * Life expectancy at birth(years)=This entry contains the average number of years to be lived by a group of people born in the same year, if mortality at each age remains constant in the future. Life expectancy at birth is also a measure of overall quality of life in a country and summarizes the mortality at all ages. It can also be thought of as indicating the potential return on investment in human capital and is necessary for the calculation of various actuarial measures.,
+  * Military expenditures - dollar figure=total military expenditure,
+  
+  * Military expenditures - percent of GDP(%)=This entry gives spending on defense programs for the most recent year available as a percent of gross domestic product (GDP); the GDP is calculated on an exchange rate basis, i.e., not in terms of purchasing power parity (PPP). For countries with no military forces, this figure can include expenditures on public security and police.,
+  
+  * Natural Gas and Oil
+      + consumption=amount of oil or natural gas consumed, cubic meters for natural gas, billion barrels/day for Oil
+      + exports=amount sent to other countries, in same units
+      + imports=amount brought in from other countries, in same units
+      + production=amount produced
+      + proved reserves=This entry is the stock of proved reserves of natural gas in cubic meters (cu m) or oil in billions of barrels. Proved reserves are those quantities of natural gas or oil, which, by analysis of geological and engineering data, can be estimated with a high degree of confidence to be commercially recoverable from a given date forward, from known reservoirs and under current economic conditions.
+        
+      + Natural gas - consumption(cu m)
+      
+      + Natural gas - exports(cu m)
+      
+      + Natural gas - imports(cu m)
+      
+      + Natural gas - production(cu m)
+      
+      + Natural gas - proved reserves(cu m)
+      
+      + Oil - consumption(bbl/day)
+      
+      + Oil - exports(bbl/day)
+      
+      + Oil - imports(bbl/day)
+      
+      + Oil - production(bbl/day)
+      
+      + Oil - proved reserves(bbl)
+      
+  * Population=This entry gives an estimate from the US Bureau of the Census based on statistics from population censuses, vital statistics registration systems, or sample surveys pertaining to the recent past and on assumptions about future trends. The total population presents one overall measure of the potential impact of the country on the world and   within its region. Note: Starting with the 1993 Factbook, demographic estimates for some countries (mostly African) have explicitly taken into account the effects of the growing impact of the HIV/AIDS epidemic. These countries are currently: The Bahamas, Benin, Botswana, Brazil, Burkina Faso, Burma, Burundi, Cambodia, Cameroon, Central African Republic, Democratic Republic of the Congo, Republic of the Congo, Cote d'Ivoire, Ethiopia, Gabon, Ghana, Guyana, Haiti, Honduras, Kenya, Lesotho, Malawi, Mozambique, Namibia, Nigeria, Rwanda, South Africa, Swaziland, Tanzania, Thailand, Togo, Uganda, Zambia, and Zimbabwe.,
+  
+  * Railways(km)=This entry states the total route length of the railway network and of its component parts by gauge, which is the measure of the distance between the inner sides of the load-bearing rails. The four typical types of gauges are: broad, standard, narrow, and dual. Other gauges are listed under note. Some 60% of the world's railways use the standard gauge of 1.4 m (4.7 ft). Gauges vary by country and sometimes within countries. The choice of gauge during initial construction was mainly in response to local conditions and the intent of the builder. Narrow-gauge railways were cheaper to build and could negotiate sharper curves, broad-gauge railways gave greater stability and permitted higher speeds. Standard-gauge railways were a compromise between narrow and broad gauges.,
+  
+  * Public debt(% of GDP)=This entry records the cumulative total of all government borrowings less repayments that are denominated in a country's home currency. Public debt should not be confused with external debt, which reflects the foreign currency liabilities of both the private and public sector and must be financed out of foreign exchange earnings.,
+  
+  * Reserves of foreign exchange & gold=This entry gives the dollar value for the stock of all financial assets that are available to the central monetary authority for use in meeting a country's balance of payments needs as of the end-date of the period specified. This category includes not only foreign currency and gold, but also a country's holdings of Special Drawing Rights in the International Monetary Fund, and its reserve position in the Fund.,
+  
+  * Telephones - main lines in use=This entry gives the total number of fixed telephone lines in use,
+  
+  * Telephones - mobile cellular=This entry gives the total number of mobile cellular telephone subscribers,
+  
+  * Total fertility rate(children born/woman)=This entry gives a figure for the average number of children that would be born per woman if all women lived to the end of their childbearing years and bore children according to a given fertility rate at each age. The total fertility rate (TFR) is a more direct measure of the level of fertility than the crude birth rate, since it refers to births per woman. This indicator shows the potential for population change in the country. A rate of two children per woman is considered the replacement rate for a population, resulting in relative stability in terms of total numbers. Rates above two children indicate populations growing in size and whose median age is declining. Higher rates may also indicate difficulties for families, in some situations, to feed and educate their children and for women to enter the labor force. Rates below two children indicate populations decreasing in size and growing older. Global fertility rates are in general decline and this trend is most pronounced in industrialized countries, especially Western Europe, where populations are projected to decline dramatically over the next 50 years.,
+  
+  * Unemployment rate(%)=This entry contains the percent of the labor force that is without jobs. Substantial underemployment might be noted.
+
 ## Braden Griebel Individual Section:
 **Question:** What is the relationship between length of highways and railroads, when controlling for land area and wealth measured by GDP per capita, and what affect does the ratio have with the oil consumption of the country?
 
@@ -347,4 +352,49 @@ cor(bfb$ratio,bfb$oil_percapita)
 
 ### Findings: 
 From the graph directly above, and the correlation coefficient, there is no significant correlation between the ratio of railroads to higways. This could mean a variety of things, such as the effeciency of trains and highways not being significantly different, or usage rates varying not being reflected by size of the rail network. Either way this means it is not particularly useful to build more railways per km of highway in reducing oil use. From the first two graphs (again the third is for small countries and other territories, and in fact most of the countries have NAs across most of their variables), it can be seen that across GDP and country size there is a positive correlation between kilometers of highways in a country and kilometers of railways in a country. This makes sense, as both are correlated to country size. The slope of the lines varies between the GDP levels, but there doesn't seem to be any consistant trends about what level of wealth leads to higher or lower slopes of the linear model. 
+
+## Luke Fanning Individual Section
+
+**Question:** How does the rate of military expenditures, in terms of percent of GDP, affect various measures of economic success, such as GDP growth rate, unemployment rate, public debt, as well as various import and export variables?
+
+```{r}
+l_1factbook <- factbook %>% filter(!is.na(`Military expenditures - percent of GDP(%)`) & !is.na(`GDP - real growth rate(%)`))
+
+ggplot(data = l_1factbook, mapping = aes(x = `Military expenditures - percent of GDP(%)`, y = `GDP - real growth rate(%)`)) + geom_point() + geom_smooth() + labs(title = "Miltary Expenditures vs. GDP growth rate", x = "Miltary Expenditures as a percent of GDP", y = " GDP - Real Growth Rate")
+```
+```{r}
+l_2factbook <- factbook %>% filter(!is.na(`Military expenditures - percent of GDP(%)`) & !is.na(`Unemployment rate(%)`))
+
+ggplot(data = l_2factbook, mapping = aes(x = `Military expenditures - percent of GDP(%)`, y = `Unemployment rate(%)`)) + geom_point() + geom_smooth() + labs(title = "Military Expenditures vs. Unemployment Rate", x = "Military Expenditures as a percent of GDP", y = "Unemployment Rate")
+```
+
+```{r}
+l_3factbook <- factbook %>% filter(!is.na(`Military expenditures - percent of GDP(%)`) & !is.na(`Public debt(% of GDP)`))
+
+ggplot(data = l_3factbook, mapping = aes(x = `Military expenditures - percent of GDP(%)`, y = `Public debt(% of GDP)`)) + geom_point() + geom_smooth() + labs(title = "Military Expenditures vs. Public Debt", x = " Military Expenditures as a percent of GDP", y = "Public Debt as a percent of GDP")
+```
+```{r}
+l_4factbook <- factbook %>% filter(!is.na(`Military expenditures - percent of GDP(%)`) & !is.na(`Imports`))
+
+ggplot(data = l_4factbook, mapping = aes(x = `Military expenditures - percent of GDP(%)`, y = `Imports`)) + geom_point() + geom_smooth() + labs(title = "Military Expenditures vs. Imports", x = "Military Expenditures as a percent of GDP", y = " Number of Imports")
+```
+```{r}
+l_5factbook <- factbook %>% filter(!is.na(`Military expenditures - percent of GDP(%)`) & !is.na(`Exports`))
+
+ggplot(data = l_5factbook, mapping = aes(x = `Military expenditures - percent of GDP(%)`, y = `Exports`)) + geom_point() + geom_smooth() + labs(title = "Military Expenditures vs. Exports", x = "Military Expenditures as a percent of GDP", y = "Number of Exports")
+```
+
+### Findings:
+
+The graphs above clearly show that there is no correlation between military spending as a function of GDP and any factor of economic success. This then means that countries looking to boost their economies in this day and age should focus on spending in other areas besides the military. This is especially relevant information to have in the US, where military spending has never been higher, yet we teeter closer and closer to a recession. One important thing to keep in mind with this data, however, is while there is no clear correlation between military expenditures and overall economic success, there is a correlation with decreased economic variability and military expenditures. This means that while you cannot necessary boost a country;s economy by spending money on the military, you can use military spending as a stabilizing factor to help reduce negative externalities of spending in other areas of the economy. 
+
+### Ethical Implications:
+
+Ethically, this can benefit governments who heed the advice of having a balanced spending plan in terms of expenditures as a percent of GDP. Many countires would be better off with less spending on thier military (such as the US), as it is clear from the graphs above (especially that of miltary expenditures vs. public debt) that at a certain point, increased military expenditures are actually related to negative economic factors rather than economic upturn. However, this data can also be extremely harmful to national security of many smaller countries, as if all countries were to increase military expenditures to a point of economic stabilization, the world would be a much more dangerous place to live in due to the volatility of various political figures in this world. 
+
+## Individual Contributions
+
+Luke Fanning: I did my individual section and conclusion, answering my question through the use of geom_point and geom_smooth. I also used the dplyr function filter, allowing me to remove NA values from the dataset in order to create a more accurate depiction of the dataset. I also wrote out the team question, adding the necessary parts about implications of this data for the domain expert and deescribing why this dataset is just generally important in this day and age. I then completed all of the graphs for the team section, and wrote the findings for each section as well as the overall conclusion and recommendation.
+
+
 
