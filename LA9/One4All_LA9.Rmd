@@ -398,6 +398,40 @@ The graphs above clearly show that there is no correlation between military spen
 
 Ethically, this can benefit governments who heed the advice of having a balanced spending plan in terms of expenditures as a percent of GDP. Many countires would be better off with less spending on thier military (such as the US), as it is clear from the graphs above (especially that of miltary expenditures vs. public debt) that at a certain point, increased military expenditures are actually related to negative economic factors rather than economic upturn. However, this data can also be extremely harmful to national security of many smaller countries, as if all countries were to increase military expenditures to a point of economic stabilization, the world would be a much more dangerous place to live in due to the volatility of various political figures in this world. 
 
+## Ahyo Falick Individual Section:
+
+**Question 1**
+How does the percent of people in the labor force compared with the total population affect the industrial production growth rate? This is an interesting question because it might show correlations between a larger labor force and a high industrial production growth rate. The answer to this question could point to an ideal percent of workers in a country to optimize industrial production. From the data, it can be analyzed what percent of the population works for more industrialized countries and what percent works for less industrialized countries.
+
+
+```{r}
+labor <- factbook %>% select("Country","Labor force","Population","Industrial production growth rate(%)", "GDP - real growth rate(%)") %>% mutate(factbook$`Labor force` / factbook$Population * 100)
+names(labor) <- c("Country", "Labor force", "Population", "Industrial production growth rate(%)", "GDP Growth Rate (%)", "Labor force (%)")
+labor <- labor %>% filter(!is.na(labor$`Industrial production growth rate(%)`))
+labor
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+ggplot(labor) + geom_point(mapping = aes(x = labor$`Labor force (%)`, y = labor$`Industrial production growth rate(%)`), color = "blue") + geom_smooth(mapping = aes(x = labor$`Labor force (%)`, y = labor$`Industrial production growth rate(%)`), color = "red") + labs(title = "Labor Force vs. Industrial Production Growth Rate", x = "Labor Force (%)", y = "Industrial Production Growth Rate (%)")
+
+ggplot(labor) + geom_point(mapping = aes(x = labor$`Labor force (%)`, y = labor$`GDP Growth Rate (%)`), color = "orange", size = 1) + geom_smooth(mapping = aes(x = labor$`Labor force (%)`, y = labor$`GDP Growth Rate (%)`), color = "magenta") + labs(title = "Labor Force vs. GDP Growth Rate (%)", x = "Labor Force (%)", y = "GDP Growth Rate (%)") + ylim(-5, 20)
+```
+
+### Findings:
+The first graph compares the Labor Force percentage of a country with the its industrial production growth rate. The individual data points are depicted in blue and an attempted trend line is in red. From this data, it can be concluded that, to a certain extent, as the labor force increases, so does the growth rate of industrial production. The trend line steadily rises until nearly a 50% labor force, where the line begins to decrease. This demonstrates that there seems to be an ideal percentage of workers a country should have for the most industrial growth.
+
+The second plot compares an increasing labor force percentage with a country's gross domestic product (GDP). As with the industrial production growth rate, a country's GDP growth rate increases steadily as the labor force percentage increases. The trendline for this graph increases throughout the whole graph with a slight decrease at  50%. The conclusion can therefore be drawn that the GDP growth rate has a positive correlation with an increased labor force. Furthermore, this shows that as long as the labor force is increasing, so will the GDP growth rate.
+
+
+### Ethics Reflection:
+This data can benefit countries with lower growth rates of industrial production and GDP by demonstrating that these rates can increase by establishing a larger labor force.
+
+
+
+
+
+
 ## Individual Contributions
 
 Luke Fanning: I did my individual section and conclusion, answering my question through the use of geom_point and geom_smooth. I also used the dplyr function filter, allowing me to remove NA values from the dataset in order to create a more accurate depiction of the dataset. I also wrote out the team question, adding the necessary parts about implications of this data for the domain expert and deescribing why this dataset is just generally important in this day and age. I then completed all of the graphs for the team section, and wrote the findings for each section as well as the overall conclusion and recommendation.
@@ -405,4 +439,5 @@ Luke Fanning: I did my individual section and conclusion, answering my question 
 
 Braden Griebel: For the team section I imported the data set and used the col_double function to parse all the columbns as a number, and then removed the NA row at the top that represented metadata that col_double parsed as an NA (since they were character strings) I also wrote out the codebook and dataset description. For the individual section I added three new variables using the mutate function. The first was the ratio of kilometers of railways to kilometers of highways to analyse how these were correlated with oil consumption. The second and third new variables were variables coding for the size of a countries area or GDP. The cut offs for this were found using quantile function to roughly equally split the data between the categories. I then used ggplot to plot the data, using color to split the data along the GDP categories. I initially used a facet_wrap function to split the data along the area categories, but this didn't allow enough control over the scale of the axis, so instead I filtered the data using the filter function and created seperate graphs. Finally, I used ggplot again to graph oil consumption vs the ratio I had created earlier, using geom_point as well geom_smooth with a linear model to show the trend. I added labels to make everything easier to read. 
 
+Ahyo Falick: In order to complete my individual section, I first selected only the variables needed to compare labor force to growth rates. These variables were the country, the labor force, the population, the industrial production growth rate, and the GDP growth rate. In order to find the labor force as a percentage, I then divided the labor force of a country by the population of that country. Finally, I created two separate plots using geom_point and geom_smooth to display the data cleanly and show its trends.
 
