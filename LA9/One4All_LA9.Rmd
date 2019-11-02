@@ -429,7 +429,7 @@ This data can benefit countries with lower growth rates of industrial production
 
 
 
-#Andrew Duffy Individual Section
+## Andrew Duffy Individual Section
 
 **Question**
 How does a countries life expectancy at birth vary based on a countries GDP per Capita? I find this to be interesting because there are many variables you can compare to GDP per capita to make assumptions of how money affect people's lives in different ways. Especially, how do people in developing countries have different lives from people living in developed countries? But, the most valuable thing for us humans is life, So I wonder how does one's wealth and income affect their life expectancy? Do people in developing countries live shorter or longer? 
@@ -459,11 +459,11 @@ df <- df %>% arrange(`GDP - per capita`)
 ggplot(data = df) + geom_smooth(aes(x = `Life expectancy at birth(years)`, y = `GDP - per capita`, color = 'red'), se = FALSE) + ggtitle("GDP per capita (US$) vs. Life Expectancy (at birth)")
 ```
 
-##Findings
+## Findings
 While there is not much of a correlation between life expectancy and GDP growth, as well as GDP per capita and death rate, I wasn't very surprised by this, because a lot of things can affect death rate/life expectancy on a small scale to create outliers. In fact, it seems that in the death rate vs. GDP per capita plot there seems to be an uptick at the end of the graph in which countries with a relatively high GDP experience the highest death rate, as well as the GDP growth vs. life expectancy where it seems countries with lower GDP growth rates have a high life expextancy. However, there is a very strong correlation between GDP per capita and life expectancy where the higher the countries income per resident, the higher the life expectancy.
 
 
-##Ethical Implications
+## Ethical Implications
 The plot GDP per capita vs. Life Expectnacy shows a clear correlation between the 2. This implicates that the richer you are, the longer you will live. Not only that, but the line equation seems to be of exponential growth, meaning there is a huge difference in life expectancy vs. someone who makes (USD) 10,000 per year versus someone who makes $80,0000 per year. This is extremely valuable information, because a large corporation who has insight on this correlation can tailor their services knowing people in certain countries will live (on average) shorter or longer than people in other countries. This statistic could possibly create a lot of room for profit if acted upon correctly, as well as the moral implications of this. In undeveloped countries, it is quite sad knowing the average person will live almost less than half as long as the richest countries, simply due to medical access and the ability to afford proper health and medications one might need. In conclusion, as a species we should work to create less class diversity, or make the poorest countries in the world wealthier to let their populations live longer.
 
 
