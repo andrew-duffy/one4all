@@ -90,7 +90,30 @@ ggplot(data = answers, mapping = aes(x = python_true, y = Score)) + geom_jitter(
 ```
 
 
+# Ahyo Falick Individual Section:
 
+## Question:
+**Does the use of an actual question for the title have any effect on the score?**
+This is an interesting question to me because it seems like a random question unlikely to result in a correlation, but it would be cool if it does. People could view titles with full questions in the names as more relatable to exactly what they are looking for and would therefore be more likely to upvote the answer.
+
+```{r}
+questions <- questions %>% mutate(question = str_detect(Title,"\\?$"))
+qtrue <- questions %>% filter(str_detect(Title,"\\?$"))
+tavg <- summarize(qtrue,mean(Score))
+tt <- tally(qtrue, name = "Score")
+qfalse <- questions %>% filter(!str_detect(Title,"\\?$"))
+favg <- summarize(qfalse,mean(Score))
+ft <- tally(qfalse, name = "Score")
+```
+
+
+```{r}
+ggplot(questions) + geom_bar(mapping = aes(x = question)) + geom_jitter(mapping = aes(x = question, y = Score, color = question)) + labs(title = "Use of a Question vs. Score", x = "Score", y = "Use of Question")
+```
+
+## Observations:
+
+From the plot above, it can be concluded that having a question as the title will result in a higher score. The histogram in the plot represents the total count of all the scores for both true and false. It is obvious that while false definitely has a larger total count, the average for true is higher. This tells us that while there were more titles that were not questions, those titles that were questions had higher average scores. The mean score for false was 18.87 and the mean score for true was 34.95 which is signficantly higher. This finding supports my hypothesis that using a question will usually result in more upvotes.
 
 
 
@@ -177,4 +200,6 @@ Stack overflow could also benefit from this knowledge by changing their search a
 
 **Braden:** I examined the mean word length of posts (both questions and answers) and its relationship to the score of the posts. I used the stringr function extract all by the word boundry to find all the words, then used length to find their length. I did this after removeing the html tags using the remove all function to examine only actual typed words, and not formating features. From this is can be seen that most of the relationship between mean word length and score has to do with the fact that almost all of the posts fall into a certain range (around 5) for mean word length, and so that was where almost all high scoring posts fell. However, if the mean word length of a post is overly long or short it will reduce its chances of being a high scoring post. I chose this feature because I though that mean word length would be a decent proxy for the complexity of the questions/answer, and I believed that complexity would have a big affect on the score of the posts. 
 
-**Andrew:** I examined the relevance of "Python" and "C++" appearing in the title of posts and popularity. I did this by mutating the original dataframe to create a boolean variable whether or not "Python" or "C++" was a string vector in the title. Then, I graphed that variable controlling for score to see the results. While my findings were not the best, there does seems to be more popular posts with either coding language in the title. I also examined the length of an answer to its score to see if longer or shorter responses yield higher scores. I did this using str_count and creating a new variable in the answers dataframe to show the length of the response in the graph. The results again were quite skewed towards 0, even after filtering out scores of 0
+**Andrew:** I examined the relevance of "Python" and "C++" appearing in the title of posts and popularity. I did this by mutating the original dataframe to create a boolean variable whether or not "Python" or "C++" was a string vector in the title. Then, I graphed that variable controlling for score to see the results. While my findings were not the best, there does seems to be more popular posts with either coding language in the title. I also examined the length of an answer to its score to see if longer or shorter responses yield higher scores. I did this using str_count and creating a new variable in the answers dataframe to show the length of the response in the graph. The results again were quite skewed towards 0, even after filtering out scores of 0.
+
+**Ahyo:** For this lab I looked at how the usage of questions in the title affects the score of the answer. To do this i used a geom_bar function behind a geom_jitter function to show the density of the plot as well as the total count. I subsequently found that there is a correlation between whether or not a question is used and the score. If a question is used, the average score is higher than if no question is used.
