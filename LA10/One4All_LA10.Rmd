@@ -1,0 +1,147 @@
+---
+title: "One4All_LA10"
+author: "Braden Griebel, Andrew Duffy, Ahyo Falick, Luke Fanning"
+date: "10/31/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(stringr)
+library(lubridate)
+answers<-read_csv(file="Answers_trunc.csv",col_types=cols(CreationDate=col_datetime()))
+questions<-read_csv(file="Questions_trunc.csv",col_types=cols(CreationDate=col_datetime()))
+answers<-answers%>%select(-X7)
+questions<-questions%>%select(-X7)
+answersb<-answers
+questionsb<-questions
+```
+
+
+```{r}
+merged <- answers %>%
+  left_join(questions, c('ParentId' = 'Id'),suffix=c(".answers",".questions"))
+
+merged <- merged %>% 
+  mutate(total_time = CreationDate.answers - CreationDate.questions) %>%
+  filter(total_time>0)
+```
+
+# Team Section:
+
+
+```{r warning=F, message=F}
+### look at histogram of scores, and total time
+## make sure to play around with xlim
+ggplot(merged) + geom_histogram(aes(Score.answers), bins=100)  + xlim(c(0, 30))+labs(title="Score of the Answers",x="Answers Score")
+ggplot(merged) + geom_density(aes(Score.answers))  + xlim(c(0, 30))+labs(title="Distribution of Answers Score",x="Score of Answer")
+# is this normally distributed?
+
+ggplot(merged) + geom_density(aes(total_time)) +xlim(c(0, 2000))+labs(title="Total Time Density Plot",x="Total Time between question creation and Answer")
+# is this normally distributed?
+
+
+### how does score change as time elapses
+### investigating timeliness
+
+ggplot(data = (merged)) + 
+  geom_jitter(mapping = aes(x = total_time, y = Score.answers), size=0.1)+xlim(0,5000) +labs(title="Answers score over time",x="Time since questions Creation",y="Score of Answer")
+```
+
+
+# Results:
+
+The distribution of the Answers score doesn't seem to be very close to a normal distribution, or at least it would be a very skewed distribution. However, it would still be possible to examine the percentiles and z-scores. Percentiles make sense with almost any data distribution, and although z-scores are attempting to normalize the data it still can be calculated as long as the data has a mean and standard distribution which this data clearly has.
+
+From the above plots the relationship between timliness of an answer and its score can be examined. Looking at the graph showing the relationship between the Time elapsed since the questions creation, and the score, it does seem that higher scoring answers tended to be those that were within 2000 s (33 minutes). However, this is also where the majority of the answers tend to lie, thus increasing the likelyhood of a high scoring post being found there. After this time there are far fewer responses, and the interest in the question seems to have largely abated. It would be interesting to examine the activity of a post over time to see if this is true. Regardless, if an answer is posted after about half an hour, it will almost certainly not get a high score. 
+
+
+
+## Luke Fanning Individual Section
+
+### Question regarding the Questions table:
+**Does a question with a shorter body length (in terms of total characters) typically get a higher score than a question with a longer body length?**
+
+This question is interesting to me as it analyzes something I've always been curious about. Visually, I'm personally turned off from reading a question on stackoverflow when the body seems really convuluted and long, as it makes me believe that the question is overly specific and not relatable to whatever assignment I'm currently working on. Therefore, I'd like to see if my personal taste is indicative of a larger trend for questions as a whole, or whether most people are willing to stick out a meatier body in hopes that the subject will be more interesting and/or more relatable to a common question or topic on the site, inidcated by the score the question recieved. 
+
+```{r}
+questions <- questions %>% mutate(letters_body = str_count(Body, regex("[a-z]", ignore_case = T)))
+ggplot(data = questions, mapping = aes(x = letters_body, y = Score)) + geom_jitter() + xlim(c(0, 3000)) + labs(title = "Question Body Length vs. Score", x = "Number of letters in body of question", y = "Score")
+ggplot(data = questions, mapping = aes(x = letters_body, y = Score)) + geom_jitter() + xlim(c(0, 500))+ labs(title = "Question Body Length vs. Score", x = "Number of letters in body of question", y = "Score")
+```
+At first, simply by looking at a plot of length in terms of number of characters vs. score, there does seem to be a trend towards what I would subjectively call medium length bodies, where the body is not so short that it is impossible to tell what the question is regarding, but not too long that it is unattractive to the reader. This appears to fall somewhere in the 0 - 1000 character length range, which, considering that the average word in the english language is about five characters long, makes sense, as about 100-200 words seems appropriate for fully elucidating a question topic without overexplaining or boring the audience. However, while there is an indication of a trend in the data, I wanted to check one small thing regarding the letters_body column itself, as seen in the plot below.
+
+```{r}
+ggplot(data = questions, mapping = aes(x = letters_body)) + geom_density() + labs(title = "Question Body Length vs. Density", x = "Number of letters in body of question", y = "Density of question body length")
+ggplot(data = questions, mapping = aes(x = letters_body)) + geom_density() + xlim(c(0, 1000))+ labs(title = "Question Body Length vs. Density", x = "Number of letters in body of question", y = "Density of question body length")
+
+```
+As seen in the plot above, the relationship that was described above may be virtually obselete, as while there may be some trend towards a medium length question body based off of score, this is more likely just due to the fact that an overwhelming majority of bodies for questions submitted to the stackoverflow topic "python questions" have a length between 0 - 1000 characters. However, this does answer my ultimate question regarding question length, as it seems that most people also feel like in order for a question to be worthwhile, the body of the question must be kept relatively brief in order to gain the attention of the reader and answerer.
+
+### Question regarding the answers table:
+**Does the usage of the word python in the response to a question affect the score of that response?**
+This question interests me because theoretically, there should be no discernable difference between responses that mention the relevant programming language and questions that don't, as these questions and responses are all from the python questions section of stackoverflow. However, as seen below, it does seem as though there is a correlation betwen higher rated responses and literally stating the word python somewhere in the response.This correlation may be due to higher quality responses often working to teach the user how to do a specific aspect of programming in the language rather than simply responding with the problem for their specific section of code that they are having issues with.  
+
+
+```{r}
+answers <- answers %>% mutate(python_true = str_detect(Body, regex("python", ignore_case = T)))
+ggplot(data = answers, mapping = aes(x = python_true, y = Score)) + geom_jitter() + labs(title = "Usage of the word python(true or false) vs. Score", x = "Usage of the word python in the response (true or false)", y = "Score")
+```
+
+
+
+
+
+
+
+
+# Braden Individual Question:
+
+## Engineered Feature/Question:
+I Will examine the relationship between score and mean word length. I believe that mean word length will have an affect on answer score, because overly simplistic explanations will use shorter words and be scored poorly, and overly verbose answers will simmilarly be scored poorly. For questions, people will tend to upvote questions they view as intelligent, which people tend to interperate as using longer words, but at a certain point it will become unintelligible and people won't upvote anymore. 
+```{r}
+answers_cleaned<-answersb%>%mutate("Body"=str_remove_all(Body,"<.+?>"))%>%mutate("mean_word_length"=2) #removing HTML tags since they shouldn't be counted as words
+questions_cleaned<-questionsb%>%mutate("Body"=str_remove_all(Body,"<.+?>"))%>%mutate("mean_word_length"=2)
+
+#iterating through the answers and finding the words, finding the mean length and then adding it to the mean word length column
+
+for(i in 1:nrow(answers_cleaned)){ 
+  answers_cleaned[i,7]=mean(str_length(str_extract_all(answers_cleaned[i,6],boundary("word"))[[1]]))
+}
+
+#same but for questions
+for(i in 1:nrow(questions_cleaned)){
+  questions_cleaned[i,7]=mean(str_length(str_extract_all(questions_cleaned[i,6],boundary("word"))[[1]]))
+}
+
+```
+
+
+
+
+```{r}
+ggplot(answers_cleaned,aes(mean_word_length,Score,color=hour(CreationDate)))+geom_point()+labs(title="Answer Mean word length and Score",x="Mean Word Length",y="Score")
+ggplot(answers_cleaned,aes(mean_word_length))+geom_density()+labs(title="Histogram of Mean word Length for Answers",x="Mean Word Length")
+ggplot(questions_cleaned,aes(mean_word_length,Score,color=hour(CreationDate)))+geom_point()+labs(title="Question Mean word length and Score",x="Mean Word Length",y="Score")
+ggplot(questions_cleaned,aes(mean_word_length))+geom_density()+labs(title="Histogram of Mean word Length for Questions",x="Mean Word Length")
+```
+
+
+## Observations:
+As can be seen in the above plots, the mean word length of both questions and answers is slightly less than 5. When looking at the scores, this is also where most of the higher scoring posts tend to be. This likely indicates that a large portion of the relationship between mean word length and score is mostly due to the high number of responses that have a mean word length around that point. Since most of the responses lie in this region, there is a higher chance that ones that score higher will lie here as well. However, above and below a certain mean word length there are no high scoring posts, so it does seem like it would be neccesary have a mean word length of around 5 to get a high scoring post, although this certainly doesn't garuntee a good post. This is mainly a criterion to rule out posts if the goal is to guess ones that are high scoring. The reason this relationship exists is likely because posts with a mean word length of around 5 are going to be the ones written in the most normal english manor, since this is around where the average english word length lies. People will be able to understand these posts more easily, and so they will tend to get higher scores. Much below or above this region indicates either confusingly long words, or over simplistic ones that fail to be clear. 
+
+
+
+# Consolodation:
+
+From the findings above it can be seen that posts that are too long or short, and posts with words that are too long or too short tend not to achieve higher scores. Thus the ideal question post would have a length between 0 and 1000 characters, as well as a mean word length of around 5. For answers, it would have a simmilar mean word length and include the word python.Additionally for answers, they should be posted within around half an hour of the questions being posted. 
+
+The overall scores distribution seems to either not be a normal distribution, or one that is very skewed. Howevever, it is still possible to calculate percentiles since you can do that with any data distribution, and as long as the data has a mean and a standard distribution the z-score can still be calculted, however for non-normal or very skewed data it might not be a particularly useful statistic. 
+
+This data could help stack overflow in examining what type of posts tend to be favored by their users, and they could filter for this in order to make it easier for their users to find good posts. This could hurt those with questions they need help with, but that don't lie in the higher scoring post characteristics. Even those these posts don't tend to get high scores, they can get useful answers, and it would be more difficult to get these answers if stack overflow filtered/sorted the posts based on what they found that users prefered. 
+
+# Individual contributions:
+
+**Braden:** I examined the mean word length of posts (both questions and answers) and its relationship to the score of the posts. I used the stringr function extract all by the word boundry to find all the words, then used length to find their length. I did this after removeing the html tags using the remove all function to examine only actual typed words, and not formating features. From this is can be seen that most of the relationship between mean word length and score has to do with the fact that almost all of the posts fall into a certain range (around 5) for mean word length, and so that was where almost all high scoring posts fell. However, if the mean word length of a post is overly long or short it will reduce its chances of being a high scoring post. I chose this feature because I though that mean word length would be a decent proxy for the complexity of the questions/answer, and I believed that complexity would have a big affect on the score of the posts. 
+
