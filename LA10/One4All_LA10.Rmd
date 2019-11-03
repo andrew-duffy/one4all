@@ -132,16 +132,49 @@ ggplot(questions_cleaned,aes(mean_word_length))+geom_density()+labs(title="Histo
 As can be seen in the above plots, the mean word length of both questions and answers is slightly less than 5. When looking at the scores, this is also where most of the higher scoring posts tend to be. This likely indicates that a large portion of the relationship between mean word length and score is mostly due to the high number of responses that have a mean word length around that point. Since most of the responses lie in this region, there is a higher chance that ones that score higher will lie here as well. However, above and below a certain mean word length there are no high scoring posts, so it does seem like it would be neccesary have a mean word length of around 5 to get a high scoring post, although this certainly doesn't garuntee a good post. This is mainly a criterion to rule out posts if the goal is to guess ones that are high scoring. The reason this relationship exists is likely because posts with a mean word length of around 5 are going to be the ones written in the most normal english manor, since this is around where the average english word length lies. People will be able to understand these posts more easily, and so they will tend to get higher scores. Much below or above this region indicates either confusingly long words, or over simplistic ones that fail to be clear. 
 
 
+### Andrew Duffy Individual Question:
+
+## Question regarding Questions file: Since these are questions regarding python, how do the scores vary with posts with the word "Python" in the title? Do all highscoring posts have "python" in the title? Also, what about the appearance of the language python is based off of, "C++", in the title?
+```{r, echo = FALSE, warning = FALSE}
+ptitle <- questions %>% filter(Score > 10) %>% mutate(p = str_detect(Title, regex("[Pp]ython")))
+
+ggplot(data = ptitle) + geom_jitter(aes(x = p, y = Score, color = Score), scale = "area") + ggtitle("Python appearing in the title vs. Score") + labs(y = "Score", x = "Usage of Python in title")
+
+cpptitle <- questions %>% filter(Score > 10) %>% mutate(cpp = str_detect(Title, regex("[Cc]++")))
+
+ggplot(data = cpptitle) + geom_jitter(aes(x = cpp, y = Score, color = Score), scale = "area") + ggtitle("C++ appearing in the title vs. Score") + labs(x = "Usage of C++ in the title vs. Score")
+```
+# Observations: 
+As seen in the plots above, there seems to be a higher chance of a post becoming popular when there are "Python" or "C++" in the title. However, this cannot be immediately deduced as a correlation because there are many factors going into this. Questions with "Python" in the title I would assume to be more general questions that novice users are asking (in the python section of stackoverflow, there is no reason to include python in the title), which have a larger pool of people searching for that question. Therefore, these posts can become more popular due to that.
+
+#Note: 
+I filtered for score > 10 because it just fills the bottom of the graph less, and there are already so many posts with very low scores.
+
+
+
+## Question regarding the Answers file: How is the score of a response affected by the length of the text?
+```{r, echo = FALSE, warning = FALSE}
+feature <- answers %>% filter(Score > 0) %>% mutate(length = str_count(Body, regex("[a-z]", ingore_case = TRUE)))
+
+ggplot(data = feature) + geom_point(aes(x = Score, y = length)) + ylim(0,5000) + ggtitle("Answer Score vs. Length of Response") %>% labs(x = "Score", y = "Length")
+```
+#Observations:
+
+It seems that there is too much data to draw a conclusion on how length affects score of a response. Not to mention that there seems to be high-scoring posts at every length up to 4,000 characters. However, there is a small concentration of high-scoring posts in which their lengths are very close to 0. I would assume this means simple answers to simple questions get the highest results compared to answers that complicate a simple question and provide a lengthy response. 
+
 
 # Consolodation:
 
-From the findings above it can be seen that posts that are too long or short, and posts with words that are too long or too short tend not to achieve higher scores. Thus the ideal question post would have a length between 0 and 1000 characters, as well as a mean word length of around 5. For answers, it would have a simmilar mean word length and include the word python.Additionally for answers, they should be posted within around half an hour of the questions being posted. 
+From the findings above it can be seen that posts that are too long or short, and posts with words that are too long or too short tend not to achieve higher scores. Thus the ideal question post would have a length between 0 and 1000 characters, as well as a mean word length of around 5. For answers, it would have a simmilar mean word length and include the word python. Additionally for answers, they should be posted within around half an hour of the questions being posted. 
 
-The overall scores distribution seems to either not be a normal distribution, or one that is very skewed. Howevever, it is still possible to calculate percentiles since you can do that with any data distribution, and as long as the data has a mean and a standard distribution the z-score can still be calculted, however for non-normal or very skewed data it might not be a particularly useful statistic. 
+The overall scores distribution seems to either not be a normal distribution, or one that is very skewed. It seems that there are too many posts with a score of 0 or very close to 0, which skews results greatly. Howevever, it is still possible to calculate percentiles since you can do that with any data distribution, and as long as the data has a mean and a standard distribution the z-score can still be calculted, however for non-normal or very skewed data it might not be a particularly useful statistic, due to the fact there are many more posts close to a score of 0. It is hard to find a good way to benefit from the results considering posts with very low scores can still be very helpful, epecially to those asking very advanced questions in which the pool of people searching for that question, and the pool of people with the knowledge to respond are both very small compared to simple questions that anyone with a basic knowledge of python can answer.
 
-This data could help stack overflow in examining what type of posts tend to be favored by their users, and they could filter for this in order to make it easier for their users to find good posts. This could hurt those with questions they need help with, but that don't lie in the higher scoring post characteristics. Even those these posts don't tend to get high scores, they can get useful answers, and it would be more difficult to get these answers if stack overflow filtered/sorted the posts based on what they found that users prefered. 
+This data could help stack overflow in examining what type of posts tend to be favored by their users, and they could filter for this in order to make it easier for their users to find good posts. This could hurt those with questions they need help with, but that don't lie in the higher scoring post characteristics. Even though these posts don't tend to get high scores, they can get useful answers, and it would be more difficult to get these answers if stack overflow filtered/sorted the posts based on what they found that users prefered. 
+
+Stack overflow could also benefit from this knowledge by changing their search algorithms in ways to help all users. For example, it can match searches for advanced questions not by popularity, but by proximity of the question search and the text of the already existing question post. But for simple questions, stack overflow should match searches with similar popular posts to get an answer that is the most helpful. 
 
 # Individual contributions:
 
 **Braden:** I examined the mean word length of posts (both questions and answers) and its relationship to the score of the posts. I used the stringr function extract all by the word boundry to find all the words, then used length to find their length. I did this after removeing the html tags using the remove all function to examine only actual typed words, and not formating features. From this is can be seen that most of the relationship between mean word length and score has to do with the fact that almost all of the posts fall into a certain range (around 5) for mean word length, and so that was where almost all high scoring posts fell. However, if the mean word length of a post is overly long or short it will reduce its chances of being a high scoring post. I chose this feature because I though that mean word length would be a decent proxy for the complexity of the questions/answer, and I believed that complexity would have a big affect on the score of the posts. 
 
+**Andrew:** I examined the relevance of "Python" and "C++" appearing in the title of posts and popularity. I did this by mutating the original dataframe to create a boolean variable whether or not "Python" or "C++" was a string vector in the title. Then, I graphed that variable controlling for score to see the results. While my findings were not the best, there does seems to be more popular posts with either coding language in the title. I also examined the length of an answer to its score to see if longer or shorter responses yield higher scores. I did this using str_count and creating a new variable in the answers dataframe to show the length of the response in the graph. The results again were quite skewed towards 0, even after filtering out scores of 0
