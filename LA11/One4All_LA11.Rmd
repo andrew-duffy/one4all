@@ -544,6 +544,14 @@ trendyf <- trendyf %>% arrange(desc(sdiff))
 ```
 Based on the criteria given by the couple, I would recommend Daxton and Adaline as the respective boy or girl name because they had the biggest positive difference between the slope of 2000-2010 and 1990-2000.
 
+## Plot of Ahyo
+```{r}
+lett <- babynames %>% filter(str_detect(name,"Ahy"))%>%group_by(year) %>% summarize(prop=sum(prop))
+ahyo_names <- babynames %>% filter(str_detect(name,"A[hy]+[oa]?")) %>% group_by(year) %>% summarize(prop=sum(prop))
+ggplot() + geom_smooth(data=lett,mapping=aes(x=year,y=prop,color="Names that Start with Ahy"),se=F) + 
+  geom_smooth(data=ahyo_names,mapping=aes(year,prop,color="Ahyo Names"),se=F) + labs(title="Popuarity of Ahyo", x="Year",y="Proportion")
+```
+
 ## Ariel and Rachel Regexs
 ```{r}
 arx<-"^A[y]?r+[iaey]+[aeiy]+l+[le]?$"
