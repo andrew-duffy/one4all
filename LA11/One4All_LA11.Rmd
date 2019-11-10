@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 ---
 title: "One4All_LA11"
 author: "Braden Griebel, Andrew Duffy, Ahyo Falick, Luke Fanning"
@@ -419,24 +418,27 @@ selected_female
 
 ###Andrew Duffy Individual Section
 ```{r, warning = FALSE, message = FALSE, echo = FALSE}
-babies <- bbnames18
-And <- babies %>% filter(str_detect(babies$name, "^[Aa]nd"))
+babies <- total_babynames
+And <- babies %>% filter(str_detect(babies$name, "^Aand"))
 
-andrew <- babies %>% filter(str_detect(babies$name, "^Andrew$"))
-Andrew <- Andrew %>% aggregate(Andrew$prop, by=list(Andrew$year), FUN = median)
+andrew <- babies %>% filter(str_detect(babies$name, "^And[rew]$"))
 
-ggplot(data = Andrew, aes(x = year, y = prop)) + geom_smooth(se = FALSE) + geom_smooth(data = And, aes(x = year, y = prop), se = FALSE, color = 'darkblue')
+#Only one way to spell Andrew, not including language differences so [rew] is in brackets for that reason
 
-popularity <- Andrew %>% filter(year >= 1979)
+#Andrew <- Andrew %>% aggregate(Andrew$prop, by=list(Andrew$year), FUN = median)
+
+ggplot(data = andrew, aes(x = year, y = prop)) + geom_smooth(se = FALSE) + geom_smooth(data = And, aes(x = year, y = prop), se = FALSE, color = 'darkblue')
+
+popularity <- andrew %>% filter(year >= 1979)
 ggplot(data = popularity) + geom_smooth(aes(x = year, y = prop), se = FALSE) + ggtitle("Popularity of the name Andrew since 1999") + labs(x = "Year", y = "Proportion")
 
 ```
-
+# Rachel and Ariel Regex
 
 ```{r, warning = FALSE, message = FALSE}
-regex1973 <- babynames %>% filter(year == 1973)
-ariel1973 <- regex1973 %>% mutate(contains = str_detect(regex1973$name,"Ari[ae]")) %>% filter(contains == TRUE & sex == "F") 
-rachel1973 <- regex1973 %>% mutate(contains = str_detect(regex1973$name, "Rach[ae]")) %>% filter(contains == TRUE & sex =="F")
+regex1973 <- total_babynames %>% filter(year == 1973)
+ariel1973 <- regex1973 %>% mutate(contains = str_detect(regex1973$name,"^A[ey]+r+[ie]+[ae]")) %>% filter(contains == TRUE & sex == "F") 
+rachel1973 <- regex1973 %>% mutate(contains = str_detect(regex1973$name, "^R+[aey]+ch+[ae]+l")) %>% filter(contains == TRUE & sex =="F")
 joined1973 <- rbind(rachel1973, ariel1973)
 
 rachelandariel1973 = sum(joined1973$n)
@@ -444,9 +446,9 @@ total1973 = sum(regex1973$n)
 prob1973 = rachelandariel1973 / total1973
 
 
-regex1988 <- babynames %>% filter(year == 1988)
-ariel1988 <- regex1988 %>% mutate(contains = str_detect(regex1988$name,"Ari[ae]")) %>% filter(contains == TRUE & sex == "F")
-rachel1988 <- regex1988 %>% mutate(contains = str_detect(regex1988$name, "Rach[ae]")) %>% filter(contains == TRUE & sex == "F")
+regex1988 <- total_babynames %>% filter(year == 1988)
+ariel1988 <- regex1988 %>% mutate(contains = str_detect(regex1988$name,"^A[ey]+r+[ie]+[ae]")) %>% filter(contains == TRUE & sex == "F")
+rachel1988 <- regex1988 %>% mutate(contains = str_detect(regex1988$name, "^R+[aey]+ch+[ae]+l")) %>% filter(contains == TRUE & sex == "F")
 joined1988 <- rbind(rachel1988, ariel1988)
 
 rachelandariel1988 <- sum(joined1988$n)
@@ -454,9 +456,9 @@ total1988 <- sum(regex1988$n)
 prob1988 <- rachelandariel1988 / total1988
 
 
-regex1990 <- babynames %>% filter(year == 1990)
-ariel1990 <- regex1990 %>% mutate(contains = str_detect(regex1990$name,"Ari[ae]")) %>% filter(contains == TRUE & sex == "F")
-rachel1990 <- regex1990 %>% mutate(contains = str_detect(regex1990$name, "Rach[ae]")) %>% filter(contains == TRUE & sex == "F")
+regex1990 <- total_babynames %>% filter(year == 1990)
+ariel1990 <- regex1990 %>% mutate(contains = str_detect(regex1990$name,"^A[ey]+r+[ie]+[ae]")) %>% filter(contains == TRUE & sex == "F")
+rachel1990 <- regex1990 %>% mutate(contains = str_detect(regex1990$name, "^R+[aey]+ch+[ae]+l")) %>% filter(contains == TRUE & sex == "F")
 joined1990 <- rbind(rachel1990, ariel1990)
 
 rachelandariel1990 <- sum(joined1990$n)
@@ -464,16 +466,17 @@ total1990 <- sum(regex1990$n)
 prob1990 <- rachelandariel1990 / total1990
 ```
 
+# Little Mermaid Effect
 ```{r, warning = FALSE, message = FALSE}
-regex1989 <- babynames %>% filter(year == 1989)
+regex1989 <- total_babynames %>% filter(year == 1989)
 
-ariel1989 <- regex1989 %>% mutate(contains = str_detect(name, "Ari[ae]")) %>% filter (contains == TRUE & sex == "F") 
+ariel1989 <- regex1989 %>% mutate(contains = str_detect(name, "^A[ey]+r+[ie]+[ae]")) %>% filter (contains == TRUE & sex == "F") 
 
 percenta <- ((sum(ariel1989$n) / sum(ariel1988$n)) * 100) - 100
 
 
-caroline1988  <- regex1988 %>% mutate(contains = str_detect(name, "Carol[iy]")) %>% filter(contains == TRUE & sex == "F") 
-caroline1989  <- regex1989 %>% mutate(contains = str_detect(name, "Carol[iy]")) %>% filter(contains == TRUE & sex == "F") 
+caroline1988  <- regex1988 %>% mutate(contains = str_detect(name, "Carol+[iy]+ne")) %>% filter(contains == TRUE & sex == "F") 
+caroline1989  <- regex1989 %>% mutate(contains = str_detect(name, "Carol+[iy]+ne")) %>% filter(contains == TRUE & sex == "F") 
 
 percentc <- ((sum(caroline1989$n) / sum(caroline1988$n)) * 100) - 100
 
@@ -482,8 +485,8 @@ isabella1989  <- regex1989 %>% mutate(contains = str_detect(name, "Isabel[la.]")
 
 percenti <- ((sum(isabella1988$n) / sum(isabella1989$n)) * 100) - 100
 
-megan1988  <- regex1988 %>% mutate(contains = str_detect(name, "Meg[ha]")) %>% filter (contains == TRUE & sex == "F") 
-megan1989  <- regex1989 %>% mutate(contains = str_detect(name, "Meg[ha]")) %>% filter (contains == TRUE & sex == "F")  
+megan1988  <- regex1988 %>% mutate(contains = str_detect(name, "Meg+[hae]+n")) %>% filter (contains == TRUE & sex == "F") 
+megan1989  <- regex1989 %>% mutate(contains = str_detect(name, "Meg+[hae]+n")) %>% filter (contains == TRUE & sex == "F")  
 
 percentm <- ((sum(megan1988$n) / sum(megan1989$n)) * 100) - 100
 
@@ -494,9 +497,34 @@ plist = c(percenta, percentc, percenti, percentm)
 xdata <- as.tibble(list)
 
 ggplot(data = xdata, aes(x = list, y = plist)) + geom_bar(stat = "identity", color = 'blue', fill = 'lightblue') + labs(x = "Names", y = "Percent Increase from 1988 to 1989") + ggtitle("The Little Mermaid Effect")
-
-
 ```
+
+#Name Recommendation:
+
+Criteria: Trendy but not trending, not a gender-neutral name, and can't be easily shortened
+
+```{r}
+namesm <- total_babynames %>% filter(sex == "M") %>% arrange(desc(year))
+namesf <- total_babynames %>% filter(sex == "F") %>% arrange(desc(year))
+
+#Filter out the most popular 20 names for each sex and filter if it is trending, but not too uncommon
+
+namesf <- namesf %>% filter(name != "Emma", name != "Ava", name != "Olivia", name != "Isabella", name != "Sophia", name != "Charlotte", name != "Mia", name != "Amelia", name != "Harper", name != "Evelyn", name != "Abigail", name != "Emily", name != "Elizabeth", name != "Mila", name != "Ella", name != "Avery", name != "Sofia", name != "Camila", name != "Aria", name != "Scarlett" & prop > .0025)
+
+
+namesm <- namesm %>% filter(name != "Liam", name != "Noah", name != "William", name != "James", name != "Oliver", name != "Benjamin", name != "Elijah", name != "Lucas", name != "Mason", name != "Logan", name != "Alexander", name != "Ethan", name != "Jacob", name != "Michael", name != "Daniel", name != "Henry", name != "Jackson", name != "Sebastian", name != "Aidan", name != "Matthew" & prop > .0025)
+
+#Filter out names that can be shortened and are gender - neutral
+
+namesm <- namesm %>% filter(name != "Samuel", name != "Joseph", name != "Mateo", name != "Joshua", name != "Christopher", name != "Theodore", name != "Nathan", name != "Thomas", name != "Charles", name != "Christian" & year == 2018 & n > 6540)
+
+namesf <- namesf %>% filter(name != "Madison", name != "Lillian", name != "Addison", name != "Natalie" & year == 2018)
+```
+
+Of these names for each gender, I would choose Carter for a boy, and Aubrey for a girl.
+
+
+
 # Ahyo Falick Individual Section
 
 ```{r}
