@@ -15,9 +15,72 @@ bbnames18<-read_csv("yob2018.txt",col_names = F,col_types=cols(X2=col_character(
 bbnames18<-bbnames18%>%rename("name"=X1,"sex"=X2,"n"=X3)%>%mutate(year=2018)
 ```
 
+# Team Section
+```{r}
+selected_male<-"Gannon"
+selected_female<-"Scarlette"
+```
+
+We have selected 
+```{r echo=F}
+selected_male
+``` 
+
+
+as the male name and 
+
+```{r echo=F}
+selected_female
+```
+
+as the female name  
+
+
+These are obviously male or female as shown below, with negligible amount of the other sex named the same  
+```{r}
+smale<-babynames%>%filter(str_detect(name,selected_male))
+sfemale<-babynames%>%filter(str_detect(name,selected_female))
+ggplot(smale,aes(sex))+geom_bar()+labs(title="Sex for Selected Male Name")
+ggplot(sfemale,aes(sex))+geom_bar()+labs(title="Sex for Selected Female Name")
+```
+
+
+  
+  They are both trending  
+```{r}
+ggplot(smale,aes(year,prop))+geom_point()+labs(title="Proportion of Males named Selected Male Name")
+ggplot(sfemale,aes(year,prop))+geom_point()+labs(title="Proportion of Females named Selected Female Name")
+
+```
+                                        
+  
+  
+  
+  
+  But Neither are in the top 20 Male or Female Names for 2018  
+```{r}
+babynames%>%filter(year==2018,sex=="M")%>%filter(rank(desc(prop))<20)%>%arrange(desc(prop))
+babynames%>%filter(year==2018,sex=="F")%>%filter(rank(desc(prop))<20)%>%arrange(desc(prop))
+```
+
+
+  
+  
+So these names meet all of the clients criteria, and sound cool and look nice as well. That is why we picked 
+```{r echo=F}
+selected_male
+```
+
+and 
+
+```{r echo=F}
+selected_female
+```
+
+
 # Braden Griebel Individual Section
 ## Selecting a Baby name
-In 2017, the proportion of females included was 91.3% while the proportion of males was 93.44%, it was neccesary to make the assumption that these poportions are close to those for 2018 in order to calculate the proportions for 2018.
+In 2017, the proportion of females included was 91.3% while the proportion of males was 93.44%, it was neccesary to make the assumption that these proportions are close to those for 2018 in order to calculate the proportions for 2018.
 
 ```{r}
 tot_males<-bbnames18%>%filter(sex=="M")%>%summarize(total=sum(n))
@@ -434,26 +497,371 @@ ggplot(data = xdata, aes(x = list, y = plist)) + geom_bar(stat = "identity", col
 
 ```
 
+# Luke Fanning Individual Section
+
+When reading in the baby names file from 2018, an assumption was used that all names with a count greater than or equal to 5 represented 91% of the total names given in that year. This assumption comes from the fact that the given names in 2017 with a count greater than or equal to 5 represented 91% of all given names in that year.
+```{r}
+baby_2018 <- read_csv("yob2018.txt", col_names = c("name", "sex", "n"), col_types = cols( name = col_character(), sex = col_character(), n = col_double()))
+baby_2018_M <- baby_2018 %>% filter(sex == "M")
+total_M <- sum(baby_2018_M$n)/.913016
+baby_2018_F <- baby_2018 %>% filter(sex == "F")
+total_F <- sum(baby_2018_F$n)/.913016
+baby_2018 <- baby_2018 %>% mutate(prop = case_when(sex == "F" ~ (n/total_F), sex == "M" ~ (n/total_M)))
+baby_2018 <- baby_2018 %>% mutate(year = 2018)
+```
+```{r}
+total_babynames <- full_join(babynames, baby_2018, by = c("name", "sex", "n","prop", "year"))
+```
+
+### Criteria: Male names
+The first criterion to be filled is that the name must be trending but not trendy. To ascertain names based off of this criteria, the top 20 male names from the last ten years will be eliminated, and then names will be searched for that have increasing proportional usage from 1990-2010. 
+```{r}
+babynames_2_M <- total_babynames %>% filter(year >= 2010 & sex == "M") %>% arrange(desc(n))
+babynames_2_M <- unique(babynames_2_M$name) %>% head(20)
+```
+
+```{r}
+babynames2_1990_M <- total_babynames %>% filter(sex =="M") %>% filter(year %in% c(1990)) %>% filter(name != "Jacob", name != "Michael", name != "Liam", name!= "Noah", name != "Mason", name != "Ethan", name != "William", name !="Jayden", name != "Alexander", name != "Daniel", name != "Aiden", name != "Anthony", name!= "Joshua", name != "James", name!= "Benjamin", name != "Christopher", name!= "Andrew", name != "David", name != "Matthew", name !="Logan" ) %>% filter(prop > .0025)
+babynames2_2000_M <- total_babynames %>% filter(sex =="M") %>% filter(year %in% c(2000)) %>% filter(name != "Jacob", name != "Michael", name != "Liam", name!= "Noah", name != "Mason", name != "Ethan", name != "William", name !="Jayden", name != "Alexander", name != "Daniel", name != "Aiden", name != "Anthony", name!= "Joshua", name != "James", name!= "Benjamin", name != "Christopher", name!= "Andrew", name != "David", name != "Matthew", name !="Logan" ) %>% filter(prop>.0030)
+babynames2_2010_M <- total_babynames %>% filter(sex =="M") %>% filter(year %in% c(2010)) %>% filter(name != "Jacob", name != "Michael", name != "Liam", name!= "Noah", name != "Mason", name != "Ethan", name != "William", name !="Jayden", name != "Alexander", name != "Daniel", name != "Aiden", name != "Anthony", name!= "Joshua", name != "James", name!= "Benjamin", name != "Christopher", name!= "Andrew", name != "David", name != "Matthew", name !="Logan" )%>% filter(prop>.004)
+
+babynames_2_1990_2000_M <- semi_join(babynames2_1990_M, babynames2_2000_M, by = "name")
+babynames2_M <- semi_join(babynames_2_1990_2000_M, babynames2_2010_M, by = "name")
+babynames2_M$name
+```
+
+After testing to find trending but not trendy names, we find the results above. Next, these names will be tested to see if any of them have shortened versions of the name also present as a relatively popular name (greater than 400 in one year).
+
+```{r}
+joe_names <- total_babynames %>% filter(str_detect(name, "^Joey?$")) %>% filter(sex == "M") %>% filter(n>400)
+
+ry_names <- total_babynames %>% filter(str_detect(name, "^R[iy]e?$")) %>% filter(sex == "M") %>% filter(n>400)
+
+nick_names <- total_babynames %>% filter(str_detect(name, "^Ni[ck]+[iy]?$")) %>% filter(sex == "M") %>% filter(n>400)
+
+jon_names <- total_babynames %>% filter(str_detect(name, "^Joh?n$")) %>% filter(sex == "M") %>% filter(n>400)
+
+Bran_names <- total_babynames %>% filter(str_detect(name, "^Bran+$")) %>% filter(sex == "M") %>% filter(n>400)
+
+ty_names <- total_babynames %>% filter(str_detect(name, "^T[iy]e?$")) %>% filter(sex == "M") %>% filter(n>400)
+
+Jor_names <- total_babynames %>% filter(str_detect(name, "^Jord?$")) %>% filter(sex == "M") %>% filter(n>400)
+
+Nat_names <- total_babynames %>% filter(str_detect(name, "^Nat$")) %>% filter(sex == "M") %>% filter(n>400)
+
+sam_names <- total_babynames %>% filter(str_detect(name, "^Sam$")) %>% filter(sex == "M") %>% filter(n>400)
+
+christ_names <- total_babynames %>% filter(str_detect(name, "^Christ$")) %>% filter(sex == "M") %>% filter(n>400)
+```
+
+After tests were run comparing the above names to shortened versions of themselves, the names Joseph, Nicholas, Jonathon, Tyler, and Samuel were eliminated, leaving Ryan, John, Brandon, Jordan, Nathan, and Christian to be tested against the final criterion: whether or not the names are clearly male names, meaning that the names must have 95% or more usage for males across all years in the dataset. 
+
+```{r}
+ryan_m_names<- total_babynames %>% filter(name == "Ryan") %>% filter(sex == "M") %>% summarize(sum_Ry_M = sum(n))
+ryan_f_names<-total_babynames %>% filter(name == "Ryan") %>% filter(sex == "F") %>% summarize(sum_Ry_F = sum(n))
+931782/(931782+23770)
+
+john_m_names<- total_babynames %>% filter(name == "John") %>% filter(sex == "M") %>% summarize(sum_Jo_M = sum(n))
+john_f_names<-total_babynames %>% filter(name == "John") %>% filter(sex == "F") %>% summarize(sum_Jo_F = sum(n))
+(5124585)/(5124585+21689)
+
+brandon_m_names<- total_babynames %>% filter(name == "Brandon") %>% filter(sex == "M") %>% summarize(sum_Br_M = sum(n))
+brandon_f_names<-total_babynames %>% filter(name == "Brandon") %>% filter(sex == "F") %>% summarize(sum_Br_F = sum(n))
+756824/(756824+4139)
+
+Jordan_m_names<- total_babynames %>% filter(name == "Jordan") %>% filter(sex == "M") %>% summarize(sum_Jor_M = sum(n))
+Jordan_f_names<-total_babynames %>% filter(name == "Jordan") %>% filter(sex == "F") %>% summarize(sum_Jor_F = sum(n))
+374391/(372391+130986)
+
+nathan_m_names<- total_babynames %>% filter(name == "Nathan") %>% filter(sex == "M") %>% summarize(sum_Na_M = sum(n))
+nathan_f_names<-total_babynames %>% filter(name == "Nathan") %>% filter(sex == "F") %>% summarize(sum_Na_F = sum(n))
+(549369)/(549369+1748)
+
+christian_m_names<- total_babynames %>% filter(name == "Christian") %>% filter(sex == "M") %>% summarize(sum_ch_M = sum(n))
+christian_f_names<-total_babynames %>% filter(name == "Christian") %>% filter(sex == "F") %>% summarize(sum_ch_F = sum(n))
+(421389)/(421389+19557)
+```
+After running the test to see whether the names are clearly non-gender ambiguous, the name Jordan was eliminated. However, the name John will also be eliminated at this point due to the sheer amount of children named John across time, making it clear that while the name could be on an upswing recently, it is more likely just due to the exceeding popularity of the name and does not satisfy the trending but not trendy criterion. The other names, Ryan, Brandon, Nathan and Christian will all be graphed with their proportional usage vs. time to see which name is currently on the largest upswing in recent years.
+
+```{r}
+ryan_names <- total_babynames %>% filter(sex == "M") %>% filter(name == "Ryan")
+ggplot(data = ryan_names) + geom_smooth(mapping = aes(x = year, y = prop)) + labs(title = "Proportional change in Ryan usage over time", y = "Proportional usage of the name Ryan", x = "Year")
+
+brandon_names <- total_babynames %>% filter(sex == "M") %>% filter(name == "Brandon")
+ggplot(data = brandon_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Brandon usage over time", y = "Proportional usage of the name Brandon", x = "Year")
+
+nathan_names <- total_babynames %>% filter(sex == "M") %>% filter(name == "Nathan")
+ggplot(data = nathan_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Nathan usage over time", y = "Proportional usage of the name Nathan", x = "Year")
+
+christian_names <- total_babynames %>% filter(sex == "M") %>% filter(name == "Christian")
+ggplot(data = christian_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Christian usage over time", y = "Proportional usage of the name Christian", x = "Year")
+```
+It is obvious from the graphs above that the name on the largest upswing in recent years is Christian. 
+
+**I would recommend Christian as the male name that best fulfills the couple's three criteria.**
+
+
+
+### Criteria: Female names
+The first criterion to be filled is that the name must be trending but not trendy. To ascertain names based off of this criteria, the top 20 female names from the last ten years will be eliminated, and then names will be searched for that have increasing proportional usage from 1990-2010. 
+```{r}
+babynames_2_F <- total_babynames %>% filter(year >= 2010 & sex == "F") %>% arrange(desc(n))
+babynames_2_F <- unique(babynames_2_F$name) %>% head(20)
+```
+
+```{r}
+babynames2_1990_F <- total_babynames %>% filter(sex =="F") %>% filter(year %in% c(1990)) %>% filter(name != "Isabella", name != "Sophia", name != "Emma", name!= "Olivia", name != "Ava", name != "Mia", name != "Emily", name !="Abigail", name != "Madison", name != "Charlotte", name != "Amelia", name != "Chloe", name!= "Harper", name != "Evelyn", name!= "Addison", name != "Elizabeth", name!= "Ella", name != "Sofia", name != "Avery", name !="Natalie" ) %>% filter(prop > .001)
+babynames2_2000_F <- total_babynames %>% filter(sex =="F") %>% filter(year %in% c(2000)) %>% filter(name != "Isabella", name != "Sophia", name != "Emma", name!= "Olivia", name != "Ava", name != "Mia", name != "Emily", name !="Abigail", name != "Madison", name != "Charlotte", name != "Amelia", name != "Chloe", name!= "Harper", name != "Evelyn", name!= "Addison", name != "Elizabeth", name!= "Ella", name != "Sofia", name != "Avery", name !="Natalie" ) %>% filter(prop > .0015)
+babynames2_2010_F <- total_babynames %>% filter(sex =="F") %>% filter(year %in% c(2010)) %>% filter(name != "Isabella", name != "Sophia", name != "Emma", name!= "Olivia", name != "Ava", name != "Mia", name != "Emily", name !="Abigail", name != "Madison", name != "Charlotte", name != "Amelia", name != "Chloe", name!= "Harper", name != "Evelyn", name!= "Addison", name != "Elizabeth", name!= "Ella", name != "Sofia", name != "Avery", name !="Natalie" ) %>% filter(prop > .002)
+babynames_2_1990_2000_F <- semi_join(babynames2_1990_F, babynames2_2000_F, by = "name")
+babynames2_F <- semi_join(babynames_2_1990_2000_F, babynames2_2010_F, by = "name")
+
+babynames2_F$name
+```
+
+After testing to find trending but not trendy names, we find the results above. Next, these names will be tested to see if any of them have shortened versions of the name also present as a relatively popular name (greater than 400 in one year). 
+
+```{r}
+ash_names <- total_babynames %>% filter(name == "Ash") %>% filter(sex == "F") %>% filter(n>400)
+
+sam_names <- total_babynames %>% filter(name == "Sam") %>% filter(sex == "F")%>% filter(n>400)
+
+sammy_names <- total_babynames %>% filter(str_detect(name, "^Sam+[iy]e?$")) %>% filter(sex == "F")%>% filter(n>400)
+
+laur_names <- total_babynames %>%  filter(str_detect(name, "^Laur?$")) %>% filter(sex == "F")%>% filter(n>400)
+
+kay_names <- total_babynames %>%  filter(str_detect(name, "^Ka[ey]$")) %>% filter(sex == "F")%>% filter(n>400)
+
+ally_names <- total_babynames %>%  filter(str_detect(name, "^Al+[iy]$")) %>% filter(sex == "F")%>% filter(n>400)
+
+jas_names <- total_babynames %>%  filter(str_detect(name, "^Jas+y?$")) %>% filter(sex == "F")%>% filter(n>400)
+
+vicky_names <- total_babynames %>%  filter(str_detect(name, "^Vi[ck]+[ie]?y?$")) %>% filter(sex == "F")%>% filter(n>400)
+
+alex_names <- total_babynames %>%  filter(str_detect(name, "^Al[ei]x[ai]?$")) %>% filter(sex == "F")%>% filter(n>400)
+
+ann_names <- total_babynames %>%  filter(str_detect(name, "^An+$")) %>% filter(sex == "F")%>% filter(n>400)
+
+tay_names <- total_babynames %>%  filter(str_detect(name, "^T[ae]y$")) %>% filter(sex == "F")%>% filter(n>400)
+
+mor_names <- total_babynames %>%  filter(str_detect(name, "^Mor$")) %>% filter(sex == "F")%>% filter(n>400)
+
+lea_names <- total_babynames %>%  filter(str_detect(name, "^L[eia]+$")) %>% filter(sex == "F")%>% filter(n>400)
+  
+Jul_names <- total_babynames %>%  filter(str_detect(name, "^Jul+[iey]$")) %>% filter(sex == "F")%>% filter(n>400)
+
+```
+After tests were run comparing these names to shortened versions of themselves, the names Kayla, Alyssa, Victoria, Alexandra, Anna, Allison, Alexis, Leah, and Alexa were eliminated from contention. This then leaves Ashley, Samantha, Sarah, Lauren, Jasmine, Hannah, Taylor, Morgan, Brianna, Julia, and Grace to be tested for the final criterion: whether or not the names are clearly female names, meaning that the names must have 95% or more usage for females across all years in the dataset. 
+
+```{r}
+ash_f_names <- total_babynames %>% filter(name == "Ashley") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+ash_m_names <- total_babynames %>% filter(name == "Ashley") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+846086/(846086 + 15668)
+
+sam_f_names <- total_babynames %>% filter(name == "Samantha") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+sam_m_names <- total_babynames %>% filter(name == "Samantha") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+574556/(574556 + 1203)
+
+sarah_f_names <- total_babynames %>% filter(name == "Sarah") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+sarah_m_names <- total_babynames %>% filter(name == "Sarah") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+1077629/(1077629+3320)
+
+lauren_f_names <- total_babynames %>% filter(name == "Lauren") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+lauren_m_names <- total_babynames %>% filter(name == "Lauren") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+468171/(468171+5790)
+
+jasmine_f_names <- total_babynames %>% filter(name == "Jasmine") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+jasmine_m_names <- total_babynames %>% filter(name == "Jasmine") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+246340/(246340+1261)
+
+hannah_f_names <- total_babynames %>% filter(name == "Hannah") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+hannah_m_names <- total_babynames %>% filter(name == "Hannah") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+433395/(433395 + 695)
+
+taylor_f_names <- total_babynames %>% filter(name == "Taylor") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+taylor_m_names <- total_babynames %>% filter(name == "Taylor") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+320414/(320414+110384)
+
+morgan_f_names <- total_babynames %>% filter(name == "Morgan") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+morgan_m_names <- total_babynames %>% filter(name == "Morgan") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+214207/(214207+42300)
+
+brianna_f_names <- total_babynames %>% filter(name == "Brianna") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+brianna_m_names <- total_babynames %>% filter(name == "Brianna") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+252574/(252574+428)
+
+julia_f_names <- total_babynames %>% filter(name == "Julia") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+julia_m_names <- total_babynames %>% filter(name == "Julia") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+458988/(458988+1738)
+
+grace_f_names <- total_babynames %>% filter(name == "Grace") %>% filter(sex == "F") %>% summarize(sum_F = sum(n))
+grace_m_names <- total_babynames %>% filter(name == "Grace") %>% filter(sex == "M") %>% summarize(sum_M = sum(n))
+496909/(496909 + 1341)
+```
+After checking to see if the names are clearly not gender ambiguous, the names Taylor and Morgan were eliminated. To whittle down from the final names left available, we will go back now to the trendy vs. trending criterion. Considering the verbage behind it, it is clear that the couple is looking for names that are not incredibly popular right now, so we will therefore eliminate the names Sarah and Ashley due to their overall popularity. Finally, the remaining names will be graphed with their proportinal usage over time to see which of the names is currently on the largest upswing in popularity.
+
+```{r}
+hannah_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Hannah")
+ggplot(data = hannah_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Hannah usage over time", y = "Proportional usage of the name Hannah", x = "Year")
+
+Brianna_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Brianna")
+ggplot(data = Brianna_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Brianna usage over time", y = "Proportional usage of the name Brianna", x = "Year")
+
+Jasmine_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Jasmine")
+ggplot(data = Jasmine_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Jasmine usage over time", y = "Proportional usage of the name Jasmine", x = "Year")
+
+samantha_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Samantha")
+ggplot(data = samantha_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Samantha usage over time", y = "Proportional usage of the name Samantha", x = "Year")
+
+lauren_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Lauren")
+ggplot(data = lauren_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Lauren usage over time", y = "Proportional usage of the name Lauren", x = "Year")
+
+julia_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Julia")
+ggplot(data = julia_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Julia usage over time", y = "Proportional usage of the name Julia", x = "Year")
+
+grace_names <- total_babynames %>% filter(sex == "F") %>% filter(name == "Grace")
+ggplot(data = grace_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Grace usage over time", y = "Proportional usage of the name Grace", x = "Year")
+```
+As Hannah is the only name of the remaining seven to demonstrate a clear and large upswing in recent years, it is the name that I would recommend.
+
+**I would recommend Hannah as the female name that best fulfills the couple's three criteria.**
+
+
+
+
+
+### Individual Plot of Luke by popularity over time
+```{r}
+luk_names <- total_babynames %>%filter(sex == "M")  %>% filter(str_detect(name, "^Luk"))
+luke_names <- total_babynames %>% filter(sex == "M") %>% filter(str_detect(name, "^Lu[ck]e?$"))
+luk_names <- luk_names %>% group_by(year) %>% summarize(prop = sum(prop))
+all_names <- full_join(luk_names, luke_names, by = "year")
+ggplot(data = all_names, mapping = aes(x= year)) + geom_smooth(aes(y = prop.x), color = "red") + geom_smooth(aes(y = prop.y), color = "blue") + labs(title = "Proportion of 'Luk' names vs Luke over time", x = "Year", y = "Proportion of Total Names", caption = "Red = 'Luk' names, Blue = Luke")
+
+(luke_names_pop <- luke_names %>% group_by(year)%>% filter(year %in% c(1997, 2018)) %>% summarize(prop = sum(prop)))
+
+(all_names_pop <- all_names %>% group_by(year) %>% filter(year %in% c(1997, 2018)) %>% summarize(prop = (sum(prop.y) / sum(prop.x))))
+```
+
+
+
+### Ariel and Rachel regexs
+```{r}
+ariel_names <-total_babynames %>% filter(str_detect(name, "^A[yr]?[r]+[iy][ae]+[y]?l+e?$")) %>% filter(sex == "F") %>% filter(year %in% c(1973, 1988, 1990, 2018)) %>%group_by(year)
+ ariel_name_variants <- ariel_names%>%  filter(year %in% c(1973, 1988, 1990)) %>% summarise(Ariel_name_variants = n())
+
+rachel_names <- total_babynames %>% filter(str_detect(name, "^R[ae]+y?[sc]h[aey]+l+e?$")) %>% filter(sex == "F") %>% filter(year %in% c(1973, 1988, 1990, 2018)) %>% group_by(year)
+rachel_name_variants <- rachel_names %>% filter(year %in% c(1973, 1988, 1990)) %>% summarise(Rachel_name_variants = n())
+```
+
+```{r}
+(Ariel_or_Rachel_name_variants <- full_join(rachel_name_variants, ariel_name_variants, by = "year"))
+```
+```{r}
+ariel_names_73 <- ariel_names %>% filter(year == 1973)
+x_73 <- sum(ariel_names_73$prop)
+ariel_names_88 <- ariel_names %>% filter(year == 1988)
+x_88 <- sum(ariel_names_88$prop)
+ariel_names_90 <- ariel_names %>% filter(year == 1990)
+x_90 <- sum(ariel_names_90$prop)
+ariel_names_18 <- ariel_names %>% filter(year == 2018)
+x_18 <- sum(ariel_names_18$prop)
+
+rachel_names_73<- rachel_names %>% filter(year == 1973)
+y_73 <- sum(rachel_names_73$prop)
+rachel_names_88<- rachel_names %>% filter(year == 1988)
+y_88 <- sum(rachel_names_88$prop)
+rachel_names_90<- rachel_names %>% filter(year == 1990)
+y_90 <- sum(rachel_names_90$prop)
+rachel_names_18<- rachel_names %>% filter(year == 2018)
+y_18 <- sum(rachel_names_18$prop)
+
+
+xy <- c(x_73+y_73, x_88 + y_88, x_90 + y_90, x_18+y_18)
+yn <- c(1973, 1988, 1990, 2018)
+tibble( year = yn,Chance_a_girl_is_named_Rachel_or_Ariel = xy)
+```
+### The Little Mermaid Effect
+```{r}
+vowel_names_1988 <- total_babynames %>% filter(sex == "F") %>% filter(str_detect(name, "^[AEIOU]")) %>% filter(year == 1988)
+vowel_names_1990 <- total_babynames %>% filter(sex == "F") %>% filter(str_detect(name, "^[AEIOU]")) %>% filter(year == 1990)
+
+vowel_names_88_90 <- left_join(vowel_names_1988, vowel_names_1990, by = "name") %>% mutate(change = prop.y-prop.x) %>% arrange(desc(change))
+  
+x_88 <- sum(ariel_names_88$prop)
+x_90 <- sum(ariel_names_90$prop)
+
+x_90 - x_88
+```
+```{r}
+
+vowel_names_88_90_percent_below <- vowel_names_88_90 %>% filter(change < 0.00128231)
+
+vowel_names_88_90_percent_above <- vowel_names_88_90 %>% filter(change >= 0.00128231)
+
+(Ariel_percentile <- nrow(vowel_names_88_90_percent_below)/(nrow(vowel_names_88_90_percent_above) + nrow(vowel_names_88_90_percent_below))) 
+
+ggplot(data = vowel_names_88_90) + geom_histogram(mapping = aes(x = change), binwidth = .0001) + geom_vline(xintercept  = 0.00178697) + labs(title = "Change in proportional usage of all female names beginning with vowels from 1988 to 1990", x = "Change in proportions from 1988 to 1990", y = "Count", caption = "Line at proportional change of Ariel variants")
+```
+
+The plot above shows the change in proportion of name usage for names starting with vowels vs. the number of names that experienced that change. The vertical line on the graph represents the change in Ariel names from 1988 to 1990, showing clearly that the name Ariel experienced a massive boost compared to the change in proportion for most names starting with vowels. In fact, with all variants included, the name Ariel had the highest proportional change of any other female name begionning with a vowel from 1988 to 1990. Even with other variants excluded, Ariel was in the 99th percentile of all vowel names in terms of proportional change from 1988 to 1990.
+
+
+### Your Names:
+```{r}
+(luke_names_pop_75_97_18 <- luke_names %>% group_by(year)%>% filter(year %in% c(1975,1997, 2018)) %>% summarize(prop_Luke = sum(prop)))
+
+andrew_names <- total_babynames %>% filter(sex == "M") %>% filter(str_detect(name, "^Andy?[rewu]*$"))
+
+(andrew_names_pop_75_97_18 <- andrew_names %>% group_by(year)%>% filter(year %in% c(1975,1997, 2018)) %>% summarize(prop_Andrew = sum(prop)))
+
+ahyo_names <- total_babynames %>% filter(sex == "M") %>% filter(str_detect(name, "^A[hy]+[oa]$"))
+
+(ahyo_names_pop_75_97_18 <- ahyo_names %>% group_by(year)%>% filter(year %in% c(1975,1997, 2018)) %>% summarize(prop_Ahyo = sum(prop)))
+
+braden_names <- total_babynames %>% filter(sex == "M") %>% filter(str_detect(name, "^Braden$"))
+
+(braden_names_pop_75_97_18 <- braden_names %>% group_by(year)%>% filter(year %in% c(1975,1997, 2018)) %>% summarize(prop_Braden = sum(prop)))
+
+all_names_75 <- total_babynames %>% filter(year == 1975) %>% filter(sex == "M")
+all_names_97 <- total_babynames %>% filter(year == 1997)%>% filter(sex == "M")
+all_names_18 <- total_babynames %>% filter(year == 2018)%>% filter(sex == "M")
+
+all_names_75_97 <- left_join(all_names_75, all_names_97, by = "name") %>% mutate(change = prop.y-prop.x) %>% arrange(desc(change))
+all_names_97_18 <- left_join(all_names_97, all_names_18, by = "name") %>% mutate(change = prop.y-prop.x) %>% arrange((change))
+
+(Luke_percentile_change_75_to_97 <- (0.00253087-0.00048304)/0.01486418)*100
+(Andrew_percentile_change_75_to_97 <- (0.014295550-0.009755220)/0.01486418)*100
+(Ahyo_percentile_change_75_to_97 <- (3.0e-06)/0.01486418)*100
+(Braden_percentile_change_75_to_97 <- (0.0005257000-0.0000523700)/0.01486418)*100
+(Luke_percentile_change_97_to_18 <- (0.00438203-0.00253087)/0.009002343)
+(Andrew_percentile_change_75_to_97 <- (0.004855173-0.014295550)/-0.01290629)*100
+(Braden_percentile_change_75_to_97 <- (0.0002398681-0.0005257000)/-0.01290629)*100
+(Ahyo_percentile_change_75_to_97 <- (4.564e-06 - 3.0e-06)/0.009002343)*100
+
+ggplot(data = all_names_75_97) + geom_histogram(mapping = aes(x = change)) + geom_vline(xintercept = (0.00253087-0.00048304), color = "red") + geom_vline(xintercept = (0.014295550-0.009755220), color = "blue") + geom_vline(xintercept = (3.0e-06), color = "green") + geom_vline(xintercept = (0.0005257000-0.0000523700), color = "purple") + labs(title = "Proportional change in all male names from 1975 to 1997", x ="Change in proportion from 1975 to 1997", y = "Count", caption = "Red = Luke, Blue = Andrew, Green = Ahyo, Red = Braden")
+ggplot(data = all_names_97_18) + geom_histogram(mapping = aes(x = change))+ geom_vline(xintercept = (0.00438203-0.00253087), color = "red") + geom_vline(xintercept = (0.004855173-0.014295550), color = "blue") + geom_vline(xintercept = (4.564e-06 - 3.0e-06), color = "green") + geom_vline(xintercept = (0.0002398681-0.0005257000), color = "purple") + labs(title = "Proportional change in all male names from 1997 to 2018", x ="Change in proportion from 1997 to 2018", y = "Count", caption = "Red = Luke, Blue = Andrew, Green = Ahyo, Red = Braden")
+```
+
+Based on the data above, Luke's name is in the 14th percentile of all poitive proportional male name changes from 1975 to 1997, Andrew's in the 31st, Ahyo's in the 0th, and Braden's in the 3rd. In the years from 1997 to 2018, Luke's and Ahyo's names are in the 0th percentile of all positive proportional male name changes, whereas Andrew's name is in the 73rd percentile of all negative proportional male name changes, and Braden's is in the 2nd. The most significant change over years, then, is the decline of usage of Andrew from 1997 to 2018. 
+
+### My recommendation of boy and girl names:
+
+For a boy, I would recommend the name Christian. It is used just over 95% of the time for males, it has no common nicknames and shortenings, and the graph below shows that it's usage is on a clear upswing while not being one of the most popular names of the last 10 years.
+```{r}
+ggplot(data = christian_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Christian name usage over time", y = "Proportional usage of the name Christian", x = "Year")
+```
+
+For a girl, I would recommend the name Hannah. It is used 99.8% of the time for females, it has no common nicknames and/or shortenings, and the graph below shows that its usage is on a clear upswing while not being one of the most popular names of the last ten years.
+```{r}
+ggplot(data = hannah_names) + geom_smooth(mapping = aes(x = year, y = prop))+ labs(title = "Proportional change in Hannah usage over time", y = "Proportional usage of the name Hannah", x = "Year")
+```
 
 ## Individual Contributions:
 
 I, Braden Griebel, started by filtering the babynames according to the clients criteria. I did this by creating a filtering dataset, either positive or negative, and then using a semi or anti join respectively to filter down the initial dataset to meet the clients specifications. I created the negative filter for the male female criteria, by filtering out all names that had a very high or low proportion of males, and then getting rid of all these names in the initial dataset. For the trending but not trendy I examined the slope of a linear model for the last 10 years and made sure it was non-negative (or small positive to make sure the trend was actually clear). For the shortening criteria, I took the first 2,3,4, and 5 letters of all the names, and filtered all the ones that had a match in the dataset and made that a negative filter to match with the dataset, since all of the names could be shortened. Next I used a regex to catch common spellings of my name and plotted the popularity over time, and then moved on the the ariel section. I created regex's for ariel and rachel to catch common spellings, and then used these to find the proportions of names that matched and calculated the number of variations on the names and the probability a baby was named rachel, ariel, and the combined probability of the two. Next I examined how Ariel's popularity had been affected by the little mermaid and found that both Ariel and its common spellings had increased significantly compared to other female names starting with a vowel (using percentiles) and also to all other female names using a histogram. In all cases I found that the proportion of both Ariel and all its common spellings had increased significantly between 1988 and 1990. Next I used regexs to match my, and my teammates names and find how they had changed between 1968 (20 years before my birth) to 1998 (my birth year) to 2018 (the last year we had data for). I showed this change on a histogram, coloring the tails, and using lines to represent where all out team names fell in the data. I also calculated percentiles in addition to absolute change for our team names, and determined which had significant changes in proportion in the two time periods. Finally, I added graphs to the team section showing how the names we selected met the clients criteria (by showing the proportion of sexes for the names, their proportions over the years but that they weren't trendy in 2018). It is clear from the names themselves that their shortenings do not appear in the data set, so it wan't neccesary to include that part as part of the team section. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+I, Luke Fanning, completed all of the work in my individual section. Please review that section to see the work that I performed. 
 
 
 
