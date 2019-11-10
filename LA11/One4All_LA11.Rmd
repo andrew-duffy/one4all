@@ -496,6 +496,83 @@ ggplot(data = xdata, aes(x = list, y = plist)) + geom_bar(stat = "identity", col
 
 
 ```
+# Ahyo Falick Individual Section
+
+```{r}
+b18<-bbnames18
+bn<-babynames
+mtot<-b18%>%filter(sex=="M")%>%summarize(total=sum(n))
+ftot<-b18%>%filter(sex=="F")%>%summarize(total=sum(n))
+mtot<-mtot[1,1]
+ftot<-ftot[1,1]
+prop<-bn%>%filter(year==2017)%>%group_by(sex)%>%summarize(total=sum(prop))
+mprop<-prop[[2,2]]
+fprop<-prop[[1,2]]
+mtot<-(mtot/mprop)[1,1]
+ftot<-(ftot/fprop)[1,1]
+b18<-b18%>%mutate("prop"=ifelse(sex=="M",n/mtot,n/ftot))
+bn<-full_join(bn,b18,by=c("name","prop","n","year","sex"))
+```
+
+```{r}
+amb<-bn%>%group_by(name)%>%summarize("nm"=sum(ifelse(sex=="M",n,0)),total=sum(n))%>%mutate(mprop=nm/total)%>%filter(mprop>=.001&mprop<=.999)
+amb
+bn<-anti_join(bn,amb,by="name")
+```
+
+```{r}
+trendym <- bn %>% filter(year > 2010 & sex == "M") %>% arrange(desc(n))
+m2000 <- bn %>% filter(year == 2000 & sex == "M")
+m2010 <- bn %>% filter(year == 2010 & sex == "M")
+trendym <- left_join(trendym, m2000, by = "name")
+trendym <- left_join(trendym, m2010, by = "name")
+trendym <- trendym[-c(5,6,7,9,10,11,13)]
+trendym <- trendym %>% filter(n.x > n & n > n.y)
+trendym <- trendym %>% mutate("slope1" = (n.x - n)/10) %>% mutate("slope2" = (n-n.y)/10) %>% mutate("slope" = (n.x-n.y)/20) %>% mutate("sdiff" = slope1-slope2) %>% filter(slope1 > slope2 & slope < 100 & slope > 50)
+trendym <- trendym %>% arrange(desc(sdiff))
+
+trendyf <- bn %>% filter(year > 2010 & sex == "F") %>% arrange(desc(n))
+f2000 <- bn %>% filter(year == 2000 & sex == "F")
+f2010 <- bn %>% filter(year == 2010 & sex == "F")
+trendyf <- left_join(trendyf, f2000, by = "name")
+trendyf <- left_join(trendyf, f2010, by = "name")
+trendyf <- trendyf[-c(5,6,7,9,10,11,13)]
+trendyf <- trendyf %>% filter(n.x > n & n > n.y)
+trendyf <- trendyf %>% mutate("slope" = (n.x - n.y)/20) %>% filter(slope >= 50 & slope <= 100)
+trendyf <- trendyf %>% mutate("slope1" = (n.x - n)/10) %>% mutate("slope2" = (n-n.y)/10) %>% mutate("slope" = (n.x-n.y)/20) %>% mutate("sdiff" = slope1-slope2) %>% filter(slope1 > slope2 & slope < 100 & slope > 50)
+trendyf <- trendyf %>% arrange(desc(sdiff))
+```
+Based on the criteria given by the couple, I would recommend Daxton and Adaline as the respective boy or girl name because they had the biggest positive difference between the slope of 2000-2010 and 1990-2000.
+
+## Ariel and Rachel Regexs
+```{r}
+arx<-"^A[y]?r+[iaey]+[aeiy]+l+[le]?$"
+rrx<-"^R[ae]+ch[ae]+l+[le]?$"
+
+tot73 <- babynames %>% filter(year == 1973 & sex == "F")
+tot73 <- sum(tot73$n)
+a73 <- babynames %>% filter(year == 1973) %>% filter(str_detect(name,arx) & sex == "F") 
+r73 <- babynames %>% filter(year == 1973) %>% filter(str_detect(name,rrx) & sex =="F")
+b73 <- rbind(r73, a73)
+ra73 <- sum(b73$n)
+prop73 <- 100*ra73 / tot73
+
+tot88 <- babynames %>% filter(year == 1988 & sex == "F")
+tot88 <- sum(tot88$n)
+a88 <- babynames %>% filter(year == 1988) %>% filter(str_detect(name,arx) & sex == "F") 
+r88 <- babynames %>% filter(year == 1988) %>% filter(str_detect(name,rrx) & sex =="F")
+b88 <- rbind(r88, a88)
+ra88 <- sum(b88$n)
+prop88 <- 100*ra88 / tot88
+
+tot90 <- babynames %>% filter(year == 1990 & sex == "F")
+tot90 <- sum(tot90$n)
+a90 <- babynames %>% filter(year == 1990) %>% filter(str_detect(name,arx) & sex == "F") 
+r90 <- babynames %>% filter(year == 1990) %>% filter(str_detect(name,rrx) & sex =="F")
+b90 <- rbind(r90, a90)
+ra90 <- sum(b90$n)
+prop90 <- 100*ra90 / tot90
+```
 
 # Luke Fanning Individual Section
 
