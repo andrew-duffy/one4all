@@ -483,6 +483,9 @@ gap_data&lt;-gapminder</code></pre>
 <span class="math inline">\(H_0\)</span>:Cor(GDP per capita, Life expectancy) in Asia <span class="math inline">\(-\)</span> Cor(GDP per capita, Life expectancy) in Asia <span class="math inline">\(=\)</span> 0<br />
 <span class="math inline">\(H_1\)</span>:Cor(GDP per capita, Life expectancy) in Asia <span class="math inline">\(-\)</span> Cor(GDP per capita, Life expectancy) in Asia <span class="math inline">\(\neq\)</span> 0<br />
 We will reject the null, and accept the alternative hypothesis and reject the null if and only if percentile of the difference in means is under <span class="math inline">\(2.5\%\)</span> or above <span class="math inline">\(97.5\%\)</span></p>
+<div id="why-this-question-is-interesting" class="section level2">
+<h2>Why this Question is Interesting:</h2>
+<p>There is a correlation between life expectancy and per capita GDP (can be shown with a permutation test), but is this correlation as strong in different regions? This is interesting because it can allow us to see what aspects can affect this correlation. This is important because it can allow for an understanding of how life expectancy is affected by a variety of dufferent variables. This in turn would allow for programs to reduce the disparity in life exxpectancy between the more and less wealthy countries (by increasing the life expenctancy of the less wealthy countries, not decreasing the life expectancy of the wealthier countries although that would be easier).</p>
 <pre class="r"><code>set.seed(25)
 gap_data2&lt;-gap_data%&gt;%group_by(continent,country)%&gt;%summarize(correlation=cor(gdpPercap,lifeExp))%&gt;%filter(continent==&quot;Asia&quot;|continent==&quot;Europe&quot;)
 
@@ -522,6 +525,7 @@ stats</code></pre>
 ## 6 97.5 Percentile              0.124   
 ## 7 Calculated Mean Difference   0.169   
 ## 8 Percentile                 100.0</code></pre>
+</div>
 </div>
 <div id="question-2" class="section level1">
 <h1>Question 2:</h1>
@@ -566,6 +570,10 @@ stats</code></pre>
 ## 6 97.5 Percentile         0.0870  
 ## 7 Calculated Correlation -0.0194  
 ## 8 Percentile              0.341</code></pre>
+</div>
+<div id="individual-contributions" class="section level1">
+<h1>Individual Contributions:</h1>
+<p>I, Braden Griebel, implemented the perm_mean function and used it to run a permutation test on the correlation between Life expectancy and GDP per capita differed between Europe and Asia. I added colour to the graph to show where its tails were, in order to demonstrate whether the difference in mean correlation between Europe and Asia was significant. I also added a vertical line to show where the calculated difference in means lay.</p>
 </div>
 
 
