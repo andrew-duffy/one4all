@@ -94,13 +94,10 @@ perm_cor <- function(perms = 1000, x, y)
   return(correlations)
   
 }
-gapminder
+
 ```
 
-```{r}
-levels(gapminder$continent)
-unique(gapminder$year)
-```
+
 
 
 
@@ -116,7 +113,7 @@ unique(gapminder$year)
 #  gdpPercap=col_double()
 #  
 #))
-gap_data<-gapminder
+gap_data<-gapminder_unfiltered
 ```
 
 
@@ -164,7 +161,7 @@ stats
 ```
 
 ### Conclusion:
-As can be seen in the graph above, the calculated difference in means is in the tails of the permutation test. In fact, it is in the 99.95 percentile, above almost all of the data. This indicates that we should reject the null, and accept the alternative that is that there is a difference in the correlation between GDP per capita and life expectancy in Asia and in Europe. Europe seems to have a higher correlation between these two variables than does Asia. The mean of the permuted means is close to zero, as is the median, showing that with randomized labels, the difference in the correlation is virtually none, but including the labels increases this significantly, and means that the labels of Europe and Asia do in fact matter in terms of this difference in means of correlation coefficients. 
+As can be seen in the graph above, the calculated difference in means is in the tails of the permutation test. In fact, it is in the 99.89 percentile, above almost all of the data. This indicates that we should reject the null, and accept the alternative that is that there is a difference in the correlation between GDP per capita and life expectancy in Asia and in Europe. Europe seems to have a higher correlation between these two variables than does Asia. The mean of the permuted means is close to zero, as is the median, showing that with randomized labels, the difference in the correlation is virtually none, but including the labels increases this significantly, and means that the labels of Europe and Asia do in fact matter in terms of this difference in means of correlation coefficients. 
 
 ## Question 2:
 Is there a correlation between population and GDP per capita for the African continent?                 
@@ -184,7 +181,7 @@ correlations<-perm_cor(perms=10000,thing1,thing2)
 correlations<-tibble("correlation"=correlations)
 calculated_cor<-cor(thing1,thing2)
 ggplot(data=correlations,aes(x=correlation,fill=(correlation<quantile(correlation,probs = c(.025),na.rm=T)[[1]]|correlation>quantile(correlation,probs = c(.975),na.rm=T)[[1]])))+geom_histogram()+
-  geom_vline(xintercept=calculated_cor,color="red")+
+  geom_vline(xintercept=calculated_cor,color="green")+
   labs(fill="tails")
 percentile<-length(correlations$correlation[correlations$correlation<calculated_cor])/nrow(correlations)
 stats<-tribble(
@@ -204,7 +201,7 @@ stats
 ```
 
 ### Conclusion:
-Based on the above, it can be seen that there is not a significant correlation between GDP per capita and population. Since the correlation between GDP per capita and population is in the 34th percentile, it is not in either of the tails of the data. This can be seen on the graph, where the line representing the calculated value for this correlation is roughly in the center. This value is quite close to the mean of zero, and shows that the null hypothesis should be upheld, that is there is no significant correlation between GDP per capita and population. 
+Based on the above, it can be seen that there is not a significant correlation between GDP per capita and population. Since the correlation between GDP per capita and population is in the 37th percentile, it is not in either of the tails of the data. This can be seen on the graph, where the line representing the calculated value for this correlation is roughly in the center. This value is quite close to the mean of zero, and shows that the null hypothesis should be upheld, that is there is no significant correlation between GDP per capita and population. 
 
 
 ## Individual Contributions:
