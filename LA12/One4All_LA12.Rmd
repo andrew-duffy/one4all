@@ -209,5 +209,5 @@ I, Braden Griebel, implemented the perm_mean function and used it to run a permu
 
 I, Luke Fanning, proofread Braden's work. I also implemented my own versions of the functions in a separate file and ran my own permutation and correlation tests. My permutation test tested the difference in mean GDP per capita between North and Central African countries and found the difference to be statistically significant, whereas my correlation test tested for a correlation between GDP per capita and life expectancy and found a correlation. I graphed each of these tests on a histogram and added the relevant correlation and/or mean on the graph through the use of a vertical line. 
 
-
+I, Ahyo Falick, assisted in this lab by creating my own different version of the lab. As a group we decided on the use of Braden's functions in the end because it is more efficiently answers the questions asked. My correlation test was able to find a correlation between between the data given and I used a geom_smooth function to plot the correlations with the mean being a vertical line.
 
