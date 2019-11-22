@@ -211,3 +211,5 @@ I, Luke Fanning, proofread Braden's work. I also implemented my own versions of 
 
 I, Ahyo Falick, assisted in this lab by creating my own different version of the lab. As a group we decided on the use of Braden's functions in the end because it is more efficiently answers the questions asked. My correlation test was able to find a correlation between between the data given and I used a geom_smooth function to plot the correlations with the mean being a vertical line.
 
+I, Andrew Duffy, implemented my own functions regarding the 2 permutation tests, testing for the correlation between Europe and North America regarding life expectancy vs. GDP per capita, in which there was a fairly significant correlation when running the permutation tests. I accepted the null hypothesis that Europe and North America have similar correlations between life expectancy and GDP. I also tested the correlations between GDP per capita and fertility rate in South east Asia, for which there were no correlations. I graphed both of these with a bar plot, with a solid line denoting the mean.
+
