@@ -1,0 +1,55 @@
+---
+title: "One4All_LA13"
+author: "Braden Griebel,Ahyo Falick, Andrew Duffy, Luke Fanning"
+date: "11/23/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(stringr)
+library(purrr)
+library(readxl)
+
+co2_per_person<-read_csv(file="co2_emissions_tonnes_per_person.csv")
+co2_economic<-read_csv(file = "co2_intensity_of_economic_output_kg_co2_per_2011_ppp_of_gdp.csv")
+co2_cummulative<-read_csv(file = "cumulative_co2_emissions_tonnes.csv")
+co2_emissions<-read_csv(file = "yearly_co2_emissions_1000_tonnes.csv")
+forest_coverage<-read_csv(file="forest_coverage_percent.csv")
+
+regions<-read_excel(path="Data Geographies - v1 - by Gapminder.xlsx",sheet="list-of-countries-etc")
+
+co2_per_person<-co2_per_person%>%select(country,`1990`:`2014`)
+co2_economic<-co2_economic%>%select(country,`1990`:`2014`)
+co2_cummulative<-co2_cummulative%>%select(country,`1990`:`2014`)
+co2_emissions<-co2_emissions%>%select(country,`1990`:`2014`)
+forest_coverage<-forest_coverage%>%select(country,`1990`:`2014`)
+
+co2_per_person<-co2_per_person%>%gather(`1990`:`2014`,key="year",value="co2_emissions_tonnes_per_person")
+co2_economic<-co2_economic%>%gather(`1990`:`2014`,key="year",value="co2_intensity_of_economic_output_kg_co2_per_2011_ppp_of_gdp")
+co2_cummulative<-co2_cummulative%>%gather(`1990`:`2014`,key="year",value="cumulative_co2_emissions_tonnes")
+co2_emissions<-co2_emissions%>%gather(`1990`:`2014`,key="year",value="yearly_co2_emissions_1000_tonnes")
+forest_coverage<-forest_coverage%>%gather(`1990`:`2014`,key="year",value="forest_coverage_percent")
+
+data<-list(co2_per_person,co2_economic,co2_cummulative,co2_emissions,forest_coverage)
+
+co2_data<-data%>%reduce(full_join)
+
+regions<-regions%>%select(name,four_regions,eight_regions,`World bank region`)%>%rename("country"=name,"continent"=four_regions,"continent_spec"= eight_regions,"wbr"=`World bank region`)
+co2_data<-co2_data%>%left_join(regions, by="country")
+
+
+
+```
+
+```{r}
+
+
+co2_data
+
+
+
+```
+
