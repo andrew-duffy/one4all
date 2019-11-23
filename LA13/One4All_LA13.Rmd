@@ -44,12 +44,147 @@ co2_data<-co2_data%>%left_join(regions, by="country")
 
 ```
 
+
 ```{r}
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # all_values (num): all data values
+  # n_A (int): Size of group A
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  permuted_mean_differences<-rep(0,perms)
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly separate vector "values" into disjoint 
+    # groups of size "nA" and "nB" respectively
+    temp<-sample(all_values)
+    group_A<-temp[1:n_A]
+    group_B<-temp[(n_A+1):length(temp)]
+    
+    # Step 3:
+    # Compute the sample means for the two groups from 
+    # step 2
+    mean_A<-mean(group_A,na.rm=T)
+    mean_B<-mean(group_B,na.rm=T)
+    
+    
+    # Step 4: 
+    # Compute the difference in sample means, store the
+    # value in the vector from step 1
+    permuted_mean_differences[i]<-mean_A-mean_B
+    
+  }
+  
+  # Step 5:
+  # Return the permuted mean differences vector
+  return(permuted_mean_differences)
+  
+}
+```
 
 
+```{r}
+perm_cor <- function(perms = 1000, x, y)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # x: Vector of Variable 1 - for computing correlation
+  # y: Vector of Variable 2 - for computing correlation
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  correlations<-rep(0,perms)
+  
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly mix up the values in the vector "y"
+    temp<-sample(y)
+    
+    # Step 3:
+    # Compute the correlation between x and the randomly mixed
+    # up y-vector. Store this value in the vector from step 1.
+    correlations[i]<-cor(x,temp,use="pairwise.complete.obs")
+    
+  }
+  
+  # Step 4:
+  # Return new updated vector, created in step 1
+  return(correlations)
+  
+}
+
+```
+
+
+```{r}
 co2_data
+```
 
+
+
+
+
+
+
+
+
+
+## Braden Individual Section:
+### Question:   
+Is there a correlation between the percentage of a country covered in forests and the $CO_2$ intensity of their economies (Emission intensity is the average emission rate of a given pollutant from a given source relative to the intensity of a specific activity, in this case economic activity)   
+
+
+### Importance: 
+This question is important because it allows us to understand the realtionship between the economic release of $CO_2$ and how much of a country is covered in forests. Since countries with a high percentage of forest cover will tend to have an economy tied to this resource, this relationship can illuminate the relationship between economic activity involving forestry and its impact on the $CO_2$ emmisions of a country. An understanding of this relaitonship could allow for policies to decrease the amount of $CO_2$ produced from economic activities. This is important becuase now, more than ever we need to be able to control the amount of $CO_2$ released into the atmosphere. If it is found that forestry activity increases the economic output of $CO_2$, then policies to move away from dependence on this economic acticity could be implemented. However, if forestry is found to decrease the emission rate of $CO_2$ relative to economic intensity, then economic activities related to forestry could be encouraged. 
+
+
+```{r message=FALSE,warning=FALSE}
+summary_mean<-co2_data%>%select(co2_emissions_tonnes_per_person:forest_coverage_percent)%>%map(mean,na.rm=T)
+summary_mean<-as_tibble(summary_mean)%>%mutate(statistic="mean")
+summary_median<-co2_data%>%select(co2_emissions_tonnes_per_person:forest_coverage_percent)%>%map(median,na.rm=T)
+summary_median<-as_tibble(summary_median)%>%mutate(statistic="median")
+summary_sd<-co2_data%>%select(co2_emissions_tonnes_per_person:forest_coverage_percent)%>%map(sd,na.rm=T)
+summary_sd<-as_tibble(summary_sd)%>%mutate(statistic="sd")
+summary<-reduce(list(summary_mean,summary_median,summary_sd),full_join)
+summary<-summary%>%select(statistic,co2_emissions_tonnes_per_person:forest_coverage_percent)
+summary
+
+actual_correlation<-cor(co2_data$forest_coverage_percent,co2_data$co2_intensity_of_economic_output_kg_co2_per_2011_ppp_of_gdp, use="pairwise.complete.obs")
+
+
+
+
+correlations_generated<-tibble(correlation=perm_cor(perms=1000,co2_data$forest_coverage_percent,co2_data$co2_intensity_of_economic_output_kg_co2_per_2011_ppp_of_gdp))
+
+
+ggplot(data=correlations_generated,aes(correlation,fill=(correlation<quantile(correlation,probs = c(.025),na.rm=T)[[1]]|correlation>quantile(correlation,probs = c(.975),na.rm=T)[[1]])))+
+  geom_histogram()+
+  geom_vline(xintercept = actual_correlation,color="red")+
+  labs(title="Correlation Permutation Test Between CO2 Economic Intensity and Forest Cover",fill="Tails")
+
+percentile<-nrow(filter(correlations_generated,correlation<actual_correlation))/nrow(correlations_generated)
+
+
+correlation_summary<-tibble("Correlation"=c(actual_correlation),"Percentile"=c(percentile))
+correlation_summary
 
 
 ```
+
+
+### Findings    
+From the above graph, it is clear that the correlation is more negative than would be expected if the labels were not important. It is clearly in the tails of the graph, and in fact it has a percentile of 0, so the correlation is most likely statistically significant. The negative value of this correlation shows that as percentage of forest cover increases, the Emission intesnsity of $CO_2$ from the economy decreases. Though this could be indicative of a relationship between the forest cover and economic production of $CO_2$, the confounding variable of size is important to take into account. Smaller countries could tend to have more forest cover, and also tend to have economies whose with less relation to $CO_2$ production. However, this statistically significant correlation does warrant further research. 
 
