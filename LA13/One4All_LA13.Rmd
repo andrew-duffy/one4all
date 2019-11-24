@@ -343,3 +343,70 @@ As seen in the histogram above, the null hypothesis can clearly be rejected, as 
 
 
 
+##Andrew Duffy Individual Section
+
+#Subquestion: It is commonly known that most of the world's polution comes from Asia. Although that is true for polution of the ocean, is it also true for co2 emissons?
+
+Null Hypothesis: Polution is equally distrubited throughout all of the populated continents
+
+Test statistic: Mean of yearly co2 emissions for Asia - mean for yearly co2 emissions for all other continents
+
+```{r}
+
+real <- co2_data %>% filter(year == 2014) %>% select(yearly_co2_emissions_1000_tonnes,continent) %>% group_by(continent)
+
+realasia <- real %>% filter(continent == "asia")
+
+realAM <- real %>% filter(continent == "americas")
+
+realEU <- real %>% filter(continent == "europe")
+
+realAFR <- real %>% filter(continent == "africa")
+
+meanAS <- mean(realasia$yearly_co2_emissions_1000_tonnes, na.rm = TRUE)
+
+meanother <- mean(mean(realAM$yearly_co2_emissions_1000_tonnes, na.rm = TRUE) + mean(realEU$yearly_co2_emissions_1000_tonnes, na.rm = TRUE) + mean(realAFR$yearly_co2_emissions_1000_tonnes, na.rm = TRUE))
+```
+
+Before the Permutation test, we should find the real difference between co2 emissions in Asia vs. the rest of the world.
+
+The difference is:
+
+```{r, echo = FALSE}
+realdiff <- meanAS - meanother
+
+realdiff
+```
+
+meaning that actually, Asia produces less co2 emissions (on average) than the rest of the world. 
+
+Now that we can reject the null hypothesis, we sould represent the difference as a positive number so it can be represented on the histogram for the permutation test. Therefore:
+
+```{r}
+realdiff = meanother - meanAS
+
+realdiff
+```
+
+Now for the permutation test:
+
+```{r}
+real <- real %>% arrange(continent, .by_group = TRUE)
+```
+
+Now, we need to do perm_means test. For this, I will make my own since asia does not appear at the start of the tibble, meaning n_A will not be 1:n_A.
+
+```{r}
+realpm <- c(real$yearly_co2_emissions_1000_tonnes)
+
+permtibble <- perm_mean(perms = 1000, realpm, 56)
+
+```
+
+```{r}
+permtibble <- as.tibble(permtibble)
+ggplot(data = permtibble) + geom_histogram(aes(x = value, binwidth = .2, color = "gray")) + geom_vline(xintercept = -(realdiff), color = "red") + ggtitle("Permutation Test of Means of co2 Emissions by Continent") + labs(x = "co2 Emissions, in 1000 tons")
+
+```
+
+
