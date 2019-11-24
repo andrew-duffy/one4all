@@ -12,7 +12,12 @@ library(lubridate)
 library(stringr)
 library(purrr)
 library(readxl)
+```
 
+
+## Data Import:
+
+```{r message=F , warning=F}
 co2_per_person<-read_csv(file="co2_emissions_tonnes_per_person.csv")
 co2_economic<-read_csv(file = "co2_intensity_of_economic_output_kg_co2_per_2011_ppp_of_gdp.csv")
 co2_cummulative<-read_csv(file = "cumulative_co2_emissions_tonnes.csv")
@@ -39,13 +44,11 @@ co2_data<-data%>%reduce(full_join)
 
 regions<-regions%>%select(name,four_regions,eight_regions,`World bank region`)%>%rename("country"=name,"continent"=four_regions,"continent_spec"= eight_regions,"wbr"=`World bank region`)
 co2_data<-co2_data%>%left_join(regions, by="country")
-
-
-
 ```
 
 
-```{r}
+
+```{r message=F , warning=F}
 perm_mean <- function(perms = 1000, all_values, n_A)
 {
   ## Variables ##
@@ -91,7 +94,7 @@ perm_mean <- function(perms = 1000, all_values, n_A)
 ```
 
 
-```{r}
+```{r message=F , warning=F}
 perm_cor <- function(perms = 1000, x, y)
 {
   ## Variables ##
@@ -129,38 +132,104 @@ perm_cor <- function(perms = 1000, x, y)
 ```
 
 
-```{r}
+```{r message=F , warning=F}
+co2_data<-co2_data%>%mutate(year=as.double(year))
 co2_data
 ```
 
 
+## Team Section:
+### Question:    
+Is the correlation coefficient between year and co2_emmisions_tonnes_per_person different between the Americas and Europe?
+
+### Importance:     
+This question is important because it allows us to see how different the correlation of year and co2_emissions_tonnes_per_person are between the Americas and Europe. Understanding how this correlation differs between Europe and the Americas would allow us to understand what factors that affect this correlation. The Americas and Europe both have simmilar levels of developement, and economies so these confounding variables are of less concern. Understanding the factors that affect the correlation between year and per capita $CO_2$ correlations would allow the institution of policies that decrease the correlation. As the global climate continues to change, largely due to the emission of $CO_2$, we need to work on decreasing our emissions. If we were able to reduce the correlation between year (i.e. level of developement) and per capita $CO_2$ emission we could continue to have our current level of technological advancement, while decreasing the per capita $CO_2$ emissions to fight climate change.       
+
+
+
+### Data:  
+The data was from the gapminder website, it included 5 datasets.   
+1.  Cumulative $CO_2$ emissions in tonnes, which is the total $CO_2$ emitted by the country summed over the years it has been emitting $CO_2$   
+2.  Yearly $CO_2$ emissions, the tonnes of $CO_2$ emitted by the country measured in 1000 tonnes   
+3.  $CO_2$ emissions per capita, the tonnes of $CO_2$ that the country emitted divided by its population            
+4.  $CO_2$ emission intensity of economic output, Emission intensity is the average emission rate of a given pollutant from a given source relative to the intensity of a specific activity, in this case economic activity    
+5.  The percentage of the country covered in forest        
+All of these are by year, most only had full data from between 1990 and 2014, so that was the data we focused on, using the select function to narrow the dataset to these years. To tidy the data, we first gathered the years into a single column. Initially, each year had its own column, but since the year is really a variable, the principles of tidy data dictate that it should be in a single column. Then, the datasets were combined using the full_join function, combining the data by country. Since this was a binary operation and 5 datasets needed to be combined, we used the reduce function to repeatedly apply it. 
+
+
+### Hypotheses:   
+Test Statistic: The test statistic will be the mean, to determine if there is a difference between correlation of year and co2_emissions_tonnes_per_person    
+$H_0:$  $\mu_{Americas\ Correlation\ Coefficients}-\mu_{Europes\ Correlation\ Coefficients}=0$                    
+$H_1:$  $\mu_{Americas\ Correlation\ Coefficients}-\mu_{Europes\ Correlation\ Coefficients}\neq0$            
+
+
+
+
+```{r message=F , warning=F}
+
+models <- co2_data %>% 
+  split(.$country) %>% 
+  map(~lm(co2_emissions_tonnes_per_person ~ year, data = .))
+#models
+
+
+
+
+correlation_coefficient<-models %>% 
+  map(summary) %>% 
+  map_dbl(~.$r.squared)
+continents<-co2_data%>%select(country,continent)
+df<-tibble("country"=names(correlation_coefficient),"cor"=correlation_coefficient)
+df<-left_join(df,continents,by="country")
+europe_correlations<-df%>%filter(continent=="europe")
+americas_correlations<-df%>%filter(continent=="americas")
+actual_mean_difference<-mean(americas_correlations$cor,na.rm=T)-mean(europe_correlations$cor,na.rm=T)
+
+AE_correlations<-df%>%filter(continent=="americas"|continent=="europe")
+permuted_means<-tibble("correlation"=perm_mean(perms=1000,all_values = AE_correlations$cor, n_A = nrow(americas_correlations)))
+ggplot(permuted_means,aes(correlation,fill=(correlation<quantile(correlation,probs = c(.025),na.rm=T)[[1]]|correlation>quantile(correlation,probs = c(.975),na.rm=T)[[1]])))+
+  geom_histogram(binwidth = .003)+
+  geom_vline(xintercept=actual_mean_difference,color="red")+
+  labs(fill="Tails")
+per<-nrow(filter(permuted_means,correlation<actual_mean_difference))/nrow(permuted_means)
+percentile<-tibble("Mean Difference"=actual_mean_difference,"Percentile"=per)
+percentile
+```
+
+### Findings:
+From the above graph it can be seen that the difference in the means of the correlations is in the tails of the graph. This is further supported by the percentile of the calculated mean difference, namely 1. It is higher than 100% of th randomly generated mean differences. This clearly suggests that there is a difference in the correlation of year and per capita $CO_2$ emission between Europe and the Americas. Also, since it is to the right, the correlation is higher in the Americas than in EUrope. That is, in the Americas the $CO_2$ per capita emissions, is less corelated to the year. Thus, we would recomend policies that make the americas more closely match Europe in terms of per capita $CO_2$ emissions, to decrease the correlation between the year and $CO_2$ per capita emissions. Decreasing this correlation would mean that the yearly tendency to increase $CO_2$ emissions, would then decrease and so would overall emission levels.
 
 
 
 
 
 
+## Braden Individual Section:    
+### Question:       
+Is there a correlation between the percentage of a country covered in forests and the $CO_2$ intensity of their economies (Emission intensity is the average emission rate of a given pollutant from a given source relative to the intensity of a specific activity, in this case economic activity).           
 
 
-## Braden Individual Section:
-### Question:   
-Is there a correlation between the percentage of a country covered in forests and the $CO_2$ intensity of their economies (Emission intensity is the average emission rate of a given pollutant from a given source relative to the intensity of a specific activity, in this case economic activity)   
+### Importance:    
+This question is important because it allows us to understand the realtionship between the economic release of $CO_2$ and how much of a country is covered in forests. Since countries with a high percentage of forest cover will tend to have an economy tied to this resource, this relationship can illuminate the relationship between economic activity involving forestry and its impact on the $CO_2$ emmisions of a country. An understanding of this relaitonship could allow for policies to decrease the amount of $CO_2$ produced from economic activities. This is important becuase now, more than ever we need to be able to control the amount of $CO_2$ released into the atmosphere. If it is found that forestry activity increases the economic output of $CO_2$, then policies to move away from dependence on this economic acticity could be implemented. However, if forestry is found to decrease the emission rate of $CO_2$ relative to economic intensity, then economic activities related to forestry could be encouraged.       
 
-
-### Importance: 
-This question is important because it allows us to understand the realtionship between the economic release of $CO_2$ and how much of a country is covered in forests. Since countries with a high percentage of forest cover will tend to have an economy tied to this resource, this relationship can illuminate the relationship between economic activity involving forestry and its impact on the $CO_2$ emmisions of a country. An understanding of this relaitonship could allow for policies to decrease the amount of $CO_2$ produced from economic activities. This is important becuase now, more than ever we need to be able to control the amount of $CO_2$ released into the atmosphere. If it is found that forestry activity increases the economic output of $CO_2$, then policies to move away from dependence on this economic acticity could be implemented. However, if forestry is found to decrease the emission rate of $CO_2$ relative to economic intensity, then economic activities related to forestry could be encouraged. 
+### Hypotheses:
+$H_0:$ There is no correlation between the forest cover of a country and the econonomic intensity of $CO_2$, i.e. $\rho=0$      
+$H_1:$There is a correlation between the forest cover of a country and the econonomic intensity of $CO_2$, i.e. $\rho\neq0$      
+Test Statistic: The correlation between the forest coverage and economic emmision intensity of $CO_2$
 
 
 ```{r message=FALSE,warning=FALSE}
+#The code below takes the co2 data and maps the mean median and sd functions to all the numeric columns in the co2 data set, it was used to explore the characteristics of each of the columns before further examination
+#using a permutation test
 summary_mean<-co2_data%>%select(co2_emissions_tonnes_per_person:forest_coverage_percent)%>%map(mean,na.rm=T)
 summary_mean<-as_tibble(summary_mean)%>%mutate(statistic="mean")
 summary_median<-co2_data%>%select(co2_emissions_tonnes_per_person:forest_coverage_percent)%>%map(median,na.rm=T)
 summary_median<-as_tibble(summary_median)%>%mutate(statistic="median")
 summary_sd<-co2_data%>%select(co2_emissions_tonnes_per_person:forest_coverage_percent)%>%map(sd,na.rm=T)
 summary_sd<-as_tibble(summary_sd)%>%mutate(statistic="sd")
-summary<-reduce(list(summary_mean,summary_median,summary_sd),full_join)
-summary<-summary%>%select(statistic,co2_emissions_tonnes_per_person:forest_coverage_percent)
-summary
+summar<-reduce(list(summary_mean,summary_median,summary_sd),full_join)
+summar<-summar%>%select(statistic,co2_emissions_tonnes_per_person:forest_coverage_percent)
+summar
 
 actual_correlation<-cor(co2_data$forest_coverage_percent,co2_data$co2_intensity_of_economic_output_kg_co2_per_2011_ppp_of_gdp, use="pairwise.complete.obs")
 
