@@ -257,6 +257,40 @@ correlation_summary
 ### Findings    
 From the above graph, it is clear that the correlation is more negative than would be expected if the labels were not important. It is clearly in the tails of the graph, and in fact it has a percentile of 0, so the correlation is most likely statistically significant. The negative value of this correlation shows that as percentage of forest cover increases, the Emission intesnsity of $CO_2$ from the economy decreases. Though this could be indicative of a relationship between the forest cover and economic production of $CO_2$, the confounding variable of size is important to take into account. Smaller countries could tend to have more forest cover, and also tend to have economies whose with less relation to $CO_2$ production. However, this statistically significant correlation does warrant further research. 
 
+## Ahyo Falick Individual Section:
+### Question:
+What is the average difference in percentage of the country covered in forest between the largest $CO_2$ emittor per capita and the smallest? Additionally, is the data statistically significant?
+
+### Importance:
+This question is important because it can emphasize just how much damage $CO_2$ emissions cause. By using emissions per capita instead of total emissions, confounding variables like total population can be ruled out. If there is found to be a substantial difference in percentage, it can be concluded that $CO_2$ emissions per capita and forest coverage. This result can also lead to the conclusion that deforestation is related to individual emissions, pointing to the importance of individual emission reductions.
+
+### Hypotheses:
+Null hypothesis: There will be no substantial difference in the two countries' forest coverage.
+
+Other hypothesis: There will be a significant difference in forest coverage between the largest emittors and the smallest.
+
+```{r}
+#First, determine which country has the smallest emissions per capita on average
+cpp <- co2_per_person %>% group_by(country) %>% mutate(average = mean(co2_emissions_tonnes_per_person))
+largest <- cpp %>% arrange(desc(average)) %>% filter(country != "Qatar")
+smallest <- cpp %>% arrange(average) #Chad: avg = 0.030440
+
+#Next, find the difference in forest coverage of those countries
+fc <- forest_coverage %>% filter(country == "Kuwait" | country == "Chad")
+mg <- tibble(mean=perm_mean(1000,fc$forest_coverage_percent,24))
+
+#Using the map function to compute the mean of forest coverage percent
+k <- fc %>% filter(country == "Kuwait") %>% select(forest_coverage_percent) %>% map(mean)
+c <- fc %>% filter(country == "Chad") %>% select(forest_coverage_percent) %>% map(mean)
+amd <- k$forest_coverage_percent-c$forest_coverage_percent #actual average found to be -4.552
+
+#Plot of histogram
+ggplot(data=mg,aes(mean,fill=(mean<quantile(mean,probs = c(.025),na.rm=T)[[1]]|mean>quantile(mean,probs = c(.975),na.rm=T)[[1]])))+
+  geom_histogram() + geom_vline(xintercept = abs(amd), color = "blue") + labs(title = "Mean Difference Between Chad and Kuwait", x = "Percent forest", fill = "tails") 
+```
+
+### Findings
+It is apparent from the above plot that the null hypothesis can be safely rejected. This can be concluded because the actual mean difference is far outside of the histogram plot in the 100th percentile showing there is most likely statistic significance. This proves that there is a large difference in the country percentage covered by forests between the top and botom emittors per capita. If the emissions per person in each country were to be lowered, it can be concluded that it could greatly improve the state of forests around the world.
 
 ## Luke Fanning Individual Section
 ### Question: 
