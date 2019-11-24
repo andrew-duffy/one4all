@@ -257,3 +257,55 @@ correlation_summary
 ### Findings    
 From the above graph, it is clear that the correlation is more negative than would be expected if the labels were not important. It is clearly in the tails of the graph, and in fact it has a percentile of 0, so the correlation is most likely statistically significant. The negative value of this correlation shows that as percentage of forest cover increases, the Emission intesnsity of $CO_2$ from the economy decreases. Though this could be indicative of a relationship between the forest cover and economic production of $CO_2$, the confounding variable of size is important to take into account. Smaller countries could tend to have more forest cover, and also tend to have economies whose with less relation to $CO_2$ production. However, this statistically significant correlation does warrant further research. 
 
+
+## Luke Fanning Individual Section
+### Question: 
+Is there a noticeable difference in means of forest coverage percentage between the two continents with the current highest nominal GDP, Asia and North America?
+
+### Importance:
+Throughout periods of high industrialization in most developed countries, there were large deforestation efforts in place in order to maximize the ability of those countries to succeed and advance. However, there are many smaller countries in the Asian continent, with the primary example being Japan, who may have also had to find other methods to support their industrialization, as the smaller forest area avaliable to them disallowed them from using deforestation to advance their development efforts. While replanting efforts have been in full swing now across the world for many years, and many national parks and other conservation efforts have been made specifically in North America, significant damage has likely been done in these smaller industrialized countries in Asia, as while they may have had to find various other ways to support their industrialization efforts, there is a high likelihood that a lot of their forested areas would've had to be removed to both support their industrialization as well as to make room for a more industrialized society.Therefore, it will be interesting to compare the mean forest coverage percentages from both continents from 1990 onwards to see if there is a significant difference between the two regions with the highest GDP's in the world and analyze their deforestation percentages in order to obtain those GDP's. 
+
+### Map functions:
+```{r}
+(means_Asia <- co2_data %>% filter(continent == "asia") %>% select(forest_coverage_percent) %>% map(mean, na.rm = T))
+
+(means_n_america <- co2_data %>% filter(continent_spec == "america_north") %>% select(forest_coverage_percent) %>% map(mean, na.rm = T))
+
+
+(standard_dev_Asia <- co2_data %>% filter(continent == "asia") %>% select(forest_coverage_percent) %>% map(sd, na.rm = T))
+
+(standard_dev_n_america <- co2_data %>% filter(continent_spec == "america_north") %>% select(forest_coverage_percent) %>% map(sd, na.rm = T))
+
+
+```
+The four above map functions work to provide important statistical datapoints for the two regions being analyzed in the above question,  with the first two data points representing the means of forest coverage percentage in Asia and North America, respectively, whereas the second two represent the dstandard deviations of forest coverage percentage in Asia and North America, again respectively. These map functions were performed by first filtering the data for each respective continent, selecting the requisuite vartiable, and then taking the mapped mean or standard deviation of each dataset, removing any N.A. data points. 
+
+### Permutation Test
+
+**Null Hypothesis:** The mean forest coverage percentage between the two continents is equal.
+**Alternative Hypothesis:** The mean forest coverage percentage between the two continents is not equal. 
+
+```{r}
+asian_countries <- co2_data %>% filter(continent == "asia")
+n_american_countries <- co2_data %>% filter(continent_spec == "america_north")
+asia_and_n_america_forests <- co2_data %>% filter(continent == "asia" | continent_spec == "america_north")
+
+real_mean <- mean(n_american_countries$forest_coverage_percent, na.rm = T) - mean(asian_countries$forest_coverage_percent, na.rm = T)
+
+permuted_means <- tibble(permuted_means = perm_mean(10000, asia_and_n_america_forests$forest_coverage_percent, 1000))
+
+(percentile_forest_means<-nrow(filter(permuted_means,permuted_means<real_mean))/nrow(permuted_means))
+
+ggplot(data = permuted_means, mapping = aes(permuted_means, fill=(permuted_means<quantile(permuted_means,probs = c(.05),na.rm=T)[[1]]|permuted_means>quantile(permuted_means,probs = c(.95),na.rm=T)[[1]]))) +   geom_histogram(binwidth = 0.25)+
+  geom_vline(xintercept = real_mean,color="blue")+
+  labs(title=" Mean Permutation Test Between Forest 
+       Coverage Percentage in Asia and North America",fill="Tails")
+```
+
+### Conclusion 
+
+As seen in the histogram above, the null hypothesis can clearly be rejected, as the real difference between the two means is well outside of the range of statistically expected data. In fact, the real difference is actually in the 100th percentile of the permuted means difference. Therefore, it can be seen that there is a statistically signifcant difference in forest coverage percentage between the two continents.  
+
+
+
+
