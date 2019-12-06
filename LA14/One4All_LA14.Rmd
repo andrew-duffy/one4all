@@ -1,0 +1,280 @@
+---
+title: "One4All_LA14"
+author: "Braden Griebel, Luke Fanning, Ayho Falick, Andrew Duffy"
+date: "12/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(purrr)
+library(broom)
+library(stringr)
+library(modelr)
+source("http://www.openintro.org/stat/data/cdc.R")
+cdc <- as_tibble(cdc)
+```
+
+
+```{r}
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # all_values (num): all data values
+  # n_A (int): Size of group A
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  permuted_mean_differences<-rep(0,perms)
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly separate vector "values" into disjoint 
+    # groups of size "nA" and "nB" respectively
+    temp<-sample(all_values)
+    group_A<-temp[1:n_A]
+    group_B<-temp[(n_A+1):length(temp)]
+    
+    # Step 3:
+    # Compute the sample means for the two groups from 
+    # step 2
+    mean_A<-mean(group_A,na.rm=T)
+    mean_B<-mean(group_B,na.rm=T)
+    
+    
+    # Step 4: 
+    # Compute the difference in sample means, store the
+    # value in the vector from step 1
+    permuted_mean_differences[i]<-mean_A-mean_B
+    
+  }
+  
+  # Step 5:
+  # Return the permuted mean differences vector
+  return(permuted_mean_differences)
+  
+}
+```
+
+
+```{r}
+perm_cor <- function(perms = 1000, x, y)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # x: Vector of Variable 1 - for computing correlation
+  # y: Vector of Variable 2 - for computing correlation
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  correlations<-rep(0,perms)
+  
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly mix up the values in the vector "y"
+    temp<-sample(y)
+    
+    # Step 3:
+    # Compute the correlation between x and the randomly mixed
+    # up y-vector. Store this value in the vector from step 1.
+    correlations[i]<-cor(x,temp,use="pairwise.complete.obs")
+    
+  }
+  
+  # Step 4:
+  # Return new updated vector, created in step 1
+  return(correlations)
+  
+}
+
+```
+
+
+```{r}
+cdc
+tdata<-cdc%>%mutate(hlthcoded=ifelse(genhlth=="excellent",5,
+                                     ifelse(genhlth=="very good",4,
+                                            ifelse(genhlth=="good",3,
+                                                   ifelse(genhlth=="fair",2,
+                                                          ifelse(genhlth=="poor",1,NA))))))
+```
+
+
+
+## Team Question: 
+How does smoking affect General Health when accounting for age?
+
+### Importance:
+This is important, because although people now know that smoking can cause cancer, it is not neccesarily well known whether smoking affects other aspects of health. This analysis will allow us to see whether there affects on the general health based on smoking. Additionally, since we will be taking age into account, we don't have to worry about this variable confusing the matter. If we can understand how general health is affected by smoking we can understand how important smoking is when considering how healthy someone is likely to be. This can be used by the government to institute policies relating to this. Since many people, especially young people, seem less concerned about the long term probability of cancer increasing due to smoking, understanding how it affects current general health could be important in convincing more people to stop smoking.  So ultimately, this question is important because it allows us to understand how general health is affected by smoking. This in turn is important, becuase understanding how smoking affects general health can allow the government to make policies, and determine whether spending more money on programs to discourage smoking would be effective in improving the general health of the population. Improving the general health of a population would likely increase the overall happiness of the society, decrease the amount of money the government has to spend on health programs and increase the economic stability of the general populace (given that medical debt is one of the leading causes of bankrupcy in the US).
+
+### Generalised Linear Model
+```{r}
+modelsmoke<-glm(smoke100~hlthcoded+age,family=binomial,data=tdata)
+tdata<-add_predictions(tdata,modelsmoke)%>%mutate(psmoke=exp(pred)/(1+exp(pred)))
+#tdata
+smoking_probabilities<-cdc%>%group_by(genhlth)%>%summarise("Probability of Smoking"=mean(smoke100))%>%rename("General Health"=genhlth)
+smoking_probabilities
+age_smoking_prob<-cdc%>%group_by(genhlth,age)%>%summarize(probability=mean(smoke100))
+coef(modelsmoke)
+ggplot(tdata,aes(age,psmoke))+geom_point(data=age_smoking_prob,aes(age,probability,color=genhlth))+geom_smooth(aes(color=genhlth))+labs(y="Probability of Smoking",x="Age",title="Proability of Smoking and General Health")#+facet_wrap(~genhlth)
+```
+
+
+
+
+### Finding: 
+As can be seen from the probability calculations, as people decrease in general health they have a higher probability of having smoked. Additionally, from the generalised linear models we can examine the effect that age and general health have on the probability of smoking. Note, that these models generate a logodds, not an actual probability. However, since logodds is a monotomically increasing function on probability, we can still interpret the signs on the coefficients as influencing the probability. As health increases (from poor to excellent) the health coded increases, so we can just treat this as a measure of health. The sign of the coefficient for the health coded term is negative, meaning that those with better health have a lower probability of smoking (when taking age into account). Since the age term has a positive sign associated with it the probability of smoking increases with age (which makes sense given how much effort has been put into decreasing smoking over the years, and how popular it used to be). What this means, is that those who have smoked have a higher probability of being in a worse health category. 
+
+
+### Permutation Test:
+Is there a difference in the general health between smokers and non-smokers?
+$H_0:\mu_{General\ Health\ of \ non-smokers}-\mu_{General\ Health\ of \ smokers}=0$     
+$H_1:\mu_{General\ Health\ of \ non-smokers}-\mu_{General\ Health\ of \ smokers}\neq0$        
+```{r}
+smokers<-tdata%>%filter(smoke100==1)
+nonsmokers<-tdata%>%filter(smoke100==0)
+smoke_calc_mean_diff<-mean(nonsmokers$hlthcoded)-mean(smokers$hlthcoded)
+smokepermuted<-tibble(differences=perm_mean(perms=1000,all_values = tdata$hlthcoded,n_A = nrow(nonsmokers)))
+ggplot(data=smokepermuted,aes(differences))+
+  geom_histogram(binwidth=.002,aes(fill=(differences<quantile(differences,probs = c(.025))[[1]]|differences>quantile(differences,probs = c(.975))[[1]])))+
+  labs(title="Permuted Mean differences Histogram",fill="Tails",x="Permuted mean Differences")+
+  geom_vline(xintercept=smoke_calc_mean_diff)+labs()
+percentile=nrow(filter(smokepermuted,differences<smoke_calc_mean_diff))/nrow(smokepermuted)
+tibble(Percentile=percentile)
+
+
+
+cdc_modified<-cdc%>%mutate(smoke100L=as.logical(smoke100))%>%mutate(hlthcoded=ifelse(genhlth=="excellent",5,
+                                     ifelse(genhlth=="very good",4,
+                                            ifelse(genhlth=="good",3,
+                                                   ifelse(genhlth=="fair",2,
+                                                          ifelse(genhlth=="poor",1,NA))))))
+ggplot(data=cdc_modified,aes(genhlth,fill=smoke100L))+geom_bar(position="dodge")+labs(title="Smoking and General Health",fill="Has Smoked",x="General Health")
+```
+
+### Findings:
+Since the real calculated mean difference between the mean general health of smokers, and that of non smokers is far into the tail of the permuted graph we can reject the null and acceptt the alternative hypothesis. This is also backed up by the fact that it has a percentile of 1, so the difference is greater than any of the randomly permuted difference of means. Clearly then, the labels of smoker and non-smoker really do make a difference to general health. Also, note that since it is far to the right, non-smokers seem to have higher general health than the non-smokers. All of this is further backed up by the graph showing that there is a higher number of non-smokers in the higher health category, and higher numbers of smokers in the lower health categories. 
+
+
+### Conclusion:
+From the generalised linear model, it can be seen that even when accounting for age, smoking is still less likely as the general health category increases. From the permutation test, it is clear that the differencce in general health between smokers and non-smokers is significantly different. All of this is backed up by the last graph showing that those who don't smoke are more likely to be in the higher health categories, while those that do smoke are more likely to be in a lower health cateogry. This is backed up by the earlier probability calculations. Taking this all together, we can see that smoking is detrimental to general health even when accounting for age. 
+
+
+### Recomendation:
+
+Thus we know that smoking generally decreases the general health of the person smoking. So beyond just increasing the risk of cancer, it also decreases health across the board. With this in mind, we recomend that it is made clear that smoking not only increases the probability of cancer, but also decreases general health across the course of a lifetime. We would encourage spending in programs that increase the knowledge of this aspect of smoking. Also, increased spending on any programs which seem to decrease the proportion of people that smoke. In order to do this it would be important to understand what types of programs are most effective at decreasing the number of people which smoke (and doing a cost-benefit analysis on these).
+
+
+### Some Ethical Cnsiderations:
+
+Insurance companies could use this analysis to increase the premiums and rates that smokers have to pay. Although, this would likely benefit the insurance company it would hurt people who are smokers or who have smoked because they will have to pay more for health insurance. 
+
+
+
+## Braden Griebel Individual Section:
+
+### Question:
+How are weight desire and weight related, and does this vary between the general health groups?
+### Importance: 
+This question is important because it allows me to understand how general health is related to weight and weight desire (specifically their difference). Understanding this could be useful, because it would allow me to gain some understanding of the phycolpogical aspects of general health and weight loss. For example, if we were to find that as general health increases, the difference between weight and weight desired decreases, this could be because across the board pepole want to weigh in a certain range and that more unhealthy people are just father away from this range. However, it could also indicate that healthier people have more realistic goals which help them get to more healthy weights thus increasing their health. Whatever the result, more analysis would be neccesary to see what the difference actually means. But this question is a good initial inroad to this knotty problem. 
+
+
+### Linear Models
+```{r}
+bdata<-cdc%>%mutate(wtdiff=weight-wtdesire)%>%group_by(genhlth)%>%nest()
+bmodel<-function(df){lm(formula = wtdesire~weight,data = df)}
+bdata<-bdata%>%mutate("model"=map(bdata$data,bmodel))
+bdata<-bdata%>%mutate(co=map(bdata$model,coef))
+bdata<-bdata%>%mutate(predictions=map2(data,model,add_predictions))
+bdata_predictions<-bdata%>%unnest(data,predictions,.drop=T)
+bdata_predictions<-bdata_predictions%>%select(-(exerany1:gender1),-wtdiff1)
+bdata<-bdata%>%mutate(slope=map_dbl(bdata$co,"weight"))
+bdata_slopes<-bdata%>%select(genhlth,slope)
+bdata_slopes
+ggplot(bdata_predictions)+geom_point(aes(weight,wtdesire))+
+  facet_wrap(~genhlth)+
+  geom_smooth(aes(weight,pred,color=genhlth))+
+  labs(title="General Health and The Relationship between Weight and Desired Weight", y="Weight Desired",x="Weight",color="General Health")
+
+
+```
+### Findings:
+As you go down in health, the slope of the relationship between weight and desired weight decreases, from a maximum slope of .7855 down to .356. This is indicative of the fact tht those in the better health categories are significantly closer to their desired weight than those in the lower health categories. 
+
+### Permutation Test
+Is there a differnce in the mean weight distance from desired weight?
+$H_0$:$\mu_{Good\ Health\ Weight\ Difference}-\mu_{Poor\ Health\ Weight\ Difference} =0$
+$H_1$:$\mu_{Good\ Health\ Weight\ Difference}-\mu_{Poor\ Health\ Weight\ Difference} \neq 0$
+
+
+```{r}
+b2data<-cdc%>%mutate(wtdiff=weight-wtdesire)
+good_health<-b2data%>%filter(genhlth %in% c("good","very good","excellent"))
+poor_health<-b2data%>%filter(genhlth %in% c("fair", "poor"))
+calculated_mean_diff<-mean(good_health$wtdiff)-mean(poor_health$wtdiff)
+combined_vector<-c(good_health$wtdiff,poor_health$wtdiff)
+permuted_mean_difference<-tibble(differences=perm_mean(perms=1000,all_values=combined_vector,n_A=nrow(good_health)))
+ggplot(data=permuted_mean_difference,aes(differences))+
+  geom_histogram(binwidth=.1,aes(fill=(differences<quantile(differences,probs = c(.025))[[1]]|differences>quantile(differences,probs = c(.975))[[1]])))+
+  labs(title="Permuted Mean Differences",fill="Tails",x="Difference between the permuted means")+
+  geom_vline(xintercept=calculated_mean_diff)
+
+percentile=nrow(filter(permuted_mean_difference,differences<calculated_mean_diff))/nrow(permuted_mean_difference)
+tibble(Percentile=percentile,"Numerical Result"=calculated_mean_diff)
+
+
+
+```
+### Findings: 
+As can be seen from the graph above, the actual calculated mean difference is far into the tails of the permuted difference of means. This is further supported by the fact that the calculated mean difference is in the 0th percetile. This means that the null hypothesis should be rejected, so there is (almost certainly) a difference in in the mean of the difference between weight and desired weight between the good and poor health groups. Also, since it is at the 0th percentile (and thus to the far left on the graph) we can also say that those with better health have a smaller difference between their actual weight and their weight desired. 
+From this and the earlier linear models, it can thus be seen that those in better health categories are closer 
+
+### Conclusion: 
+This questions was used to explore other factors that can affect, be affected by general health. Some people report smoking as an attempt to loose weight, or not desiring to quit because of a likely weight game. All of this means that my question is useful when considering the relationship between smoking and general health due to the relationship between general health and weight, and also weight and weight desires relationship to smoking. Moslty this question was used to explore how general health affects, or is affected by factors that are associated with smoking. The answer to the question is that healthier people tend to be closer to their desired weight, and that, based on the linear model, the relationship between weight and desired weight is much closer (slope nearer one) for healthier individuals. This is related to the main question in that it shows how weight and desired weight can affect or be affected by general health. It shows that general health has a relation to weight and weight desire, and due to the relationship that smoking has with weight and weight desire this is important to consider when thinking about the results to the team question.      
+
+I applied a permutation test in answering this question in order to see if there was a statistically significant difference in the difference between weight and weight desire between those with better and worse health. I also used a linear model to see how the relantionship between weight and desired weight differs between the general health categories. 
+
+
+
+
+## Individual Contributions:
+
+
+I, Braden Griebel, ran a generalised linear model on the data to see how general health and age affects the probability of the individuals having smoked (at least 100 cigarettes). I used this to understnand how health is affected by smoking when taking into account the age of the individuals (Since general health generally desclines with age). Since the result of the generalised linear model in binomial mode returns logodds I transformed these back into probabilities as those are easier to understand. I added labels, and colored the graph to make it easier to understand. In my individual dection I used a simple linear model to understand how the relation between weight and desired weight changes between the general health categories. I used a facet function to divide between the general health categories when graphing the models. I also displayed the slopes numerically to makae clear how the relationship changed between the difference health categories. Then I used a histogram to display the results of a permutation test (as well as outputting the actual result, and its percentile to make the actual numbers more clear). I used the fill aesthetic to show where in the histogram the tails fell. Finally, I added labels to all the graphs to make clear exactly what each of the graphs meant. The new tooks I applied were a permutation test, and a linear model. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
