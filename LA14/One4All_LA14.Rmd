@@ -248,6 +248,170 @@ I applied a permutation test in answering this question in order to see if there
 
 
 
+# Andrew Duffy subquestion
+
+## Question: 
+### Using a permutation test, can you show that people who smoke are less healthy than non-smokers via the difference of weight and weight desire?
+
+
+## Null Hypothesis: 
+### Smoking has no effect on health
+
+since genhealth is not an exact measurement of health, we can measure one's health with weight vs. weight desire. Weight is definitely not the only determinant of health, but if weight - weightdesire > 15, we can assume they are quite unhealthy becuase they would like to lose at least 15 pounds. Therefore, our test statistic will be the boolean variable measuring if they smoke or not
+
+##Hypothesis 1: 
+### Smoking does have an effect on health.
+
+I expect for this hypothesis to be proven true by the visual representation of the permutation test I will perform.
+
+```{r}
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # all_values (num): all data values
+  # n_A (int): Size of group A
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  permuted_mean_differences<-rep(0,perms)
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly separate vector "values" into disjoint 
+    # groups of size "nA" and "nB" respectively
+    temp<-sample(all_values)
+    group_A<-temp[1:n_A]
+    group_B<-temp[(n_A+1):length(temp)]
+    
+    # Step 3:
+    # Compute the sample means for the two groups from 
+    # step 2
+    mean_A<-mean(group_A,na.rm=T)
+    mean_B<-mean(group_B,na.rm=T)
+    
+    
+    # Step 4: 
+    # Compute the difference in sample means, store the
+    # value in the vector from step 1
+    permuted_mean_differences[i]<-mean_A-mean_B
+    
+  }
+  
+  # Step 5:
+  # Return the permuted mean differences vector
+  return(permuted_mean_differences)
+  
+}
+```
+
+
+```{r}
+perm_cor <- function(perms = 1000, x, y)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # x: Vector of Variable 1 - for computing correlation
+  # y: Vector of Variable 2 - for computing correlation
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  correlations<-rep(0,perms)
+  
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly mix up the values in the vector "y"
+    temp<-sample(y)
+    
+    # Step 3:
+    # Compute the correlation between x and the randomly mixed
+    # up y-vector. Store this value in the vector from step 1.
+    correlations[i]<-cor(x,temp,use="pairwise.complete.obs")
+    
+  }
+  
+  # Step 4:
+  # Return new updated vector, created in step 1
+  return(correlations)
+  
+}
+```
+
+
+```{r}
+nonsmk <- cdc %>% filter(smoke100 == 0) %>% select(weight, smoke100, wtdesire)
+
+realmean_ns <- mean((nonsmk$weight - nonsmk$wtdesire), na.rm = TRUE)
+
+smk <- cdc %>% filter(smoke100 == 1) %>% select(weight, smoke100, wtdesire)
+
+realmean_s <- mean((smk$weight - smk$wtdesire), na.rm = TRUE)
+```
+
+The real mean for weight - weight desire for non smokers is:
+```{r}
+realmean_ns
+```
+
+The real mean for weight - weight desire for smokers is:
+```{r}
+realmean_s
+```
+
+so, as you can see, smokers on average do want to lose more weight, signalling that they are more overweight. However, there is barely a difference between the two means. 
+
+
+Now, for the permutation test.
+
+```{r}
+permtib <- cdc %>% select(weight, wtdesire, smoke100)
+permtib["difference"] <- (permtib$weight - permtib$wtdesire)
+```
+
+
+```{r}
+perm_ns <- permtib %>% filter(smoke100 == 0)
+perm_s <- permtib %>% filter(smoke100 == 1)   #I do this to figure out the size of each category, for n_A in perm test.
+
+permtib <- permtib %>% arrange(smoke100 == 0)
+
+permtest_val <- perm_mean(perms = 1000, permtib$difference, 9441)
+```
+
+```{r}
+realdiff <- realmean_s - realmean_ns
+```
+
+```{r, warning = FALSE, echo = FALSE, message = FALSE}
+permtest_val <- as.tibble(permtest_val)
+ggplot(data = permtest_val) + geom_histogram(aes(x = value, binwidth = .17), fill = "dark gray") + geom_vline(xintercept = realdiff, color = "red") + ggtitle("Permutation Test of means of Weight - Weight Desire for non smokers vs. smokers") + labs(x = "Difference in Means")
+
+```
+
+## Findings:
+
+Based on the permutation test results, the difference in means is slightly skewed to a very small integer above zero and below the real mean difference value. Therefore, it seems that after 1000 permutations there is a slight difference in one's health for smokers versus non smokers. The null hypothesis is rejected, because the difference in means for the permutation test is slightly above zero, close to the real value.
+
+
+##Conclusion:
+
+It can be concluded that in terms of one's weight and how they would like to see their weight change, smokers have a slightly higher difference between their weight and ideal weight than non smokers. From this knowledge you can infer that non smokers are slightly more fit than smokers, not in terms of exercise but in regards to their actual weight.
+
+We know that there are many determinants of general health, including exercise, diet, sleep, and others. However, weight is a big indicator of one's general health, i.e. most factors of general health have a large effect on one's weight. Therefore, this is a good way to determine if smokers are less healthy than non smokers cause someone who is very overweight will have a larger difference in weight vs. weight desire.
+
+
+These results and inferences lead me to believe that non smokers are, on average, slightly healthier than smokers.
+
+
 
 ## Individual Contributions:
 
