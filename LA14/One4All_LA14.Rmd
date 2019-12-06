@@ -114,23 +114,28 @@ tdata<-cdc%>%mutate(hlthcoded=ifelse(genhlth=="excellent",5,
 
 
 ## Team Question: 
-How does smoking affect General Health when accounting?
+How does smoking affect General Health when accounting for age?
 
 ### Importance:
-This is important, because although people now know that smoking can cause cancer, it is not neccesarily well known whether smoking affects other aspects of health. This analysis will allow us to see whether there 
+This is important, because although people now know that smoking can cause cancer, it is not neccesarily well known whether smoking affects other aspects of health. This analysis will allow us to see whether there affects on the general health based on smoking. Additionally, since we will be taking age into account, we don't have to worry about this variable confusing the matter. If we can understand how general health is affected by smoking we can understand how important smoking is when considering how healthy someone is likely to be. This can be used by the government to institute policies relating to this. Since many people, especially young people, seem less concerned about the long term probability of cancer increasing due to smoking, understanding how it affects current general health could be important in convincing more people to stop smoking.  So ultimately, this question is important because it allows us to understand how general health is affected by smoking. This in turn is important, becuase understanding how smoking affects general health can allow the government to make policies, and determine whether spending more money on programs to discourage smoking would be effective in improving the general health of the population. Improving the general health of a population would likely increase the overall happiness of the society, decrease the amount of money the government has to spend on health programs and increase the economic stability of the general populace (given that medical debt is one of the leading causes of bankrupcy in the US).
 
 ### Generalised Linear Model
 ```{r}
-modelsmoke<-glm(smoke100~hlthcoded,family=binomial,data=tdata)
+modelsmoke<-glm(smoke100~hlthcoded+age,family=binomial,data=tdata)
 tdata<-add_predictions(tdata,modelsmoke)%>%mutate(psmoke=exp(pred)/(1+exp(pred)))
 #tdata
 smoking_probabilities<-cdc%>%group_by(genhlth)%>%summarise("Probability of Smoking"=mean(smoke100))%>%rename("General Health"=genhlth)
 smoking_probabilities
-
-ggplot(tdata,aes(genhlth,psmoke,group=1))+geom_point()+geom_line()+labs(y="Probability of Smoking",x="General Health Category",title="Proability of Smoking and General Health")
+age_smoking_prob<-cdc%>%group_by(genhlth,age)%>%summarize(probability=mean(smoke100))
+coef(modelsmoke)
+ggplot(tdata,aes(age,psmoke))+geom_point(data=age_smoking_prob,aes(age,probability,color=genhlth))+geom_smooth(aes(color=genhlth))+labs(y="Probability of Smoking",x="Age",title="Proability of Smoking and General Health")#+facet_wrap(~genhlth)
 ```
+
+
+
+
 ### Finding: 
-As can be seen from the graph based on the generalised linear model, and the probability calculations 
+As can be seen from the probability calculations, as people decrease in general health they have a higher probability of having smoked. Additionally, from the generalised linear models we can examine the effect that age and general health have on the probability of smoking. Note, that these models generate a logodds, not an actual probability. However, since logodds is a monotomically increasing function on probability, we can still interpret the signs on the coefficients as influencing the probability. As health increases (from poor to excellent) the health coded increases, so we can just treat this as a measure of health. The sign of the coefficient for the health coded term is negative, meaning that those with better health have a lower probability of smoking (when taking age into account). Since the age term has a positive sign associated with it the probability of smoking increases with age (which makes sense given how much effort has been put into decreasing smoking over the years, and how popular it used to be). What this means, is that those who have smoked have a higher probability of being in a worse health category. 
 
 
 ### Permutation Test:
@@ -149,11 +154,32 @@ ggplot(data=smokepermuted,aes(differences))+
 percentile=nrow(filter(smokepermuted,differences<smoke_calc_mean_diff))/nrow(smokepermuted)
 tibble(Percentile=percentile)
 
+
+
+cdc_modified<-cdc%>%mutate(smoke100L=as.logical(smoke100))%>%mutate(hlthcoded=ifelse(genhlth=="excellent",5,
+                                     ifelse(genhlth=="very good",4,
+                                            ifelse(genhlth=="good",3,
+                                                   ifelse(genhlth=="fair",2,
+                                                          ifelse(genhlth=="poor",1,NA))))))
+ggplot(data=cdc_modified,aes(genhlth,fill=smoke100L))+geom_bar(position="dodge")+labs(title="Smoking and General Health",fill="Has Smoked",x="General Health")
 ```
 
 ### Findings:
+Since the real calculated mean difference between the mean general health of smokers, and that of non smokers is far into the tail of the permuted graph we can reject the null and acceptt the alternative hypothesis. This is also backed up by the fact that it has a percentile of 1, so the difference is greater than any of the randomly permuted difference of means. Clearly then, the labels of smoker and non-smoker really do make a difference to general health. Also, note that since it is far to the right, non-smokers seem to have higher general health than the non-smokers. All of this is further backed up by the graph showing that there is a higher number of non-smokers in the higher health category, and higher numbers of smokers in the lower health categories. 
 
 
+### Conclusion:
+From the generalised linear model, it can be seen that even when accounting for age, smoking is still less likely as the general health category increases. From the permutation test, it is clear that the differencce in general health between smokers and non-smokers is significantly different. All of this is backed up by the last graph showing that those who don't smoke are more likely to be in the higher health categories, while those that do smoke are more likely to be in a lower health cateogry. This is backed up by the earlier probability calculations. Taking this all together, we can see that smoking is detrimental to general health even when accounting for age. 
+
+
+### Recomendation:
+
+Thus we know that smoking generally decreases the general health of the person smoking. So beyond just increasing the risk of cancer, it also decreases health across the board. With this in mind, we recomend that it is made clear that smoking not only increases the probability of cancer, but also decreases general health across the course of a lifetime. We would encourage spending in programs that increase the knowledge of this aspect of smoking. Also, increased spending on any programs which seem to decrease the proportion of people that smoke. In order to do this it would be important to understand what types of programs are most effective at decreasing the number of people which smoke (and doing a cost-benefit analysis on these).
+
+
+### Some Ethical Cnsiderations:
+
+Insurance companies could use this analysis to increase the premiums and rates that smokers have to pay. Although, this would likely benefit the insurance company it would hurt people who are smokers or who have smoked because they will have to pay more for health insurance. 
 
 
 
@@ -162,7 +188,7 @@ tibble(Percentile=percentile)
 ### Question:
 How are weight desire and weight related, and does this vary between the general health groups?
 ### Importance: 
-It is important to understand what influence that weight and weight desire have on 
+It is important to understand what influence that weight and weight desire have on general health because 
 
 
 ### Linear Models
@@ -222,4 +248,4 @@ As can be seen from the graph above, the actual calculated mean difference is fa
 ## Individual Contributions:
 
 
-I, Braden Griebel, ran a generalised linear model on the data to see how the general health category affects 
+I, Braden Griebel, ran a generalised linear model on the data to see how general health and age affects the probability of the individuals having smoked (at least 100 cigarettes). 
