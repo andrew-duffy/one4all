@@ -343,9 +343,10 @@ As seen in the histogram above, the null hypothesis can clearly be rejected, as 
 
 
 
-##Andrew Duffy Individual Section
+# Andrew Duffy Individual Section
 
-#Subquestion: It is commonly known that most of the world's polution comes from Asia. Although that is true for polution of the ocean, is it also true for co2 emissons?
+## Subquestion: 
+It is commonly known that most of the world's polution comes from Asia. Although that is true for polution of the ocean, is it also true for co2 emissons?
 
 Null Hypothesis: Polution is equally distrubited throughout all of the populated continents
 
@@ -380,7 +381,7 @@ realdiff
 
 meaning that actually, Asia produces less co2 emissions (on average) than the rest of the world. 
 
-Now that we can reject the null hypothesis, we sould represent the difference as a positive number so it can be represented on the histogram for the permutation test. Therefore:
+Now that we can reject the null hypothesis, we sould represent the difference as a positive number so it can be represented on the histogram for the permutation test. We willl make it negative again later.  Therefore:
 
 ```{r}
 realdiff = meanother - meanAS
@@ -394,8 +395,6 @@ Now for the permutation test:
 real <- real %>% arrange(continent, .by_group = TRUE)
 ```
 
-Now, we need to do perm_means test. For this, I will make my own since asia does not appear at the start of the tibble, meaning n_A will not be 1:n_A.
-
 ```{r}
 realpm <- c(real$yearly_co2_emissions_1000_tonnes)
 
@@ -403,10 +402,13 @@ permtibble <- perm_mean(perms = 1000, realpm, 56)
 
 ```
 
+Now to graph the data:
+
 ```{r}
 permtibble <- as.tibble(permtibble)
 ggplot(data = permtibble) + geom_histogram(aes(x = value, binwidth = .2, color = "gray")) + geom_vline(xintercept = -(realdiff), color = "red") + ggtitle("Permutation Test of Means of co2 Emissions by Continent") + labs(x = "co2 Emissions, in 1000 tons")
 
 ```
 
-
+## Conclusion:
+It is clear that the null hypothesis should be rejected, as the graph leans very negative, meaning that Asia on average has a lot less co2 emissions than the rest of the world. This is a lot different of a result than I was expecting, although I did expect the null hypothesis to be rejected. However, I expected the null hypothesis to be rejected due to Asia having much higher co2 emissions than the rest of the world, but instead Asia had a significantly lower emissions rate than the rest of the world, on average.
