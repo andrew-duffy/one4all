@@ -273,6 +273,39 @@ tibble(val = permuted_means) %>% ggplot(., aes(val)) + geom_histogram(bins = 50,
 ### Findings:
 As the difference between mean weight difference for smokers vs. non-smokers is in the 99.9th percentile of all mean weight differences, it is clear that there is a quantifiable difference between the mean weight differences for the two groups. The data clearly suggests that smokers have a larger difference between their current weight and desired weight than non-smokers, indicating that the apparent health problems caused by smoking also includes the mental perception of one's weight. While this may not be a mental problem, and rather a physical problem simply caused by other health problems surrounding smoking which make it harder for a person to reach their desired weight, it is important to understand that this difference between smokers and non-smokers exists, as again, this can help professionals working to help those with smoking related health or mental health problems.
 
+## Ahyo Falick Individual Section
+
+### Subquestion
+Do people's ages have an affect on how much they smoke?
+
+### Null Hypothesis
+A person's age has no affect on how much they smoke
+
+### Alternate Hypothesis
+Younger people are more likely to smoke than older people showing that there is a correlation between age and smoking.
+
+### Importance
+This is an important question because it could lead to important answers about general health and smoking as people age. This knowledge could benefit a wide range of groups who are trying to determine what ages are more prone to smoke. For example, if the elderly are found to smoke more frequently than younger people, health groups could market anti smoking ads towards them in efforts to help them quit.
+
+### Permutation Tests
+Is there a difference between mean amount smoked by people under 50 and mean amount smoked by people over 50?
+
+```{r}
+sanda <- cdc %>% filter(smoke100 ==1) %>% select(age)
+under <- sanda %>% filter(age < 40)
+over <- sanda %>% filter(age >= 40)
+meandiff <- mean(under$age) - mean(over$age)
+pmd <- tibble(m = perm_mean(1000,sanda$age, nrow(under)))
+
+ggplot(data=pmd,aes(m))+
+  geom_histogram(binwidth = 0.04, aes(fill=(m<quantile(m,probs = c(.025))[[1]]|m>quantile(m,probs = c(.975))[[1]]))) + geom_vline(xintercept = meandiff) + labs(title = "Permuted Mean Difference", x = "Mean Difference", y = "Count", fill = "Tails")
+
+ggplot() + geom_histogram(data = sanda, mapping = aes(x = sanda$age, fill = sanda$age > 50)) + labs(title = "Number of Smokers at Every Age", x = "Age", y =  "Number of Smokers", fill = "Over 50")
+```
+### Findings
+
+From the data it can be concluded that, the null hypothesis is invalid as the real difference in means is far outside of the histogram in the 100th percentile. It is also obvious that age does have an affect on smoking habits as people below the age of 50 were far more likely to smoke than those over 50. This data can be useful for people trying to know what ages smoke the most. The alternate hyothesis was therefore found to be true as there is a distinct correlation between age and smoking.
+
 # Andrew Duffy subquestion
 
 ## Question: 
@@ -445,7 +478,7 @@ I, Braden Griebel, ran a generalised linear model on the data to see how general
 
 I, Luke Fanning, used a permutation mean test to answer my question regarding smoking and weight difference (weight - weight desired). 
 
-
+I, Ahyo Falick, analyzed how age and smoking were correlated. Because smoking is represented in the data as a boolean, it was not possible to use the correlation permutation test. I instead opted for the mean difference permutation and plotted the data on a histogram. The first histogram showed that the null hypothesis could be rejected as the real mean difference was Additionally, I created another histogram of only smokers to show which ages were most prone to smoke. People under the age of 50 were far more likely to smoke than people over the age of 50 according to the second histogram. From the data it could also be concluded that people between the ages of about 30-50 are most likely to smoke while people over the age of 60 smoked much less than other groups.
 
 
 
