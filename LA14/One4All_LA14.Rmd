@@ -1,0 +1,225 @@
+---
+title: "One4All_LA14"
+author: "Braden Griebel, Luke Fanning, Ayho Falick, Andrew Duffy"
+date: "12/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(purrr)
+library(broom)
+library(stringr)
+library(modelr)
+source("http://www.openintro.org/stat/data/cdc.R")
+cdc <- as_tibble(cdc)
+```
+
+
+```{r}
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # all_values (num): all data values
+  # n_A (int): Size of group A
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  permuted_mean_differences<-rep(0,perms)
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly separate vector "values" into disjoint 
+    # groups of size "nA" and "nB" respectively
+    temp<-sample(all_values)
+    group_A<-temp[1:n_A]
+    group_B<-temp[(n_A+1):length(temp)]
+    
+    # Step 3:
+    # Compute the sample means for the two groups from 
+    # step 2
+    mean_A<-mean(group_A,na.rm=T)
+    mean_B<-mean(group_B,na.rm=T)
+    
+    
+    # Step 4: 
+    # Compute the difference in sample means, store the
+    # value in the vector from step 1
+    permuted_mean_differences[i]<-mean_A-mean_B
+    
+  }
+  
+  # Step 5:
+  # Return the permuted mean differences vector
+  return(permuted_mean_differences)
+  
+}
+```
+
+
+```{r}
+perm_cor <- function(perms = 1000, x, y)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # x: Vector of Variable 1 - for computing correlation
+  # y: Vector of Variable 2 - for computing correlation
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  correlations<-rep(0,perms)
+  
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly mix up the values in the vector "y"
+    temp<-sample(y)
+    
+    # Step 3:
+    # Compute the correlation between x and the randomly mixed
+    # up y-vector. Store this value in the vector from step 1.
+    correlations[i]<-cor(x,temp,use="pairwise.complete.obs")
+    
+  }
+  
+  # Step 4:
+  # Return new updated vector, created in step 1
+  return(correlations)
+  
+}
+
+```
+
+
+```{r}
+cdc
+tdata<-cdc%>%mutate(hlthcoded=ifelse(genhlth=="excellent",5,
+                                     ifelse(genhlth=="very good",4,
+                                            ifelse(genhlth=="good",3,
+                                                   ifelse(genhlth=="fair",2,
+                                                          ifelse(genhlth=="poor",1,NA))))))
+```
+
+
+
+## Team Question: 
+How does smoking affect General Health when accounting?
+
+### Importance:
+This is important, because although people now know that smoking can cause cancer, it is not neccesarily well known whether smoking affects other aspects of health. This analysis will allow us to see whether there 
+
+### Generalised Linear Model
+```{r}
+modelsmoke<-glm(smoke100~hlthcoded,family=binomial,data=tdata)
+tdata<-add_predictions(tdata,modelsmoke)%>%mutate(psmoke=exp(pred)/(1+exp(pred)))
+#tdata
+smoking_probabilities<-cdc%>%group_by(genhlth)%>%summarise("Probability of Smoking"=mean(smoke100))%>%rename("General Health"=genhlth)
+smoking_probabilities
+
+ggplot(tdata,aes(genhlth,psmoke,group=1))+geom_point()+geom_line()+labs(y="Probability of Smoking",x="General Health Category",title="Proability of Smoking and General Health")
+```
+### Finding: 
+As can be seen from the graph based on the generalised linear model, and the probability calculations 
+
+
+### Permutation Test:
+Is there a difference in the general health between smokers and non-smokers?
+$H_0:\mu_{General\ Health\ of \ non-smokers}-\mu_{General\ Health\ of \ smokers}=0$     
+$H_1:\mu_{General\ Health\ of \ non-smokers}-\mu_{General\ Health\ of \ smokers}\neq0$        
+```{r}
+smokers<-tdata%>%filter(smoke100==1)
+nonsmokers<-tdata%>%filter(smoke100==0)
+smoke_calc_mean_diff<-mean(nonsmokers$hlthcoded)-mean(smokers$hlthcoded)
+smokepermuted<-tibble(differences=perm_mean(perms=1000,all_values = tdata$hlthcoded,n_A = nrow(nonsmokers)))
+ggplot(data=smokepermuted,aes(differences))+
+  geom_histogram(binwidth=.002,aes(fill=(differences<quantile(differences,probs = c(.025))[[1]]|differences>quantile(differences,probs = c(.975))[[1]])))+
+  labs(title="",fill="Tails")+
+  geom_vline(xintercept=smoke_calc_mean_diff)+labs()
+percentile=nrow(filter(smokepermuted,differences<smoke_calc_mean_diff))/nrow(smokepermuted)
+tibble(Percentile=percentile)
+
+```
+
+### Findings:
+
+
+
+
+
+## Braden Griebel Individual Section:
+
+### Question:
+How are weight desire and weight related, and does this vary between the general health groups?
+### Importance: 
+It is important to understand what influence that weight and weight desire have on 
+
+
+### Linear Models
+```{r}
+bdata<-cdc%>%mutate(wtdiff=weight-wtdesire)%>%group_by(genhlth)%>%nest()
+bmodel<-function(df){lm(formula = wtdesire~weight,data = df)}
+bdata<-bdata%>%mutate("model"=map(bdata$data,bmodel))
+bdata<-bdata%>%mutate(co=map(bdata$model,coef))
+bdata<-bdata%>%mutate(predictions=map2(data,model,add_predictions))
+bdata_predictions<-bdata%>%unnest(data,predictions,.drop=T)
+bdata_predictions<-bdata_predictions%>%select(-(exerany1:gender1),-wtdiff1)
+bdata<-bdata%>%mutate(slope=map_dbl(bdata$co,"weight"))
+bdata_slopes<-bdata%>%select(genhlth,slope)
+bdata_slopes
+ggplot(bdata_predictions)+geom_point(aes(weight,wtdesire))+
+  facet_wrap(~genhlth)+
+  geom_smooth(aes(weight,pred,color=genhlth))
+
+
+```
+### Findings:
+As you go down in health, the slope of the relationship between weight and desired weight decreases, from a maximum slope of .7855 down to .356. This is indicative of the fact tht those in the better health categories are significantly closer to their desired weight than those in the lower health categories. 
+
+### Permutation Test
+Is there a differnce in the mean weight distance from desired weight?
+$H_0$:$\mu_{Good\ Health\ Weight\ Difference}-\mu_{Poor\ Health\ Weight\ Difference} =0$
+$H_1$:$\mu_{Good\ Health\ Weight\ Difference}-\mu_{Poor\ Health\ Weight\ Difference} \neq 0$
+
+
+```{r}
+b2data<-cdc%>%mutate(wtdiff=weight-wtdesire)
+good_health<-b2data%>%filter(genhlth %in% c("good","very good","excellent"))
+poor_health<-b2data%>%filter(genhlth %in% c("fair", "poor"))
+calculated_mean_diff<-mean(good_health$wtdiff)-mean(poor_health$wtdiff)
+combined_vector<-c(good_health$wtdiff,poor_health$wtdiff)
+permuted_mean_difference<-tibble(differences=perm_mean(perms=1000,all_values=combined_vector,n_A=nrow(good_health)))
+ggplot(data=permuted_mean_difference,aes(differences))+
+  geom_histogram(binwidth=.1,aes(fill=(differences<quantile(differences,probs = c(.025))[[1]]|differences>quantile(differences,probs = c(.975))[[1]])))+
+  labs(title="",fill="Tails")+
+  geom_vline(xintercept=calculated_mean_diff)
+
+percentile=nrow(filter(permuted_mean_difference,differences<calculated_mean_diff))/nrow(permuted_mean_difference)
+tibble(Percentile=percentile)
+
+
+
+```
+### Findings: 
+As can be seen from the graph above, the actual calculated mean difference is far into the tails of the permuted difference of means. This is further supported by the fact that the calculated mean difference is in the 0th percetile. This means that the null hypothesis should be rejected, so there is (almost certainly) a difference in in the mean of the difference between weight and desired weight between the good and poor health groups. 
+
+
+
+
+
+
+
+## Individual Contributions:
+
+
+I, Braden Griebel, ran a generalised linear model on the data to see how the general health category affects 
