@@ -473,14 +473,13 @@ These results and inferences lead me to believe that non smokers are, on average
 
 ## Individual Contributions:
 
-
 I, Braden Griebel, ran a generalised linear model on the data to see how general health and age affects the probability of the individuals having smoked (at least 100 cigarettes). I used this to understnand how health is affected by smoking when taking into account the age of the individuals (Since general health generally desclines with age). Since the result of the generalised linear model in binomial mode returns logodds I transformed these back into probabilities as those are easier to understand. I added labels, and colored the graph to make it easier to understand. In my individual dection I used a simple linear model to understand how the relation between weight and desired weight changes between the general health categories. I used a facet function to divide between the general health categories when graphing the models. I also displayed the slopes numerically to makae clear how the relationship changed between the difference health categories. Then I used a histogram to display the results of a permutation test (as well as outputting the actual result, and its percentile to make the actual numbers more clear). I used the fill aesthetic to show where in the histogram the tails fell. Finally, I added labels to all the graphs to make clear exactly what each of the graphs meant. The new tooks I applied were a permutation test, and a linear model. 
 
 I, Luke Fanning, used a permutation mean test to answer my question regarding smoking and weight difference (weight - weight desired). 
 
 I, Ahyo Falick, analyzed how age and smoking were correlated. Because smoking is represented in the data as a boolean, it was not possible to use the correlation permutation test. I instead opted for the mean difference permutation and plotted the data on a histogram. The first histogram showed that the null hypothesis could be rejected as the real mean difference was Additionally, I created another histogram of only smokers to show which ages were most prone to smoke. People under the age of 50 were far more likely to smoke than people over the age of 50 according to the second histogram. From the data it could also be concluded that people between the ages of about 30-50 are most likely to smoke while people over the age of 60 smoked much less than other groups.
 
-
+I, Andrew Duffy, ran a permutation test on the difference between one's weight - weight desire in smokers and non smokers. Rejecting my null hypothesis was a tough decision because the real difference in means was very close to zero. That being said, the results of the permutation test were skewed past 0 and less than the real difference in means. Therefore, it can be concluded that non smokers are slightly healthier than smokers in terms of weight.
 
 
 
