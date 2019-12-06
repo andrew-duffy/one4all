@@ -149,7 +149,7 @@ smoke_calc_mean_diff<-mean(nonsmokers$hlthcoded)-mean(smokers$hlthcoded)
 smokepermuted<-tibble(differences=perm_mean(perms=1000,all_values = tdata$hlthcoded,n_A = nrow(nonsmokers)))
 ggplot(data=smokepermuted,aes(differences))+
   geom_histogram(binwidth=.002,aes(fill=(differences<quantile(differences,probs = c(.025))[[1]]|differences>quantile(differences,probs = c(.975))[[1]])))+
-  labs(title="",fill="Tails")+
+  labs(title="Permuted Mean differences Histogram",fill="Tails",x="Permuted mean Differences")+
   geom_vline(xintercept=smoke_calc_mean_diff)+labs()
 percentile=nrow(filter(smokepermuted,differences<smoke_calc_mean_diff))/nrow(smokepermuted)
 tibble(Percentile=percentile)
@@ -188,7 +188,7 @@ Insurance companies could use this analysis to increase the premiums and rates t
 ### Question:
 How are weight desire and weight related, and does this vary between the general health groups?
 ### Importance: 
-It is important to understand what influence that weight and weight desire have on general health because 
+This question is important because it allows me to understand how general health is related to weight and weight desire (specifically their difference). Understanding this could be useful, because it would allow me to gain some understanding of the phycolpogical aspects of general health and weight loss. For example, if we were to find that as general health increases, the difference between weight and weight desired decreases, this could be because across the board pepole want to weigh in a certain range and that more unhealthy people are just father away from this range. However, it could also indicate that healthier people have more realistic goals which help them get to more healthy weights thus increasing their health. Whatever the result, more analysis would be neccesary to see what the difference actually means. But this question is a good initial inroad to this knotty problem. 
 
 
 ### Linear Models
@@ -205,7 +205,8 @@ bdata_slopes<-bdata%>%select(genhlth,slope)
 bdata_slopes
 ggplot(bdata_predictions)+geom_point(aes(weight,wtdesire))+
   facet_wrap(~genhlth)+
-  geom_smooth(aes(weight,pred,color=genhlth))
+  geom_smooth(aes(weight,pred,color=genhlth))+
+  labs(title="General Health and The Relationship between Weight and Desired Weight", y="Weight Desired",x="Weight",color="General Health")
 
 
 ```
@@ -227,18 +228,18 @@ combined_vector<-c(good_health$wtdiff,poor_health$wtdiff)
 permuted_mean_difference<-tibble(differences=perm_mean(perms=1000,all_values=combined_vector,n_A=nrow(good_health)))
 ggplot(data=permuted_mean_difference,aes(differences))+
   geom_histogram(binwidth=.1,aes(fill=(differences<quantile(differences,probs = c(.025))[[1]]|differences>quantile(differences,probs = c(.975))[[1]])))+
-  labs(title="",fill="Tails")+
+  labs(title="Permuted Mean Differences",fill="Tails",x="Difference between the permuted means")+
   geom_vline(xintercept=calculated_mean_diff)
 
 percentile=nrow(filter(permuted_mean_difference,differences<calculated_mean_diff))/nrow(permuted_mean_difference)
-tibble(Percentile=percentile)
+tibble(Percentile=percentile,"Numerical Result"=calculated_mean_diff)
 
 
 
 ```
 ### Findings: 
-As can be seen from the graph above, the actual calculated mean difference is far into the tails of the permuted difference of means. This is further supported by the fact that the calculated mean difference is in the 0th percetile. This means that the null hypothesis should be rejected, so there is (almost certainly) a difference in in the mean of the difference between weight and desired weight between the good and poor health groups. 
-
+As can be seen from the graph above, the actual calculated mean difference is far into the tails of the permuted difference of means. This is further supported by the fact that the calculated mean difference is in the 0th percetile. This means that the null hypothesis should be rejected, so there is (almost certainly) a difference in in the mean of the difference between weight and desired weight between the good and poor health groups. Also, since it is at the 0th percentile (and thus to the far left on the graph) we can also say that those with better health have a smaller difference between their actual weight and their weight desired. 
+From this and the earlier linear models, it can thus be seen that those in better health categories are closer 
 
 
 
@@ -248,4 +249,29 @@ As can be seen from the graph above, the actual calculated mean difference is fa
 ## Individual Contributions:
 
 
-I, Braden Griebel, ran a generalised linear model on the data to see how general health and age affects the probability of the individuals having smoked (at least 100 cigarettes). 
+I, Braden Griebel, ran a generalised linear model on the data to see how general health and age affects the probability of the individuals having smoked (at least 100 cigarettes). I used this to understnand how health is affected by smoking when taking into account the age of the individuals (Since general health generally desclines with age). Since the result of the generalised linear model in binomial mode returns logodds I transformed these back into probabilities as those are easier to understand. I added labels, and colored the graph to make it easier to understand. In my individual dection I used a simple linear model to understand how the relation between weight and desired weight changes between the general health categories. I used a facet function to divide between the general health categories when graphing the models. I also displayed the slopes numerically to makae clear how the relationship changed between the difference health categories. Then I used a histogram to display the results of a permutation test (as well as outputting the actual result, and its percentile to make the actual numbers more clear). I used the fill aesthetic to show where in the histogram the tails fell. Finally, I added labels to all the graphs to make clear exactly what each of the graphs meant. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
