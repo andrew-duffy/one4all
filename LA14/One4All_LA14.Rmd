@@ -1,3 +1,4 @@
+
 ---
 title: "One4All_LA14"
 author: "Braden Griebel, Luke Fanning, Ayho Falick, Andrew Duffy"
@@ -246,7 +247,31 @@ This questions was used to explore other factors that can affect, be affected by
 
 I applied a permutation test in answering this question in order to see if there was a statistically significant difference in the difference between weight and weight desire between those with better and worse health. I also used a linear model to see how the relantionship between weight and desired weight differs between the general health categories. 
 
+## Luke Fanning Individual Section
 
+### Question:
+Is there a difference in mean weight difference (weight minus weight desire) between those who smoke and don't smoke?
+
+### Importance:
+Obviously, many who smoke are in poorer health than those who don't smoke, due to the obvious health problems created by smoking. However, while it is relatively obvious that many who smoke are less healthy overall (I.E. exercise less, have poorer general health, etc.), there is no evidence to suggest that these health drawbacks affect the mental viewpoint of those who smokewith regards to weight, represented through the difference in weight versus desired weight. Therefore, it would be interesting to see if smoking does in fact play a factor in having a larger or smaller mean weight difference.This is important to investigate, as it can help to better describe the mental image of the average smoker vs. the non-smoker, and can work to help those facing health problems from smoking see a clearer pattern of negative behaviorisms. It is also important to study this question as it can work to better describe the general populace of smokers to then help professionals working woth those facing smoke related health problems have a clearer picture of the populace they are attempting to help.
+
+### Permutation Test:
+
+*Null Hypothesis:* The mean weight difference is the same between smokers and non-smokers.
+*Alternative Hypothesis:* There is a difference in mean weight difference between smokers and non-smokers.
+
+```{r}
+ldata <- cdc %>% mutate(weightdifference = abs(weight-wtdesire))
+smokers <- ldata %>% filter(smoke100 == 1)
+non_smokers <- ldata %>% filter(smoke100 == 0)
+real_mean_smoke_vs_non_smoke <- mean(smokers$weightdifference) - mean(non_smokers$weightdifference)
+permuted_means <- perm_mean(10000, ldata$weightdifference, nrow(non_smokers))
+percentile <- length(permuted_means[permuted_means < real_mean_smoke_vs_non_smoke])/10000
+tibble(val = permuted_means) %>% ggplot(., aes(val)) + geom_histogram(bins = 50, aes(fill=(permuted_means<quantile(permuted_means,probs = c(.05))[[1]]|permuted_means>quantile(permuted_means,probs = c(.95))[[1]]))) + geom_vline(xintercept = real_mean_smoke_vs_non_smoke) + labs(title = "Permuted Mean Difference of Weight Desire For Smokers vs. Non-Smokers", x = "Difference between mean of weight difference", y = "Count", fill = "Histogram Tails")
+```
+
+### Findings:
+As the difference between mean weight difference for smokers vs. non-smokers is in the 99.9th percentile of all mean weight differences, it is clear that there is a quantifiable difference between the mean weight differences for the two groups. The data clearly suggests that smokers have a larger difference between their current weight and desired weight than non-smokers, indicating that the apparent health problems caused by smoking also includes the mental perception of one's weight. While this may not be a mental problem, and rather a physical problem simply caused by other health problems surrounding smoking which make it harder for a person to reach their desired weight, it is important to understand that this difference between smokers and non-smokers exists, as again, this can help professionals working to help those with smoking related health or mental health problems.
 
 # Andrew Duffy subquestion
 
@@ -402,7 +427,7 @@ ggplot(data = permtest_val) + geom_histogram(aes(x = value, binwidth = .17), fil
 Based on the permutation test results, the difference in means is slightly skewed to a very small integer above zero and below the real mean difference value. Therefore, it seems that after 1000 permutations there is a slight difference in one's health for smokers versus non smokers. The null hypothesis is rejected, because the difference in means for the permutation test is slightly above zero, close to the real value.
 
 
-##Conclusion:
+## Conclusion:
 
 It can be concluded that in terms of one's weight and how they would like to see their weight change, smokers have a slightly higher difference between their weight and ideal weight than non smokers. From this knowledge you can infer that non smokers are slightly more fit than smokers, not in terms of exercise but in regards to their actual weight.
 
@@ -418,22 +443,7 @@ These results and inferences lead me to believe that non smokers are, on average
 
 I, Braden Griebel, ran a generalised linear model on the data to see how general health and age affects the probability of the individuals having smoked (at least 100 cigarettes). I used this to understnand how health is affected by smoking when taking into account the age of the individuals (Since general health generally desclines with age). Since the result of the generalised linear model in binomial mode returns logodds I transformed these back into probabilities as those are easier to understand. I added labels, and colored the graph to make it easier to understand. In my individual dection I used a simple linear model to understand how the relation between weight and desired weight changes between the general health categories. I used a facet function to divide between the general health categories when graphing the models. I also displayed the slopes numerically to makae clear how the relationship changed between the difference health categories. Then I used a histogram to display the results of a permutation test (as well as outputting the actual result, and its percentile to make the actual numbers more clear). I used the fill aesthetic to show where in the histogram the tails fell. Finally, I added labels to all the graphs to make clear exactly what each of the graphs meant. The new tooks I applied were a permutation test, and a linear model. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+I, Luke Fanning, used a permutation mean test to answer my question regarding smoking and weight difference (weight - weight desired). 
 
 
 
