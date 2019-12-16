@@ -102,7 +102,7 @@ perm_cor <- function(perms = 1000, x, y)
 
 
 
-```{r}
+```{r warning=F,message=F}
 df <- read_csv(file = "data1.csv", col_types=cols(CreationDate=col_datetime()))
 info <- read_csv(file = "data2.csv")
 
@@ -129,7 +129,7 @@ for(i in 1:length(countries)){
 }
 
 
-cleaned
+#cleaned
 ```
 
 # Team Question:
@@ -141,6 +141,14 @@ Null Hypothesis: There is no inverse correlation between HIV rate and test stati
 Alternate Hypothesis: There is an inverse correlation between HIV rate and test statistics life expectancy and literacy rate.
 
 *note: measuring female stastic of HIV rate because male data is unavailable.
+
+
+## Domain Expert and Importance:
+
+
+We were highered by a WHO investigator to study the relationship between education and life expectancy, and whether Female rates of HIV could be an intervening variable in this relationship if one exists. Their goal is to understand if education spending would be effective in increasing life expectancy, and if it would does HIV rate play a role as an intermediary. Thus we will answer whether there is a correlation between Female HIV rate and both life expectancy and Literacy (a direct relationship between literacy and life expectancy will be analyzed in an individual sub question). This question is important because using literacy as a proxy for education rates in a country, we can investigate how education, HIV and life expectancy are related. This in turn can allow a deeper understnading of how education can play a role in life expectancy. Understanding this relationship would allow countries to understand whether increasing access to education would significantly impact the life expectancy of their citizens. Either way, they could focus their resources more effectively using this information in order to improve life expectancy. Beyond the obvious intrinsic benefits for the citizens, this could also have a positive impact on economy, since improving the health of the citizens would increase the amount they could work, and reduce the amount that they have to spend on healthcare thus increasing the amount that they can put into the economy. 
+
+
 
 
 
@@ -220,23 +228,23 @@ Now for the permutation test.
 lit<-tdata$Literacy
 HIV<-tdata$HIV
 lifeExp<-tdata$Life_exp
-cor_lit_le<-cor(lit,lifeExp,use = "pairwise.complete.obs")
+cor_lit_HIV<-cor(lit,HIV,use = "pairwise.complete.obs")
 cor_HIV_le<-cor(HIV,lifeExp,use="pairwise.complete.obs")
 
-pc_lit_le<-tibble(cor=perm_cor(perms=1000,lit,lifeExp))
+pc_lit_HIV<-tibble(cor=perm_cor(perms=1000,lit,HIV))
 pc_HIV_le<-tibble(cor=perm_cor(perms=1000,HIV,lifeExp))
 
 
 
-plow_lit_le<-quantile(pc_lit_le$cor,probs=.025)[[1]]
-phigh_lit_le<-quantile(pc_lit_le$cor,probs=.975)[[1]]
+plow_lit_HIV<-quantile(pc_lit_HIV$cor,probs=.025)[[1]]
+phigh_lit_HIV<-quantile(pc_lit_HIV$cor,probs=.975)[[1]]
   
 plow_HIV_le<-quantile(pc_HIV_le$cor,probs=.025)[[1]]
 phigh_HIV_le<-quantile(pc_HIV_le$cor,probs=.975)[[1]]
 
-ggplot(pc_lit_le,aes(cor,fill=(cor<plow_lit_le|cor>phigh_lit_le)))+geom_histogram(binwidth = .01)+geom_vline(xintercept = cor_lit_le)+
-  labs(title="Literacy rate and Life Expectancy Permutation Correlation Test",
-       x="Correlation Between Literacy rate and Life Expectancy",
+ggplot(pc_lit_HIV,aes(cor,fill=(cor<plow_lit_HIV|cor>phigh_lit_HIV)))+geom_histogram(binwidth = .01)+geom_vline(xintercept = cor_lit_HIV)+
+  labs(title="Literacy rate and Female HIV rate Permutation Correlation Test",
+       x="Correlation Between Literacy rate and Female HIV rate",
        fill="Tails")
 
 
@@ -245,18 +253,29 @@ ggplot(pc_HIV_le,aes(cor,fill=(cor<plow_HIV_le|cor>phigh_HIV_le)))+geom_histogra
        x="Correlation between Female HIV rate and Life Expectancy",
        fill="Tails")
 
-percentile_lit_le<-nrow(filter(pc_lit_le,cor<cor_lit_le))/nrow(pc_lit_le)
+percentile_lit_HIV<-nrow(filter(pc_lit_HIV,cor<cor_lit_HIV))/nrow(pc_lit_HIV)
 percentile_HIV_le<-nrow(filter(pc_HIV_le,cor<cor_HIV_le))/nrow(pc_HIV_le)
 
 
-ptable<-tibble("Percentile of:"=c("Literacy Rate and Life Expectancy Permutation Correlation Test","Female HIV Rate and Life Expectancy Permutation Correlation Test"),"Value:"=
-                 c(percentile_lit_le,percentile_HIV_le))
+ptable<-tibble("Percentile of:"=c("Literacy Rate and Female HIV Rate Permutation Correlation Test","Female HIV Rate and Life Expectancy Permutation Correlation Test"),"Value:"=
+                 c(percentile_lit_HIV,percentile_HIV_le))
 ptable
 
 
 
 ```
 
+
+### Conclusion:
+As can be seen from the graphs, and the percentiles, there are clear correlations between Female HIV rates and both life expectancy and literacy rate. From these facts we can draw conclusions about these individual correaltions. Education can reduce the Female HIV rate, and the HIV rate correlates negatively with the life expectancy. This in turn can allow us to postulate one possible cause for the relationship between literacy and life expectancy (explored in Braden's Individual Section). Namely, that low literacy (education rate) can lead to higher rates of female HIV rates, which in turn reduces the life expectancy. Thus we can see that increasing access to education in a country would also increase the life expectancy of that countries citizens. 
+
+### Recomendation:
+
+Based on our conclusion, our recomendation should be clear. We recoment that access to education is improved in order to increase life expectancies. Additionally, since it can been seen that Female HIV rate could be one possible intervening variable here, we would recomend investigations into other possible intervening variables that could further elucidate the relationship between education and life expectancy. Then based off that, it would be important to see what types of education are most effective, through those intervening variables, at increasing the average life expectancy. 
+
+### Some Ethical Considerations:
+
+This analyse would obviously benefit countries seeking effective methods to increase the average health (as measured by life expectancy) of their citizens, as well as the citizens who would benefit from both increased education and health. However, if countries or NGO's (non-Governmental Organizations) were to take this analysis and increase spending on education, since it is a known quantity, and reduce the spending on research into curing HIV, since this is more uncertain, then this could obviously hurt those already living with HIV. Although it would decrease the number of people with HIV since it would reduce the amount getting it in the future, this would still negatively affect the lives of those already infected. 
 
 
 
@@ -330,8 +349,8 @@ AFRresults <- perm_cor(perms = 1000, AFsample$Urban, AFsample$HIV)
 
 FRresults <- perm_cor(perms = 1000, Fr$Urban, Fr$HIV)
 
-AFRresults
-FRresults
+#AFRresults
+#FRresults
 ```
 
 in order to compare these results, we must find a single number to compare them with. I'll use the mean of the 1000 results for each, to compare the two. 
@@ -386,8 +405,13 @@ These findings mean that there is no correlation between urban population growth
 
 
 ### Question:
-What is the relationship between Literacy and Life expectancy when accounting for 
+What is the relationship between Literacy and Life expectancy when accounting for the GDP per capita of the countries?
 
+### Importance:
+This question is important to consider because it reflects the relationship between education (using the proxy of literacy rate) and the average life expectancy of the citizens of a country. It is important to understand this because it can illuminate unexpected benefits that education might have. Of course, both literacy and Life expectancy are correlated with GDP per capita, so in order to avoid just making the obvious conclusion that GDP has these correaltions, I used lienar models to control for this fact. It is important to understand this relationship, because it offers a way for countries to increase the health of their citizens, which can improve their economies directly from increased education, as well as healthier workers. 
+
+### New Tools:
+I used linear modeling to remove the obvious relationship between GDP and life expectancy so I could explore the relationship between literacy and life expectancy without having to worry about this intermediate variable. Then I used a permutation test to see if there was a difference in literacy between the top and bottom halves of the countries by life expectancy to see if literacy was related to life expectancy. I further used a permutation correlation test to test to see if there was a correlation. 
 
 
 ### Using Linear Models to Gain Insight
@@ -420,7 +444,11 @@ tibble(Measurement=c("Intercept","GDP per Capita", "Literacy Rate"),"Coefficient
 ```
 
 
+
 ### Is there a difference in the literacy rates between the highest 50% of Life Expectancy, and the Lowest 50%?
+
+$H_0:\mu_{Literacy\ rate\ in\ countries\ in\ top \ 50 \% \ of\ life\ expectancy }-\mu_{Literacy\ rate\ in\ countries\ in\ bottom \ 50 \% \ of\ life\ expectancy } =0$                       
+$H_1:\mu_{Literacy\ rate\ in\ countries\ in\ top \ 50 \% \ of\ life\ expectancy }-\mu_{Literacy\ rate\ in\ countries\ in\ bottom \ 50 \% \ of\ life\ expectancy } \neq 0$
 
 ```{r}
 high_le<-bdata%>%filter(Life_exp>median(bdata$Life_exp,na.rm=T))
@@ -442,7 +470,13 @@ print(paste("The Computed difference of Means is in the ",percentile*100,"th per
 
 ```
 
+
 ### Is there a correlation between Literacy and the Calculated Residuals?
+
+$H_0:$ Correlation Between Literacy rate and the residuals is 0               
+$H_1:$ Correlation Between Literacy rate and the residuals is not 0    
+
+
 ```{r}
 resids<-bdata$resid_le
 lit<-bdata$Literacy
@@ -459,6 +493,19 @@ percentile<-nrow(filter(permuted_correlations,correlations<calculated_correlatio
 print(paste("The Computed Correlation is in the ",percentile*100,"th percentile",sep = ""))
 
 ```
+
+### Findings:
+From the initial graph two things are apparent, the first is that literacy and life expectancy seem to be correlated, and second, so do life expectancy and GDP per capita. From the zoomed in graph it can also be seen that these relationships seem to be less important one you reach the high literacy rates of 90-100%. 
+As can be seen from the linear models above, after removing the relationship between life expectancy and GDP per capita, the residuals that remain are correlated with literacy rate. From the first permutation test it can be seen that literacy rate is different between the highest and lowest countries by life expectancy. This indicates that there is some relationship between literacy and life expectancy. The correlation permutation test also showed a clear correlation between literacy and the residuals. From all of this it is very clear that even when accounting for GDP per capita, the literacy rate is still correalted with life expectancy. 
+
+
+### Answer:
+Thus even when accounting for GDP per capita, literacy and life expectancy are clearly correlated.This is important for the main question, because it shows that GDP per capita is not what is causing the relationship that was found in the team question, and literacy actually correlated outside of the effect of GDP. Additionally, since GDP per capita is clearly correlated with life expectancy, this question shows another aspect that is important to consider when looking at life expectancy and what affects it. 
+
+### Ethical Implications:
+
+This could help countries trying to improve the overall health of their citizens. An important place for them to spend money would be in increasing access to education. This would also help people who are trying to set up schools, by hopefully increasing the money available for building schools. However, ultimate it might hurt countries that are trying to take advantage of this, since it would encourage them to spend money trying to increase access to education and dishonest people could take advantage of this to take some of this money for themselves.  
+
 
 ## Luke Fanning Individual Section
 
@@ -533,16 +580,16 @@ tibble(val = permuted_means) %>% ggplot(., aes(val)) + geom_histogram(binwidth =
 
 When compared to the rest of the world, the mean difference in life expectancy change from 1995 to 2018 in Asia is actually -0.30, putting it in the 32nd percentile of all life expectancy changes. Therefore, the null hypothesis can be accepted. Clearly, while life expectancies in many Asian countries are higher, on average, there is no statistical evidence to suggest that they have increased more in the past 23 years compared to the rest of the world. This then suggests that while these countries are doing some things right in terms of societal choices and lifestyle changes, these choices and changes are not significant in affecting life expectancy compared to the choices and changes made across the rest of the world. While this may be discouraging in the sense that there is no one true answer to raising life expectancy, this is actually encouraging, as it suggests that the world overall is making the correct choices to increasing life expectancy and that we just need to be patient and continue to work on technology and improvement in our spheres of life. The data simply suggests that there is not one true answer, but rather a large number of answers for increasing life expectancy depending on the culture and society of the country currently working to fix that problem or improve their already high expectancy. 
 
+
+
 ## Reflections:
 ### Team Reflection:
 
-In the beginning of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
+In the beggining of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
 
-We feel that we have met that goal and feel comfortbale representing large amounts of data visually and with certain statistic tests to get desired results.
+We feel that we have met that goal and feel comfortbale representing large amounts of data visually and with certain statistic tests to get desired results. There isn't really any aspects of our goal that we feel we didn't meet.     
 
-
-
-
+If we could time travel, and decided to use this epic power simply to communicate with ourselves of the past, we would tell ourselves to be better about communicating which aspects of the assignments we are working on so everyone has a better idea of what needs to get done. 
 
 
 
@@ -551,14 +598,42 @@ We feel that we have met that goal and feel comfortbale representing large amoun
 
 
 
-how have your six-month or 5-year goals changed? What did you learn/accomplish in this course? If you could give yourself advice at the beginning of the semester, what would you tell yourself to keep doing, stop doing, and start doing?
+
+
+
+
+
 ### Braden Reflection:
-At the start of the semester my six month goal was "to be in grad school, I don’t know specifically for what, but hopeully something related to statistics." and my five year post graduation goal was "I hope to be working on epidemiology for the CDC".
+At the start of the semester my six month goal was "to be in grad school, I don’t know specifically for what, but hopeully something related to statistics." and my five year post graduation goal was "I hope to be working on epidemiology for the CDC".My goals really haven't changed that much. Mostly what I learned in this class was ways to deal with data, and ways to answer questions I have about that data. One thing that I think that is especially valuable that I learned was how to explore the data, and see what kind of questions I should be asking. As I move forward, I will learn different ways of answering these questions, but it will always be important to figure out exactly what questions to ask.     
+As far as advice for myself at the beggining of the semester, I would tell myself to take notes when reading the book since it would be much easier to go back to those rather than having to search through the book itself. I would also tell myself to keep starting the labs early so I have plenty of time to work on them, and don't have to rush through all the work. I would tell myself to stop only doing the readings right before the assesments, and try and start them earlier so I didn't have to read so many chapters so quickly.  
 
-###Andrew Reflection:
+
+### Andrew Reflection:
 At the beginning of the semester my goals were to work in Europe after graduation to see what it is like to live in another country besides America. My long term goals were to have a comfortable job where I have the financial freedom to enjoy my hobbies, and to own my own consulting company in the very long term. I wouldn't say that my goals have changed, but there are some more things I would like to see out of my life. Something I would add is use my potential knowledge of statistics and data to better the world around me the best way that I can. I learned a lot in this course, an extremely valuable base knowledge of how to visually represent data and perform different tests on large groups of data via computing. If I could give myself any advice it would be to complete the labs earlier!
 
 ### Luke's Reflection:
 Obviously, my goals have changed a lot from the start of the semester to now, as I have once again changed my major. While I did really want to be in a sports-related field working with statistics and data, I realize now that sports and sports statistics are more of a hobby for me rather than a career interest. I have chnaged my life around a lot and am continuing to explore my own passions and career aspirations, but I think college is the time to do this, and through my self-exploration and pursuit of knowledge, I will come out a better and more well-rounded person. Therefore, while my 6 month and 5 year goals are more up in the air now than they were at the beginning of the semester, I feel that leaving these more open to exploration is a better path. Therefore, my new 5 year goal is to simply be a more learned, knowledgeable, and well-rounded person than I am now. Overall, I feel like I have learnt a lot from this course with reagards to the R programming language, and I feel this knowledge will be incredibly helpful for me moving forward. If I could give any advice to myself at the start of the semester, it would be to take detailed notes on each and every chapter and exercise in the book, as these will come to be incredibly helpful when working through each and every lab.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Individual Contributions:
+
+I, Braden Griebel, ran the permutation tests for the team question and displayed the results in a histogram which I colored (using the fill aesthetic) to make it clear where the tails of the data are. For my individual subquestion I investigated a possibly confounding variable between life expectancy and literacy rate, namely GDP. I used linear models, and permutation tests to test whether literacy rate was still correlated with life expectancy even when controlling for GDP per capita, in order to see whether GDP was what was causing the relationship between Life expectancy and literacy. I also used a permutation test to see if there was a difference in literacy rate between the top and bottom half of countries by life expectancy to see if it was reasonable to think there was a correlation. I then used a correlation test to make this correaltion very clear. I displayed the results in histograms with colored tails to show that the calculated values were indeed statistically significant. I finally calculated the percentiles to give a numerical representation of the results. I added labels to all the graphs in order to make them easier to understand and read. 
 
 
