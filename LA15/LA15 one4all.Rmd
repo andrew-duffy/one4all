@@ -460,26 +460,83 @@ print(paste("The Computed Correlation is in the ",percentile*100,"th percentile"
 
 ```
 
+## Luke Fanning Individual Section
 
+### Individual Question: 
+```{r}
+(ldata <- tdata %>% filter(year == 2018) %>% filter(!is.na(Life_exp))%>% arrange(desc(Life_exp)) %>% group_by(Life_exp, Country) %>% head(10)) %>% select("Country", "Life_exp")
+```
 
+The tibble above shows the top ten countries in terms of Life expectancy in 2018, the most recent year in which life expectancy data is available in this dataset. We can also view each of these countries life expectancies over time, as seen below.
+```{r}
+l2data <- tdata %>% filter(Country %in% c("Hong Kong SAR, China", "Japan", "Macao SAR, China", "Switzerland", "Spain", "Italy", "Singapore", "Channel Islands", "Luxemborg", "Korea, Rep.")) %>% filter(!is.na(Life_exp)) %>% group_by(Life_exp, Country)
 
+ggplot(l2data, aes(x = year, y = Life_exp, color = Country)) + geom_point() + labs(x = "Year", y = "Life Expectancy, in years", title = "Life Expectancy over time for top ten countries in 2018")
+```
 
+From the above graph, we see that the two countries with the most dramatic change in life expectancy over the time period included in the dataset are The Republic of Korea, more commonly referred to as South Korea, and Singapore. Obviously, it is fantastic that these countries have made such great improvements in their life expectancies over the last 23 years, but is this indicative of a greater trend, or are these countries outliers in terms of their improvements? 
+In other words, is the change in life expectancy in these countries between 1995 and 2018(the scope of the data) expected when compared to the average change in life expectancy for all countries in this time period, or are these changes statistically significant? 
+This question is important primarily due to the implications behind these countries being statistically significant in their changes, as if they are, it is important that we further explore exactly what policies and societal changes these countries have made in order to improve their life expectancy so dramatically up to world leading levels. These changes could then be implemented in other countries around the globe in order to allow for similar increases and lead to a longer living populace overall. 
 
+### Analysis
+```{r, include = F}
+ldata1995 <- tdata %>% filter(year %in% c(1995))%>% filter(!is.na(Life_exp)) %>% select("Country", "Life_exp")
+ldata2018 <- tdata %>% filter(year %in% c(2018))%>% filter(!is.na(Life_exp)) %>% select("Country", "Life_exp")
 
+(l3data <- full_join(ldata1995, ldata2018, by = "Country") %>% mutate(Life_exp_difference = Life_exp.y - Life_exp.x)) %>% select("Country", "Life_exp_difference")
 
+```
+```{r, include = F}
+real_diff_Singapore_Korea <- l3data %>% filter(Country %in% c("Singapore", "Korea, Rep."))
+diff_singapore <- real_diff_Singapore_Korea %>% filter(Country == "Singapore") %>% pull(Life_exp_difference)
+diff_S_Korea <- real_diff_Singapore_Korea %>% filter(Country == "Korea, Rep.") %>% pull(Life_exp_difference)
+```
 
+```{r}
+ggplot(l3data, aes(x = Life_exp_difference)) + geom_histogram(binwidth = 1)+ geom_vline(xintercept = diff_S_Korea) + geom_vline(xintercept = diff_singapore) + labs(x = "Difference in Life expectancy in years", y = "Count", title = "Change in Life Expectancy between 1995 and 2018")
+```
 
+Clearly, from the above graph, it can be seen that these two differences are not overwhelmingly different from a lot of the changes in life expectancy around the world for the given time period. However, it can be noted that these changes both occured in Asian countries, and in fact, most of the highest life expectancy countries are in Asia, which then leads us to a second question worth evaluating: Is the difference in mean life expectancy change from 1995 to 2018 between Asian countries and the rest of the world statistically significant? 
+Again. this question is important to evaluate, as it can be indicative of a continent making correct societal and lifestyle choices compared to the rest of the world. 
+In this test, we will consider the null hypothesis to be that there is no difference in mean change in life expectancy from 1995 to 2018 between Asian countries and the rest of the world, and the alternative hypothesis to be that there is.
 
+```{r, eval = F, include = F}
 
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  permuted_mean_differences <- numeric(perms)
+  for (i in c(1:perms))
+  {
+    rand_vector <- sample(all_values) #shuffles all values as a vector
+    group_A <- rand_vector[1:n_A]
+    group_B <- rand_vector[(n_A+1):length(rand_vector)]
+    mean_A <- mean(group_A)
+    mean_B <- mean(group_B)
+    difference <- mean_A - mean_B
+    permuted_mean_differences[i] <- difference
+  }
+  return(permuted_mean_differences)
+}
+```
 
+```{r}
+l4data <- l3data %>% filter(!is.na(Life_exp_difference))
+l3data_Asia <- l3data %>% filter(Country %in% c("China", "India", "Indonesia", "Pakistan", "Bangladesh", "Japan", "Philippines", "Vietnam", "Turkey", "Iran, Islamic Rep.", "Thailand", "Myanmar", "Korea, Rep.", "Iraq", "Afghanistan", "Saudi Arabia", "Uzbekistan", "Malaysia", "Yemen, Rep.", "Nepal", "Sri Lanka", "Korea, Dem. People’s Rep.", "Kazakhstan", "Syrian Arab Republic", "Cambodia", "Jordan", "Azerbaijan", "United Arab Emirates", "Tajikistan", "Israel", "Lao PDR", "Lebanon", "Kyrgyz Republic", "Turkmenistan", "Singapore", "Oman", "Kuwait", "Georgia", "Mongolia", "Armenia", "Qatar", "Bahrain"))
+l3data_rest <- l3data %>% filter(!Country %in% c("China", "India", "Indonesia", "Pakistan", "Bangladesh", "Japan", "Philippines", "Vietnam", "Turkey", "Iran, Islamic Rep.", "Thailand", "Myanmar", "Korea, Rep.", "Iraq", "Afghanistan", "Saudi Arabia", "Uzbekistan", "Malaysia", "Yemen, Rep.", "Nepal", "Sri Lanka", "Korea, Dem. People’s Rep.", "Kazakhstan", "Syrian Arab Republic", "Cambodia", "Jordan", "Azerbaijan", "United Arab Emirates", "Tajikistan", "Israel", "Lao PDR", "Lebanon", "Kyrgyz Republic", "Turkmenistan", "Singapore", "Oman", "Kuwait", "Georgia", "Mongolia", "Armenia", "Qatar", "Bahrain"))
+real_mean_diff <- mean(l3data_Asia$Life_exp_difference) - mean(l3data_rest$Life_exp_difference)
+permuted_means <- perm_mean(1000, l4data$Life_exp_difference, 100)
+percentile_Asia_vs._World <- length(permuted_means[permuted_means < real_mean_diff])/1000
 
+tibble(val = permuted_means) %>% ggplot(., aes(val)) + geom_histogram(binwidth = 0.1) + geom_vline(xintercept = real_mean_diff) + labs(x = "Mean Change in life expectancy", y = "Count", title = "Mean Changes in life expectancy difference from 1995 to 2018 around the world")
 
+```
 
+When compared to the rest of the world, the mean difference in life expectancy change from 1995 to 2018 in Asia is actually -0.30, putting it in the 32nd percentile of all life expectancy changes. Therefore, the null hypothesis can be accepted. Clearly, while life expectancies in many Asian countries are higher, on average, there is no statistical evidence to suggest that they have increased more in the past 23 years compared to the rest of the world. This then suggests that while these countries are doing some things right in terms of societal choices and lifestyle changes, these choices and changes are not significant in affecting life expectancy compared to the choices and changes made across the rest of the world. While this may be discouraging in the sense that there is no one true answer to raising life expectancy, this is actually encouraging, as it suggests that the world overall is making the correct choices to increasing life expectancy and that we just need to be patient and continue to work on technology and improvement in our spheres of life. The data simply suggests that there is not one true answer, but rather a large number of answers for increasing life expectancy depending on the culture and society of the country currently working to fix that problem or improve their already high expectancy. 
 
 ## Reflections:
 ### Team Reflection:
 
-In the beggining of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
+In the beginning of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
 
 We feel that we have met that goal and feel comfortbale representing large amounts of data visually and with certain statistic tests to get desired results.
 
@@ -500,5 +557,8 @@ At the start of the semester my six month goal was "to be in grad school, I don�
 
 ###Andrew Reflection:
 At the beginning of the semester my goals were to work in Europe after graduation to see what it is like to live in another country besides America. My long term goals were to have a comfortable job where I have the financial freedom to enjoy my hobbies, and to own my own consulting company in the very long term. I wouldn't say that my goals have changed, but there are some more things I would like to see out of my life. Something I would add is use my potential knowledge of statistics and data to better the world around me the best way that I can. I learned a lot in this course, an extremely valuable base knowledge of how to visually represent data and perform different tests on large groups of data via computing. If I could give myself any advice it would be to complete the labs earlier!
+
+### Luke's Reflection:
+Obviously, my goals have changed a lot from the start of the semester to now, as I have once again changed my major. While I did really want to be in a sports-related field working with statistics and data, I realize now that sports and sports statistics are more of a hobby for me rather than a career interest. I have chnaged my life around a lot and am continuing to explore my own passions and career aspirations, but I think college is the time to do this, and through my self-exploration and pursuit of knowledge, I will come out a better and more well-rounded person. Therefore, while my 6 month and 5 year goals are more up in the air now than they were at the beginning of the semester, I feel that leaving these more open to exploration is a better path. Therefore, my new 5 year goal is to simply be a more learned, knowledgeable, and well-rounded person than I am now. Overall, I feel like I have learnt a lot from this course with reagards to the R programming language, and I feel this knowledge will be incredibly helpful for me moving forward. If I could give any advice to myself at the start of the semester, it would be to take detailed notes on each and every chapter and exercise in the book, as these will come to be incredibly helpful when working through each and every lab.
 
 
