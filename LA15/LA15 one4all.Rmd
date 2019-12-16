@@ -263,10 +263,6 @@ ptable
 
 
 
-
-
-
-<<<<<<< HEAD
 ## Andrew Duffy Individual Question:
 
 ### Subquestion: 
@@ -363,7 +359,6 @@ These results show that there is actually a greater correlation between HIV rate
 Both of these correlation results are extremely close to 0, so the null hypothesis would not be rejected anyways, but the fact that the correlation for the African sample is negative means there is no way to reject the null hypothesis.
 
 These findings mean that there is no correlation between urban population growth and female HIV rate in Africa.
-=======
 
 
 
