@@ -296,7 +296,7 @@ Alternate Hypothesis: There is a significant correlation between female HIV rate
 
 Start off with extracting a data frame from the large set of data we cleaned up. 
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 urbanHIV <- cleaned %>% select(Country,year, HIV=`Women's share of population ages 15+ living with HIV (%)`, Urban = `Urban population growth (annual %)`)
 
 urbanHIV <- urbanHIV %>% mutate(year=as.double(year), HIV=as.double(HIV), Urban = as.double(Urban))
@@ -305,7 +305,7 @@ urbanHIV <- urbanHIV %>% mutate(year=as.double(year), HIV=as.double(HIV), Urban 
 
 First, lets graph findings, for both worldwide and for a country that is devastated by aids, as well as a country not devastated by aids.
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 ggplot(data = urbanHIV) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("Worldwide Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
 
 #we have already seen the worldwide hiv rate graph, but here it is again for good measure
@@ -318,7 +318,7 @@ As you can see, on a global scale there seems to be no correlation whatsoever be
 
 Now, lets test France and Mongolia.
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 mongolia <- urbanHIV %>% filter(Country == "Mongolia")
 
 ggplot(data = mongolia) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("Mongolia's Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
@@ -328,7 +328,7 @@ ggplot(data = mongolia) + geom_smooth(mapping = aes(x = year, y = HIV), se = FAL
 
 Visually, one can see that the graphs seem to have a similar path up until 2005-2006. Then the graphs become reciprocal of each other.
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 Fr <- urbanHIV %>% filter(Country == "France")
 
 ggplot(data = Fr) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("France Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
@@ -340,9 +340,9 @@ ggplot(data = Fr) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + 
 As you can see, the graphs are similar in function to those of Mongolia
 
 
-Now we will perform the permutation correlation test to see if there is any correlation between the two. We will run this with a sample of a few African countries then compare to France, since France seemed to have a surprisingly similar trend line for urban population growth and HIV rate. I will do the test up to 2006 because that is where HIV seems to be stop being a very life-threatening disease due to modern medicine and political acts, such as President George Bush's push to move high quantities of new HIV medication into Africa in 2003.
+Now we will perform the permutation correlation test to see if there is any correlation between the two. We will run this with a sample of a few African countries then compare to France, since France seemed to have a surprisingly similar trend line for urban population growth and HIV rate, yet is not a country that is devastated by HIV. I will do the test up to 2006 because that is where HIV seems to be stop being a very life-threatening disease due to modern medicine and political acts, such as President George Bush's push to move high quantities of new HIV medication into Africa in 2003.
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 AFsample <- urbanHIV %>% filter(year <= "2006") %>% filter(Country == "South Africa" | Country == "Mongolia" | Country == "Central African Republic" | Country == "Ethiopia")
 
 AFRresults <- perm_cor(perms = 1000, AFsample$Urban, AFsample$HIV)
@@ -355,20 +355,20 @@ FRresults <- perm_cor(perms = 1000, Fr$Urban, Fr$HIV)
 
 in order to compare these results, we must find a single number to compare them with. I'll use the mean of the 1000 results for each, to compare the two. 
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 afrmean <- mean(AFRresults)
 frmean <- mean(FRresults)
 ```
 
 The mean of the African sample test is:
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 afrmean
 ```
 
 The mean of the France test is:
 
-```{r}
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 frmean
 ```
 
@@ -589,7 +589,7 @@ In the beggining of the semester our team goal was to "To learn techniques to ex
 
 We feel that we have met that goal and feel comfortbale representing large amounts of data visually and with certain statistic tests to get desired results. There isn't really any aspects of our goal that we feel we didn't meet.     
 
-If we could time travel, and decided to use this epic power simply to communicate with ourselves of the past, we would tell ourselves to be better about communicating which aspects of the assignments we are working on so everyone has a better idea of what needs to get done. 
+If we could time travel, and decided to use this epic power simply to communicate with ourselves of the past, we would tell ourselves to be better about communicating which aspects of the assignments we are working on so everyone has a better idea of what needs to get done. We also would have liked to be more collaborative on team sections of labs, and to be more collaborative in studying for irat/trats. We worked well as a team when it came to the trats, and scored very well on them, but didn't discuss much about the topics until we started taking them. 
 
 
 
@@ -609,7 +609,7 @@ As far as advice for myself at the beggining of the semester, I would tell mysel
 
 
 ### Andrew Reflection:
-At the beginning of the semester my goals were to work in Europe after graduation to see what it is like to live in another country besides America. My long term goals were to have a comfortable job where I have the financial freedom to enjoy my hobbies, and to own my own consulting company in the very long term. I wouldn't say that my goals have changed, but there are some more things I would like to see out of my life. Something I would add is use my potential knowledge of statistics and data to better the world around me the best way that I can. I learned a lot in this course, an extremely valuable base knowledge of how to visually represent data and perform different tests on large groups of data via computing. If I could give myself any advice it would be to complete the labs earlier!
+At the beginning of the semester my goals were to work in Europe after graduation to see what it is like to live in another country besides America. My long term goals were to have a comfortable job where I have the financial freedom to enjoy my hobbies, and to own my own consulting company in the very long term. I wouldn't say that my goals have changed, but there are some more things I would like to see out of my life. Something I would add is use my potential knowledge of statistics and data to better the world around me the best way that I can. I learned a lot in this course, an extremely valuable base knowledge of how to visually represent data and perform different tests on large groups of data via computing, and would like to use that knowledge to make people's lives better. Whether that means using data to show the world changes we need to make, or use data to tell a story that fits an agenda of changing the world for the better. The power of data is very significant, because data is factual knowledge, and factual knowledge can be the cause for change. Lastly, if I could give myself any advice it would be to complete the labs earlier!
 
 ### Luke's Reflection:
 Obviously, my goals have changed a lot from the start of the semester to now, as I have once again changed my major. While I did really want to be in a sports-related field working with statistics and data, I realize now that sports and sports statistics are more of a hobby for me rather than a career interest. I have chnaged my life around a lot and am continuing to explore my own passions and career aspirations, but I think college is the time to do this, and through my self-exploration and pursuit of knowledge, I will come out a better and more well-rounded person. Therefore, while my 6 month and 5 year goals are more up in the air now than they were at the beginning of the semester, I feel that leaving these more open to exploration is a better path. Therefore, my new 5 year goal is to simply be a more learned, knowledgeable, and well-rounded person than I am now. Overall, I feel like I have learnt a lot from this course with reagards to the R programming language, and I feel this knowledge will be incredibly helpful for me moving forward. If I could give any advice to myself at the start of the semester, it would be to take detailed notes on each and every chapter and exercise in the book, as these will come to be incredibly helpful when working through each and every lab.
@@ -636,4 +636,4 @@ Obviously, my goals have changed a lot from the start of the semester to now, as
 
 I, Braden Griebel, ran the permutation tests for the team question and displayed the results in a histogram which I colored (using the fill aesthetic) to make it clear where the tails of the data are. For my individual subquestion I investigated a possibly confounding variable between life expectancy and literacy rate, namely GDP. I used linear models, and permutation tests to test whether literacy rate was still correlated with life expectancy even when controlling for GDP per capita, in order to see whether GDP was what was causing the relationship between Life expectancy and literacy. I also used a permutation test to see if there was a difference in literacy rate between the top and bottom half of countries by life expectancy to see if it was reasonable to think there was a correlation. I then used a correlation test to make this correaltion very clear. I displayed the results in histograms with colored tails to show that the calculated values were indeed statistically significant. I finally calculated the percentiles to give a numerical representation of the results. I added labels to all the graphs in order to make them easier to understand and read. 
 
-
+I, Andrew Duffy, created visual representations for the test statistics for our team question. I made graphs that show how GDP per capita, life expectancy, literacy rate and HIV might be connected or correlated. I also sourced this dataset during the last recitation for our team to use. Also, I did a subquestion that asks how urban population growth and female HIV rate might be correlated. I found that there was no correlation, but it was still beneficial to the overall team question because it roots out the idea that female HIV rate can have an affect on urban population growth, or visa versa.
