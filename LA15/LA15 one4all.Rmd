@@ -382,21 +382,60 @@ These findings mean that there is no correlation between urban population growth
 
 
 
+## Ahyo Falick Individual Section:
+
+### Question:
+Does unemployment rate have a correlation to HIV rate?
+
+### Importance:
+This is an important question because it can lead to important findings in the relationship between development and a deadly disease. If there is found to be a clear correlation between the unemployment rate and the HIV rate, the findings can be combined with other similar questions to emphasize the importance of global employment.
+
+### Hypotheses:
+Null Hypothesis: There is no correlation between female HIV rate and unemployment rate globally
+
+Alternate Hypothesis: There is a significant correlation between female HIV rate and unemployment rate globally.
+
+```{r}
+# Cleaning data
+handu <- cleaned %>% select("Country", "year", UILO = `Unemployment, total (% of total labor force) (modeled ILO estimate)`, UNE = `Unemployment, total (% of total labor force) (national estimate)`, HIV = `Women's share of population ages 15+ living with HIV (%)`)
+
+# Add a column called average with the average of both unemployment rates
+handu <- handu %>% mutate(year = as.double(year), UILO = as.double(UILO), UNE = as.double(UNE), HIV = as.double(HIV)) %>% mutate("Average" = (UILO + UNE)/2)
+```
 
 
+```{r}
+# A plot of the global HIV rate with respect to time
+ggplot(data = handu) + geom_jitter(mapping = aes(x = year, y = HIV)) + geom_smooth(mapping = aes(x = year, y = HIV), size = 2, se = FALSE)
 
+ggplot(data = handu) + geom_jitter(mapping = aes(x = year, y = UILO)) + geom_smooth(mapping = aes(x = year, y = UILO), color = "red", size = 2, se = FALSE)
+```
 
+The first plot hopes to provide insight into the trend of HIV globally between 1995 and 2019. It is clear that there is an upward trend. I will now test if that trend has any correlation to unemployment rate. The second plot shows the unemployment rate over time. It is clear from this graph that unemployment has remained fairly constant since 1995 with a slight downward trend. The next step is to plot the two together to see if there are any difinitive trends.
 
+```{r}
+# A plot of the Unemployment Rate vs. the HIV Rate
+ggplot(data = handu) + geom_jitter(mapping = aes(x = UILO, y = HIV)) + geom_smooth(mapping = aes(x = UILO, y = HIV), size = 2, color = "red", se = FALSE) + geom_smooth(mapping = aes(x = UNE, y = HIV), size = 2, color = "orange", se = FALSE) + labs(title = "Unemployment Rate vs. HIV Rate", x = "Unemployment (%)", y = "HIV (%)")
+```
 
+From this graph alone there does not seem to be a clear correlation betwee Unemployment and HIV, although there is a slight trend downward as can be seen from the geom_smooth plots. To see if there really is a clearcut correlation beteen unemployment and HIV, we need to go one step further and perform a permuted correlation test.
 
+```{r}
+# Permuted correlation test between the two
+pc<-tibble(results = perm_cor(1000, handu$Average, handu$HIV))
+cc<-cor(handu$Average,handu$HIV,use="pairwise.complete.obs")
+```
+The correlation between unemployment and HIV rate is found to be:
+```{r}
+cc
+```
 
-
-
-
-
-
-
-
+```{r}
+# Plot of correlations with vline at real correlation
+ggplot(data = pc) + geom_histogram(mapping = aes(results, fill = (results < quantile(pc$results, probs=.025)[[1]] | results > quantile(pc$results, probs=.975)[[1]]))) + geom_vline(xintercept = cc) + labs(title = "Permuted Correlation Betwee Unemployment and HIV", x = "Correlations", fill = "Tails")
+```
+### Findings:
+It is clear from this data that while the acctual correlation coefficient is towards the very end of the histogram plot, there can not be a difinitive rejection of the null hypothesis. Although there may be a relationship between Unemployment and Female HIV rate, it is impossible to tell if that relationship is statistically significant. This means that without further data, there is no clear way to prove or disprove either of these hypotheses.
 
 
 
