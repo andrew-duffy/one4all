@@ -13,7 +13,94 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(purrr)
+library(modelr)
+
 ```
+
+```{r message=F , warning=F}
+perm_mean <- function(perms = 1000, all_values, n_A)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # all_values (num): all data values
+  # n_A (int): Size of group A
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  permuted_mean_differences<-rep(0,perms)
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly separate vector "values" into disjoint 
+    # groups of size "nA" and "nB" respectively
+    temp<-sample(all_values)
+    group_A<-temp[1:n_A]
+    group_B<-temp[(n_A+1):length(temp)]
+    
+    # Step 3:
+    # Compute the sample means for the two groups from 
+    # step 2
+    mean_A<-mean(group_A,na.rm=T)
+    mean_B<-mean(group_B,na.rm=T)
+    
+    
+    # Step 4: 
+    # Compute the difference in sample means, store the
+    # value in the vector from step 1
+    permuted_mean_differences[i]<-mean_A-mean_B
+    
+  }
+  
+  # Step 5:
+  # Return the permuted mean differences vector
+  return(permuted_mean_differences)
+  
+}
+```
+
+
+```{r message=F , warning=F}
+perm_cor <- function(perms = 1000, x, y)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # x: Vector of Variable 1 - for computing correlation
+  # y: Vector of Variable 2 - for computing correlation
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  correlations<-rep(0,perms)
+  
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly mix up the values in the vector "y"
+    temp<-sample(y)
+    
+    # Step 3:
+    # Compute the correlation between x and the randomly mixed
+    # up y-vector. Store this value in the vector from step 1.
+    correlations[i]<-cor(x,temp,use="pairwise.complete.obs")
+    
+  }
+  
+  # Step 4:
+  # Return new updated vector, created in step 1
+  return(correlations)
+  
+}
+
+```
+
+
 
 ```{r}
 df <- read_csv(file = "data1.csv", col_types=cols(CreationDate=col_datetime()))
@@ -56,9 +143,6 @@ Alternate Hypothesis: There is an inverse correlation between HIV rate and test 
 *note: measuring female stastic of HIV rate because male data is unavailable.
 
 
-```{r}
-colnames(cleaned)
-```
 
 ```{r}
 tdata<-cleaned%>%select(Country,year,GDPpc=`GDP per capita (current US$)`,Literacy= `Literacy rate, adult total (% of people ages 15 and above)`,Life_exp=`Life expectancy at birth, total (years)`,
@@ -100,13 +184,13 @@ Now that we have visualized the worldwide averages of our test statistics, lets 
 ```{r, message = FALSE, warning = FALSE}
 sadata <- tdata %>% filter(Country == "South Africa") %>% group_by(year)
 
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("South Africa rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
 
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("South Africa Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
 
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita")
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("South Africa GDP per capita") + labs(x = "Year", y = "GDP per capita")
 
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("South Africa Literacy rate") + labs(x = "Year", y = "Literacy rate")
 
 ```
 
@@ -132,43 +216,45 @@ UK results are very similar to worldwide results, especially in terms of HIV rat
 
 Now for the permutation test.
 
-
 ```{r}
-perm_cor <- function(perms = 1000, x, y)
-{
-  ## Variables ##
-  # perms: The number of permutations 
-  # x: Vector of Variable 1 - for computing correlation
-  # y: Vector of Variable 2 - for computing correlation
-  ###############
+lit<-tdata$Literacy
+HIV<-tdata$HIV
+lifeExp<-tdata$Life_exp
+cor_lit_le<-cor(lit,lifeExp,use = "pairwise.complete.obs")
+cor_HIV_le<-cor(HIV,lifeExp,use="pairwise.complete.obs")
+
+pc_lit_le<-tibble(cor=perm_cor(perms=1000,lit,lifeExp))
+pc_HIV_le<-tibble(cor=perm_cor(perms=1000,HIV,lifeExp))
+
+
+
+plow_lit_le<-quantile(pc_lit_le$cor,probs=.025)[[1]]
+phigh_lit_le<-quantile(pc_lit_le$cor,probs=.975)[[1]]
   
-  # Step 1:
-  # Create vector of zeroes of length "perms" to store
-  # permuted mean differnces
-  diff_vector2 <- rep(0,perms)
-  
-  
-  
-  # Loop throught number of permutations
-  for (i in c(1:perms))
-  {
-    # Step 2:
-    # Randomly mix up the values in the vector "y"
-    
-    ymix <- sample(y)
-    
-    # Step 3:
-    # Compute the correlation between x and the randomly mixed
-    # up y-vector. Store this value in the vector from step 1.
-    
-    diff_vector2[i] <- cor(x, ymix)
-    
-  }
-  
-  # Step 4:
-  # Return new updated vector, created in step 1
-  return(diff_vector2)
-}
+plow_HIV_le<-quantile(pc_HIV_le$cor,probs=.025)[[1]]
+phigh_HIV_le<-quantile(pc_HIV_le$cor,probs=.975)[[1]]
+
+ggplot(pc_lit_le,aes(cor,fill=(cor<plow_lit_le|cor>phigh_lit_le)))+geom_histogram(binwidth = .01)+geom_vline(xintercept = cor_lit_le)+
+  labs(title="Literacy rate and Life Expectancy Permutation Correlation Test",
+       x="Correlation Between Literacy rate and Life Expectancy",
+       fill="Tails")
+
+
+ggplot(pc_HIV_le,aes(cor,fill=(cor<plow_HIV_le|cor>phigh_HIV_le)))+geom_histogram(binwidth = .01)+geom_vline(xintercept = cor_HIV_le)+
+  labs(title="Female HIV rate and Life Expectancy permutation Correlation Test",
+       x="Correlation between Female HIV rate and Life Expectancy",
+       fill="Tails")
+
+percentile_lit_le<-nrow(filter(pc_lit_le,cor<cor_lit_le))/nrow(pc_lit_le)
+percentile_HIV_le<-nrow(filter(pc_HIV_le,cor<cor_HIV_le))/nrow(pc_HIV_le)
+
+
+ptable<-tibble("Percentile of:"=c("Literacy Rate and Life Expectancy Permutation Correlation Test","Female HIV Rate and Life Expectancy Permutation Correlation Test"),"Value:"=
+                 c(percentile_lit_le,percentile_HIV_le))
+ptable
+
+
+
 ```
 
 
@@ -180,6 +266,7 @@ perm_cor <- function(perms = 1000, x, y)
 
 
 
+<<<<<<< HEAD
 ## Andrew Duffy Individual Question:
 
 ### Subquestion: 
@@ -276,4 +363,155 @@ These results show that there is actually a greater correlation between HIV rate
 Both of these correlation results are extremely close to 0, so the null hypothesis would not be rejected anyways, but the fact that the correlation for the African sample is negative means there is no way to reject the null hypothesis.
 
 These findings mean that there is no correlation between urban population growth and female HIV rate in Africa.
+=======
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Braden Griebel Individial Section:
+
+
+### Question:
+What is the relationship between Literacy and Life expectancy when accounting for 
+
+
+
+### Using Linear Models to Gain Insight
+
+```{r}
+bdata<-tdata%>%select(-HIV)
+
+bmodel<-lm(Life_exp~GDPpc,data=bdata)
+bdata<-add_residuals(bdata,model=bmodel,var="resid_le")
+bdata
+
+ggplot(bdata,aes(x=Literacy,y=Life_exp,color=log(GDPpc,base = 10)))+geom_point()+geom_smooth(se=F,color="red")+labs(title="Literacy, Life Expectancy and GDP per capita",
+                                                                                                    x="Literacy Rate",
+                                                                                                    y="Life Expectancy",
+                                                                                                    color="Base 10 Log of GDP",
+                                                                                                    caption="Log used to show order of magnitude since it spans many orders of magnitude")                                                                                                    
+
+ggplot(bdata,aes(x=Literacy,y=resid_le))+geom_jitter()+geom_smooth(se=F,color="red")+labs(title="Literacy and Residuals of Life Expectancy",
+                                                                              caption="Residuals Generated After removing effect of GDP per Capita",
+                                                                              x="Literacy Rate",y="Residuals")
+
+ggplot(bdata,aes(x=Literacy,y=resid_le))+geom_jitter()+geom_smooth(se=F,color="red")+xlim(85,100)+labs(title="Literacy and Residuals of Life Expectancy", subtitle = "Zoomed into 85-100% Literacy",
+                                                                              caption="Residuals Generated After removing effect of GDP per Capita",
+                                                                              x="Literacy Rate",y="Residuals")
+
+
+bmodel2<-lm(Life_exp~GDPpc+Literacy,data=bdata)
+print("Coefficients of Linear Model Including Per Capita GDP and Literacty Rate")
+tibble(Measurement=c("Intercept","GDP per Capita", "Literacy Rate"),"Coefficient Value"= coef(bmodel2))
+```
+
+
+### Is there a difference in the literacy rates between the highest 50% of Life Expectancy, and the Lowest 50%?
+
+```{r}
+high_le<-bdata%>%filter(Life_exp>median(bdata$Life_exp,na.rm=T))
+low_le<-bdata%>%filter(Life_exp<=median(bdata$Life_exp,na.rm=T))
+c_mean_diff<-mean(high_le$Literacy,na.rm=T)-mean(low_le$Literacy,na.rm=T)
+
+
+permuted_means<-tibble(lit_mean_diff=perm_mean(perms=1000,all_values = c(low_le$Literacy,high_le$Literacy),n_A=nrow(high_le)))
+
+p2.5<-quantile(permuted_means$lit_mean_diff, probs=.025)[[1]]
+p97.5<-quantile(permuted_means$lit_mean_diff, probs=.975)[[1]]
+
+ggplot(data=permuted_means,aes(lit_mean_diff,fill=(lit_mean_diff<p2.5|lit_mean_diff>p97.5)))+geom_histogram()+geom_vline(xintercept = c_mean_diff)+
+  labs(title="Permuted Difference of Means",fill="Tails",x="Difference of the Means of Literacy")
+
+percentile<-nrow(filter(permuted_means,lit_mean_diff<c_mean_diff))/nrow(permuted_means)
+
+print(paste("The Computed difference of Means is in the ",percentile*100,"th percentile",sep = ""))
+
+```
+
+### Is there a correlation between Literacy and the Calculated Residuals?
+```{r}
+resids<-bdata$resid_le
+lit<-bdata$Literacy
+calculated_correlation<-cor(lit,resids,use="pairwise.complete.obs")
+permuted_correlations<-tibble(correlations=perm_cor(perms=1000,lit,resids))
+p2.5<-quantile(permuted_correlations$correlations, probs=.025)[[1]]
+p97.5<-quantile(permuted_correlations$correlations, probs=.975)[[1]]
+
+ggplot(data=permuted_correlations,aes(correlations,fill=(correlations<p2.5|correlations>p97.5)))+geom_histogram()+geom_vline(xintercept = calculated_correlation)+
+  labs(title="Permuted Correlations Between Literacy and Life Expectancy",x="Correlations",fill="Tails")
+
+percentile<-nrow(filter(permuted_correlations,correlations<calculated_correlation))/nrow(permuted_correlations)
+
+print(paste("The Computed Correlation is in the ",percentile*100,"th percentile",sep = ""))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Reflections:
+### Team Reflection:
+
+In the beggining of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+how have your six-month or 5-year goals changed? What did you learn/accomplish in this course? If you could give yourself advice at the beginning of the semester, what would you tell yourself to keep doing, stop doing, and start doing?
+### Braden Reflection:
+At the start of the semester my six month goal was "to be in grad school, I don’t know specifically for what, but hopeully something related to statistics." and my five year post graduation goal was "I hope to be working on epidemiology for the CDC".
+>>>>>>> master
 
