@@ -86,7 +86,7 @@ ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = HIV), se = F
 
 ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
 
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita")
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita (US$)")
 
 ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
 
@@ -175,4 +175,105 @@ perm_cor <- function(perms = 1000, x, y)
 
 
 
+
+
+
+
+
+## Andrew Duffy Individual Question:
+
+### Subquestion: 
+
+Does urban population growth have an effect on hiv rate in Africa? That is, is there a correlation between female HIV rate and urban population growth?
+
+Null Hypothesis: There is no correlation between female HIV rate and urban population growth in Africa.
+
+Alternate Hypothesis: There is a significant correlation between female HIV rate and urban population growth in Africa.
+
+
+
+Start off with extracting a data frame from the large set of data we cleaned up. 
+
+```{r}
+urbanHIV <- cleaned %>% select(Country,year, HIV=`Women's share of population ages 15+ living with HIV (%)`, Urban = `Urban population growth (annual %)`)
+
+urbanHIV <- urbanHIV %>% mutate(year=as.double(year), HIV=as.double(HIV), Urban = as.double(Urban))
+```
+
+
+First, lets graph findings, for both worldwide and for a country that is devastated by aids, as well as a country not devastated by aids.
+
+```{r}
+ggplot(data = urbanHIV) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("Worldwide Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
+
+#we have already seen the worldwide hiv rate graph, but here it is again for good measure
+
+ggplot(data = urbanHIV) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+
+```
+
+As you can see, on a global scale there seems to be no correlation whatsoever between urban population growth and female HIV rate.
+
+Now, lets test France and Mongolia.
+
+```{r}
+mongolia <- urbanHIV %>% filter(Country == "Mongolia")
+
+ggplot(data = mongolia) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("Mongolia's Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
+
+ggplot(data = mongolia) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Mongolia's rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+```
+
+Visually, one can see that the graphs seem to have a similar path up until 2005-2006. Then the graphs become reciprocal of each other.
+
+```{r}
+Fr <- urbanHIV %>% filter(Country == "France")
+
+ggplot(data = Fr) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("France Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
+
+
+ggplot(data = Fr) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("France's rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+```
+
+As you can see, the graphs are similar in function to those of Mongolia
+
+
+Now we will perform the permutation correlation test to see if there is any correlation between the two. We will run this with a sample of a few African countries then compare to France, since France seemed to have a surprisingly similar trend line for urban population growth and HIV rate. I will do the test up to 2006 because that is where HIV seems to be stop being a very life-threatening disease due to modern medicine and political acts, such as President George Bush's push to move high quantities of new HIV medication into Africa in 2003.
+
+```{r}
+AFsample <- urbanHIV %>% filter(year <= "2006") %>% filter(Country == "South Africa" | Country == "Mongolia" | Country == "Central African Republic" | Country == "Ethiopia")
+
+AFRresults <- perm_cor(perms = 1000, AFsample$Urban, AFsample$HIV)
+
+FRresults <- perm_cor(perms = 1000, Fr$Urban, Fr$HIV)
+
+AFRresults
+FRresults
+```
+
+in order to compare these results, we must find a single number to compare them with. I'll use the mean of the 1000 results for each, to compare the two. 
+
+```{r}
+afrmean <- mean(AFRresults)
+frmean <- mean(FRresults)
+```
+
+The mean of the African sample test is:
+
+```{r}
+afrmean
+```
+
+The mean of the France test is:
+
+```{r}
+frmean
+```
+
+These results show that there is actually a greater correlation between HIV rate and urban population growth in France than in the sample of African countries. This is very surprising, but even more surprising is the fact that there seems to be a negative correlation in the African sample test. 
+
+
+Both of these correlation results are extremely close to 0, so the null hypothesis would not be rejected anyways, but the fact that the correlation for the African sample is negative means there is no way to reject the null hypothesis.
+
+These findings mean that there is no correlation between urban population growth and female HIV rate in Africa.
 
