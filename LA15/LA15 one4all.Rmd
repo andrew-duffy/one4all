@@ -299,8 +299,8 @@ ptable
 ## Braden Griebel Individial Section:
 
 
-### Question: 
-
+### Question:
+What is the relationship between Literacy and Life expectancy when accounting for 
 
 
 
@@ -376,4 +376,39 @@ print(paste("The Computed Correlation is in the ",percentile*100,"th percentile"
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Reflections:
+### Team Reflection:
+
+In the beggining of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+how have your six-month or 5-year goals changed? What did you learn/accomplish in this course? If you could give yourself advice at the beginning of the semester, what would you tell yourself to keep doing, stop doing, and start doing?
+### Braden Reflection:
+At the start of the semester my six month goal was "to be in grad school, I don’t know specifically for what, but hopeully something related to statistics." and my five year post graduation goal was "I hope to be working on epidemiology for the CDC".
 
