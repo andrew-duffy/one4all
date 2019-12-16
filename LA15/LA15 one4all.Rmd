@@ -18,5 +18,42 @@ colnames(df) <- c("Country", "Abbreviation", "Measuring", "Code", "1995", "1996"
 
 
 worlddata <- df %>% group_by(Country) %>% nest()
+df<-df[,-29]
+
+
+df<-df%>%gather(`1995`:`2019`,key=year,value=measurement)%>%select(Country,Measuring,year,measurement)%>%filter(Country!="Data from database: World Development Indicators")%>%
+  filter(Country!="Last Updated: 10/28/2019")%>%filter(!is.na(Country))
+
+
+
+
+countries<-unique(df$Country)
+#countries
+
+afghanistan<-df%>%filter(Country=="Afghanistan")%>%spread(key=Measuring,value=measurement)
+
+
+
+cleaned<-afghanistan
+
+countries<-countries[-1]
+for(i in 1:length(countries)){
+  temp<-df%>%filter(Country==countries[i])%>%spread(key=Measuring,value=measurement)
+  cleaned<-rbind(cleaned,temp)
+}
+
+
+
+cleaned
+
+
 ```
+
+
+
+
+
+
+
+
 
