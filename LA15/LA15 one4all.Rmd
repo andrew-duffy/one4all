@@ -47,7 +47,11 @@ cleaned
 
 # Team Question:
 
-Does female HIV rate have a correlation with literacy rate  and life expectancy?
+Does female HIV rate have a correlation with life expectancy and literacy rate? Expect the correlation to be inverse, where an increase in HIV rate leads to a decrease in life expectancy.
+
+Null Hypothesis: There is no inverse correlation between HIV rate and test statistics Literacy and Life expectancy.
+
+Alternate Hypothesis: There is an inverse correlation between HIV rate and test statistics life expectancy and literacy rate.
 
 *note: measuring female stastic of HIV rate because male data is unavailable.
 
@@ -68,7 +72,7 @@ tdata
 
 First, we should graph the data, by year. Then, we will perform a permutation correlation test with the variables we wish to find a correlation. 
 
-We will start with graphing the yearly average of each statistic, worldwide, to get a look at the graphs and see if any graphs look correlated.
+We will start with graphing the yearly average of each statistic, worldwide, to get a look at the graphs and see if any graphs look correlated. We will add GDP per capita to get a decent understanding of the world's economic standing.
 
 Two Statistics that jump out at me in terms of potential correlation is Life Expectancy and HIV rate. Note that HIV will have an inverse effect on Life expectancy until the life-saving medication is discovered for it. 
 
