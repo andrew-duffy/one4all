@@ -64,9 +64,108 @@ tdata<-tdata%>%mutate(year=as.double(year),GDPpc=as.double(GDPpc),Literacy=as.do
 
 tdata
 
+```
+
+First, we should graph the data, by year. Then, we will perform a permutation correlation test with the variables we wish to find a correlation. 
+
+We will start with graphing the yearly average of each statistic, worldwide, to get a look at the graphs and see if any graphs look correlated.
+
+Two Statistics that jump out at me in terms of potential correlation is Life Expectancy and HIV rate. Note that HIV will have an inverse effect on Life expectancy until the life-saving medication is discovered for it. 
+
+```{r, message = FALSE, warning = FALSE}
+visualdata <- tdata %>% group_by(year)
+
+visualdata <- visualdata[, -1]
+
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita")
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
+
 
 ```
 
+As we can see, the graph of hiv rate has a slight upward pointing "bump" in the trend line that is otherwise linear. The graph of life expectancy has a inversely related shift, pointing at a potential negative correlation before life-saving medication is created (in the mid 2000's).
+
+Now that we have visualized the worldwide averages of our test statistics, lets take a look at a few different countries. Since HIV is most rampant in Africa, lets take a look at the same test statistics for South Africa (a country very devastated by HIV). Then, since worldwide prevelance of HIV is pretty consistent accros Europe and North America, lets take a look at a country in the EU, such as the UK.
+
+```{r, message = FALSE, warning = FALSE}
+sadata <- tdata %>% filter(Country == "South Africa") %>% group_by(year)
+
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
+
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita")
+
+ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
+
+```
+
+We can interpret from South Africa that the graphs of HIV rate and Life Expectancy have an extremely large negative correlation up until around 2006.
+
+
+```{r, message = FALSE, warning = FALSE}
+ukdata <- tdata %>% filter(Country == "United Kingdom") %>% group_by(year)
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita")
+
+ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
+
+```
+
+
+UK results are very similar to worldwide results, especially in terms of HIV rate and Life expectancy. Where there is a slight exponential increase in HIV rate, there is a slight exponential decrease in Life Expectancy. A small but not negligible negative correlation is visible from the graphs of these test statistics.
+
+
+Now for the permutation test.
+
+
+```{r}
+perm_cor <- function(perms = 1000, x, y)
+{
+  ## Variables ##
+  # perms: The number of permutations 
+  # x: Vector of Variable 1 - for computing correlation
+  # y: Vector of Variable 2 - for computing correlation
+  ###############
+  
+  # Step 1:
+  # Create vector of zeroes of length "perms" to store
+  # permuted mean differnces
+  diff_vector2 <- rep(0,perms)
+  
+  
+  
+  # Loop throught number of permutations
+  for (i in c(1:perms))
+  {
+    # Step 2:
+    # Randomly mix up the values in the vector "y"
+    
+    ymix <- sample(y)
+    
+    # Step 3:
+    # Compute the correlation between x and the randomly mixed
+    # up y-vector. Store this value in the vector from step 1.
+    
+    diff_vector2[i] <- cor(x, ymix)
+    
+  }
+  
+  # Step 4:
+  # Return new updated vector, created in step 1
+  return(diff_vector2)
+}
+```
 
 
 
