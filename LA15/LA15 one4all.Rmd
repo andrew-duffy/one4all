@@ -54,18 +54,9 @@ cleaned
 
 # Team Question:
 
-Does female HIV rate have a correlation with the rate of women making their own informed decisions regarding sexual relations, GDP per capita, and life expectancy?
+Does female HIV rate have a correlation with literacy rate  and life expectancy?
 
-*note: measuring female stastics because male data for such topics is limited or NA.
-
-
-
-
-
-
-
-## Andrew Duffy Individual Section
-
+*note: measuring female stastic of HIV rate because male data is unavailable.
 
 
 
