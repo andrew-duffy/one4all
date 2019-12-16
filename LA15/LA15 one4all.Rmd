@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 ---
 title: "LA15 one4all"
 output: html_document
+author: Andrew Duffy, Braden Greibel, Luke Fanning, Ahyo Falick.
 ---
-Andrew Duffy, Braden Greibel, Luke Fanning, Ahyo Falick.
 
-### This dataset comes from data.worldbank.org. 
-It is a very large selection of statistics with a domain of almost every country, worldwide. It ranges from years 1995-2019.
 
 
 ```{r setup, include=FALSE}
@@ -149,6 +146,8 @@ Alternate Hypothesis: There is an inverse correlation between HIV rate and test 
 
 We were highered by a WHO investigator to study the relationship between education and life expectancy, and whether Female rates of HIV could be an intervening variable in this relationship if one exists. Their goal is to understand if education spending would be effective in increasing life expectancy, and if it would does HIV rate play a role as an intermediary. Thus we will answer whether there is a correlation between Female HIV rate and both life expectancy and Literacy (a direct relationship between literacy and life expectancy will be analyzed in an individual sub question). This question is important because using literacy as a proxy for education rates in a country, we can investigate how education, HIV and life expectancy are related. This in turn can allow a deeper understnading of how education can play a role in life expectancy. Understanding this relationship would allow countries to understand whether increasing access to education would significantly impact the life expectancy of their citizens. Either way, they could focus their resources more effectively using this information in order to improve life expectancy. Beyond the obvious intrinsic benefits for the citizens, this could also have a positive impact on economy, since improving the health of the citizens would increase the amount they could work, and reduce the amount that they have to spend on healthcare thus increasing the amount that they can put into the economy. 
 
+In order to answer this question we will use data from data.worldbank.org. An international financial institution, world bank offers loans and grants to less developed countries in order to encourage developement. Recently, the world bank has stated that its goal is the reduction of poverty. The data set is a very large selection of statistics with a domain of almost every country, worldwide. It ranges from years 1995-2019. we will focus on the Female HIV rate, Literacy and Life expectancy variables in answering our team question.
+
 
 
 
@@ -278,6 +277,62 @@ Based on our conclusion, our recomendation should be clear. We recoment that acc
 
 This analyse would obviously benefit countries seeking effective methods to increase the average health (as measured by life expectancy) of their citizens, as well as the citizens who would benefit from both increased education and health. However, if countries or NGO's (non-Governmental Organizations) were to take this analysis and increase spending on education, since it is a known quantity, and reduce the spending on research into curing HIV, since this is more uncertain, then this could obviously hurt those already living with HIV. Although it would decrease the number of people with HIV since it would reduce the amount getting it in the future, this would still negatively affect the lives of those already infected. 
 
+
+
+## Ahyo Falick Individual Section:
+
+### Question:
+Does unemployment rate have a correlation to HIV rate?
+
+### Importance:
+This is an important question because it can lead to important findings in the relationship between development and a deadly disease. If there is found to be a clear correlation between the unemployment rate and the HIV rate, the findings can be combined with other similar questions to emphasize the importance of global employment.
+
+### Hypotheses:
+Null Hypothesis: There is no correlation between female HIV rate and unemployment rate globally
+
+Alternate Hypothesis: There is a significant correlation between female HIV rate and unemployment rate globally.
+
+```{r}
+# Cleaning data
+handu <- cleaned %>% select("Country", "year", UILO = `Unemployment, total (% of total labor force) (modeled ILO estimate)`, UNE = `Unemployment, total (% of total labor force) (national estimate)`, HIV = `Women's share of population ages 15+ living with HIV (%)`)
+
+# Add a column called average with the average of both unemployment rates
+handu <- handu %>% mutate(year = as.double(year), UILO = as.double(UILO), UNE = as.double(UNE), HIV = as.double(HIV)) %>% mutate("Average" = (UILO + UNE)/2)
+```
+
+
+```{r}
+# A plot of the global HIV rate with respect to time
+ggplot(data = handu) + geom_jitter(mapping = aes(x = year, y = HIV)) + geom_smooth(mapping = aes(x = year, y = HIV), size = 2, se = FALSE)
+
+ggplot(data = handu) + geom_jitter(mapping = aes(x = year, y = UILO)) + geom_smooth(mapping = aes(x = year, y = UILO), color = "red", size = 2, se = FALSE)
+```
+
+The first plot hopes to provide insight into the trend of HIV globally between 1995 and 2019. It is clear that there is an upward trend. I will now test if that trend has any correlation to unemployment rate. The second plot shows the unemployment rate over time. It is clear from this graph that unemployment has remained fairly constant since 1995 with a slight downward trend. The next step is to plot the two together to see if there are any difinitive trends.
+
+```{r}
+# A plot of the Unemployment Rate vs. the HIV Rate
+ggplot(data = handu) + geom_jitter(mapping = aes(x = UILO, y = HIV)) + geom_smooth(mapping = aes(x = UILO, y = HIV), size = 2, color = "red", se = FALSE) + geom_smooth(mapping = aes(x = UNE, y = HIV), size = 2, color = "orange", se = FALSE) + labs(title = "Unemployment Rate vs. HIV Rate", x = "Unemployment (%)", y = "HIV (%)")
+```
+
+From this graph alone there does not seem to be a clear correlation betwee Unemployment and HIV, although there is a slight trend downward as can be seen from the geom_smooth plots. To see if there really is a clearcut correlation beteen unemployment and HIV, we need to go one step further and perform a permuted correlation test.
+
+```{r}
+# Permuted correlation test between the two
+pc<-tibble(results = perm_cor(1000, handu$Average, handu$HIV))
+cc<-cor(handu$Average,handu$HIV,use="pairwise.complete.obs")
+```
+The correlation between unemployment and HIV rate is found to be:
+```{r}
+cc
+```
+
+```{r}
+# Plot of correlations with vline at real correlation
+ggplot(data = pc) + geom_histogram(mapping = aes(results, fill = (results < quantile(pc$results, probs=.025)[[1]] | results > quantile(pc$results, probs=.975)[[1]]))) + geom_vline(xintercept = cc) + labs(title = "Permuted Correlation Betwee Unemployment and HIV", x = "Correlations", fill = "Tails")
+```
+### Findings:
+It is clear from this data that while the acctual correlation coefficient is towards the very end of the histogram plot, there can not be a difinitive rejection of the null hypothesis. Although there may be a relationship between Unemployment and Female HIV rate, it is impossible to tell if that relationship is statistically significant. This means that without further data, there is no clear way to prove or disprove either of these hypotheses.
 
 
 
@@ -615,6 +670,8 @@ At the beginning of the semester my goals were to work in Europe after graduatio
 ### Luke's Reflection:
 Obviously, my goals have changed a lot from the start of the semester to now, as I have once again changed my major. While I did really want to be in a sports-related field working with statistics and data, I realize now that sports and sports statistics are more of a hobby for me rather than a career interest. I have chnaged my life around a lot and am continuing to explore my own passions and career aspirations, but I think college is the time to do this, and through my self-exploration and pursuit of knowledge, I will come out a better and more well-rounded person. Therefore, while my 6 month and 5 year goals are more up in the air now than they were at the beginning of the semester, I feel that leaving these more open to exploration is a better path. Therefore, my new 5 year goal is to simply be a more learned, knowledgeable, and well-rounded person than I am now. Overall, I feel like I have learnt a lot from this course with reagards to the R programming language, and I feel this knowledge will be incredibly helpful for me moving forward. If I could give any advice to myself at the start of the semester, it would be to take detailed notes on each and every chapter and exercise in the book, as these will come to be incredibly helpful when working through each and every lab.
 
+### Ahyo Reflection:
+My 6 month goal at the beginning of the semester was to be in graduate school working on a master's degree. I still wish to pursue this goal and enroll in a graduate program, although I am still not sure in exactly what field. My 5 year goal was to have a steady income and be involved in an exciting career path. This goal is also still something I would like to keep reaching for. Although it is fairly vague at the moment, I think it is important to keep my options open. In this course I learned how to do all sorts of things with large sets of data. Learning the applications of R studio was confusing and stressful at times, but in the end I feel confident in my abilities to transform data into whatever I want. If I could give myself at the beginning of the semester it would be to stay on top of the R4DS readings in order to help my lab group out more in the TRATs. Doing the readings on time would also allow me to understand the material better and create more effective code. Additionally, I would tell myself to stop procrastinating to reduce my stress levels and not scare my lab group as much.
 
 
 
@@ -638,686 +695,7 @@ Obviously, my goals have changed a lot from the start of the semester to now, as
 I, Braden Griebel, ran the permutation tests for the team question and displayed the results in a histogram which I colored (using the fill aesthetic) to make it clear where the tails of the data are. For my individual subquestion I investigated a possibly confounding variable between life expectancy and literacy rate, namely GDP. I used linear models, and permutation tests to test whether literacy rate was still correlated with life expectancy even when controlling for GDP per capita, in order to see whether GDP was what was causing the relationship between Life expectancy and literacy. I also used a permutation test to see if there was a difference in literacy rate between the top and bottom half of countries by life expectancy to see if it was reasonable to think there was a correlation. I then used a correlation test to make this correaltion very clear. I displayed the results in histograms with colored tails to show that the calculated values were indeed statistically significant. I finally calculated the percentiles to give a numerical representation of the results. I added labels to all the graphs in order to make them easier to understand and read. 
 
 I, Andrew Duffy, created visual representations for the test statistics for our team question. I made graphs that show how GDP per capita, life expectancy, literacy rate and HIV might be connected or correlated. I also sourced this dataset during the last recitation for our team to use. Also, I did a subquestion that asks how urban population growth and female HIV rate might be correlated. I found that there was no correlation, but it was still beneficial to the overall team question because it roots out the idea that female HIV rate can have an affect on urban population growth, or visa versa.
-=======
----
-title: "LA15 one4all"
-output: html_document
----
-Andrew Duffy, Braden Greibel, Luke Fanning, Ahyo Falick.
-
-### This dataset comes from data.worldbank.org. 
-It is a very large selection of statistics with a domain of almost every country, worldwide. It ranges from years 1995-2019.
-
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-library(tidyverse)
-library(purrr)
-library(modelr)
-
-```
-
-```{r message=F , warning=F}
-perm_mean <- function(perms = 1000, all_values, n_A)
-{
-  ## Variables ##
-  # perms: The number of permutations 
-  # all_values (num): all data values
-  # n_A (int): Size of group A
-  ###############
-  
-  # Step 1:
-  # Create vector of zeroes of length "perms" to store
-  # permuted mean differnces
-  permuted_mean_differences<-rep(0,perms)
-  
-  # Loop throught number of permutations
-  for (i in c(1:perms))
-  {
-    # Step 2:
-    # Randomly separate vector "values" into disjoint 
-    # groups of size "nA" and "nB" respectively
-    temp<-sample(all_values)
-    group_A<-temp[1:n_A]
-    group_B<-temp[(n_A+1):length(temp)]
-    
-    # Step 3:
-    # Compute the sample means for the two groups from 
-    # step 2
-    mean_A<-mean(group_A,na.rm=T)
-    mean_B<-mean(group_B,na.rm=T)
-    
-    
-    # Step 4: 
-    # Compute the difference in sample means, store the
-    # value in the vector from step 1
-    permuted_mean_differences[i]<-mean_A-mean_B
-    
-  }
-  
-  # Step 5:
-  # Return the permuted mean differences vector
-  return(permuted_mean_differences)
-  
-}
-```
-
-
-```{r message=F , warning=F}
-perm_cor <- function(perms = 1000, x, y)
-{
-  ## Variables ##
-  # perms: The number of permutations 
-  # x: Vector of Variable 1 - for computing correlation
-  # y: Vector of Variable 2 - for computing correlation
-  ###############
-  
-  # Step 1:
-  # Create vector of zeroes of length "perms" to store
-  # permuted mean differnces
-  correlations<-rep(0,perms)
-  
-  
-  # Loop throught number of permutations
-  for (i in c(1:perms))
-  {
-    # Step 2:
-    # Randomly mix up the values in the vector "y"
-    temp<-sample(y)
-    
-    # Step 3:
-    # Compute the correlation between x and the randomly mixed
-    # up y-vector. Store this value in the vector from step 1.
-    correlations[i]<-cor(x,temp,use="pairwise.complete.obs")
-    
-  }
-  
-  # Step 4:
-  # Return new updated vector, created in step 1
-  return(correlations)
-  
-}
-
-```
-
-
-
-```{r warning=F,message=F}
-df <- read_csv(file = "data1.csv", col_types=cols(CreationDate=col_datetime()))
-info <- read_csv(file = "data2.csv")
-
-colnames(df) <- c("Country", "Abbreviation", "Measuring", "Code", "1995", "1996", "1997", "1998", "1999", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019")
-
-worlddata <- df %>% group_by(Country) %>% nest()
-df<-df[,-29]
-
-df<-df%>%gather(`1995`:`2019`,key=year,value=measurement)%>%select(Country,Measuring,year,measurement)%>%filter(Country!="Data from database: World Development Indicators")%>%
-  filter(Country!="Last Updated: 10/28/2019")%>%filter(!is.na(Country))
-
-
-countries<-unique(df$Country)
-#countries
-
-afghanistan<-df%>%filter(Country=="Afghanistan")%>%spread(key=Measuring,value=measurement)
-
-cleaned<-afghanistan
-
-countries<-countries[-1]
-for(i in 1:length(countries)){
-  temp<-df%>%filter(Country==countries[i])%>%spread(key=Measuring,value=measurement)
-  cleaned<-rbind(cleaned,temp)
-}
-
-
-#cleaned
-```
-
-# Team Question:
-
-Does female HIV rate have a correlation with life expectancy and literacy rate? Expect the correlation to be inverse, where an increase in HIV rate leads to a decrease in life expectancy.
-
-Null Hypothesis: There is no inverse correlation between HIV rate and test statistics Literacy and Life expectancy.
-
-Alternate Hypothesis: There is an inverse correlation between HIV rate and test statistics life expectancy and literacy rate.
-
-*note: measuring female stastic of HIV rate because male data is unavailable.
-
-
-## Domain Expert and Importance:
-
-
-We were highered by a WHO investigator to study the relationship between education and life expectancy, and whether Female rates of HIV could be an intervening variable in this relationship if one exists. Their goal is to understand if education spending would be effective in increasing life expectancy, and if it would does HIV rate play a role as an intermediary. Thus we will answer whether there is a correlation between Female HIV rate and both life expectancy and Literacy (a direct relationship between literacy and life expectancy will be analyzed in an individual sub question). This question is important because using literacy as a proxy for education rates in a country, we can investigate how education, HIV and life expectancy are related. This in turn can allow a deeper understnading of how education can play a role in life expectancy. Understanding this relationship would allow countries to understand whether increasing access to education would significantly impact the life expectancy of their citizens. Either way, they could focus their resources more effectively using this information in order to improve life expectancy. Beyond the obvious intrinsic benefits for the citizens, this could also have a positive impact on economy, since improving the health of the citizens would increase the amount they could work, and reduce the amount that they have to spend on healthcare thus increasing the amount that they can put into the economy. 
-
-
-
-
-
-```{r}
-tdata<-cleaned%>%select(Country,year,GDPpc=`GDP per capita (current US$)`,Literacy= `Literacy rate, adult total (% of people ages 15 and above)`,Life_exp=`Life expectancy at birth, total (years)`,
-                        HIV=`Women's share of population ages 15+ living with HIV (%)`)
-
-tdata<-tdata%>%mutate(year=as.double(year),GDPpc=as.double(GDPpc),Literacy=as.double(Literacy),Life_exp=as.double(Life_exp),HIV=as.double(HIV))
-
-tdata
-
-```
-
-First, we should graph the data, by year. Then, we will perform a permutation correlation test with the variables we wish to find a correlation. 
-
-We will start with graphing the yearly average of each statistic, worldwide, to get a look at the graphs and see if any graphs look correlated. We will add GDP per capita to get a decent understanding of the world's economic standing.
-
-Two Statistics that jump out at me in terms of potential correlation is Life Expectancy and HIV rate. Note that HIV will have an inverse effect on Life expectancy until the life-saving medication is discovered for it. 
-
-```{r, message = FALSE, warning = FALSE}
-visualdata <- tdata %>% group_by(year)
-
-visualdata <- visualdata[, -1]
-
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita (US$)")
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
-
-
-```
-
-As we can see, the graph of hiv rate has a slight upward pointing "bump" in the trend line that is otherwise linear. The graph of life expectancy has a inversely related shift, pointing at a potential negative correlation before life-saving medication is created (in the mid 2000's).
-
-Now that we have visualized the worldwide averages of our test statistics, lets take a look at a few different countries. Since HIV is most rampant in Africa, lets take a look at the same test statistics for South Africa (a country very devastated by HIV). Then, since worldwide prevelance of HIV is pretty consistent accros Europe and North America, lets take a look at a country in the EU, such as the UK.
-
-```{r, message = FALSE, warning = FALSE}
-sadata <- tdata %>% filter(Country == "South Africa") %>% group_by(year)
-
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("South Africa rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
-
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("South Africa Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
-
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("South Africa GDP per capita") + labs(x = "Year", y = "GDP per capita")
-
-ggplot(data = sadata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("South Africa Literacy rate") + labs(x = "Year", y = "Literacy rate")
-
-```
-
-We can interpret from South Africa that the graphs of HIV rate and Life Expectancy have an extremely large negative correlation up until around 2006.
-
-
-```{r, message = FALSE, warning = FALSE}
-ukdata <- tdata %>% filter(Country == "United Kingdom") %>% group_by(year)
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Life_exp), se = FALSE) + ggtitle("Worldwide rate of Life Expectancy") + labs(x = "Year", y = "Life Expectancy")
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = GDPpc), se = FALSE) + ggtitle("Worldwide average of GDP per capita") + labs(x = "Year", y = "GDP per capita")
-
-ggplot(data = visualdata) + geom_smooth(mapping = aes(x = year, y = Literacy), se = FALSE) + ggtitle("Worldwide Literacy rate") + labs(x = "Year", y = "Literacy rate")
-
-```
-
-
-UK results are very similar to worldwide results, especially in terms of HIV rate and Life expectancy. Where there is a slight exponential increase in HIV rate, there is a slight exponential decrease in Life Expectancy. A small but not negligible negative correlation is visible from the graphs of these test statistics.
-
-
-Now for the permutation test.
-
-```{r}
-lit<-tdata$Literacy
-HIV<-tdata$HIV
-lifeExp<-tdata$Life_exp
-cor_lit_HIV<-cor(lit,HIV,use = "pairwise.complete.obs")
-cor_HIV_le<-cor(HIV,lifeExp,use="pairwise.complete.obs")
-
-pc_lit_HIV<-tibble(cor=perm_cor(perms=1000,lit,HIV))
-pc_HIV_le<-tibble(cor=perm_cor(perms=1000,HIV,lifeExp))
-
-
-
-plow_lit_HIV<-quantile(pc_lit_HIV$cor,probs=.025)[[1]]
-phigh_lit_HIV<-quantile(pc_lit_HIV$cor,probs=.975)[[1]]
-  
-plow_HIV_le<-quantile(pc_HIV_le$cor,probs=.025)[[1]]
-phigh_HIV_le<-quantile(pc_HIV_le$cor,probs=.975)[[1]]
-
-ggplot(pc_lit_HIV,aes(cor,fill=(cor<plow_lit_HIV|cor>phigh_lit_HIV)))+geom_histogram(binwidth = .01)+geom_vline(xintercept = cor_lit_HIV)+
-  labs(title="Literacy rate and Female HIV rate Permutation Correlation Test",
-       x="Correlation Between Literacy rate and Female HIV rate",
-       fill="Tails")
-
-
-ggplot(pc_HIV_le,aes(cor,fill=(cor<plow_HIV_le|cor>phigh_HIV_le)))+geom_histogram(binwidth = .01)+geom_vline(xintercept = cor_HIV_le)+
-  labs(title="Female HIV rate and Life Expectancy permutation Correlation Test",
-       x="Correlation between Female HIV rate and Life Expectancy",
-       fill="Tails")
-
-percentile_lit_HIV<-nrow(filter(pc_lit_HIV,cor<cor_lit_HIV))/nrow(pc_lit_HIV)
-percentile_HIV_le<-nrow(filter(pc_HIV_le,cor<cor_HIV_le))/nrow(pc_HIV_le)
-
-
-ptable<-tibble("Percentile of:"=c("Literacy Rate and Female HIV Rate Permutation Correlation Test","Female HIV Rate and Life Expectancy Permutation Correlation Test"),"Value:"=
-                 c(percentile_lit_HIV,percentile_HIV_le))
-ptable
-
-
-
-```
-
-
-### Conclusion:
-As can be seen from the graphs, and the percentiles, there are clear correlations between Female HIV rates and both life expectancy and literacy rate. From these facts we can draw conclusions about these individual correaltions. Education can reduce the Female HIV rate, and the HIV rate correlates negatively with the life expectancy. This in turn can allow us to postulate one possible cause for the relationship between literacy and life expectancy (explored in Braden's Individual Section). Namely, that low literacy (education rate) can lead to higher rates of female HIV rates, which in turn reduces the life expectancy. Thus we can see that increasing access to education in a country would also increase the life expectancy of that countries citizens. 
-
-### Recomendation:
-
-Based on our conclusion, our recomendation should be clear. We recoment that access to education is improved in order to increase life expectancies. Additionally, since it can been seen that Female HIV rate could be one possible intervening variable here, we would recomend investigations into other possible intervening variables that could further elucidate the relationship between education and life expectancy. Then based off that, it would be important to see what types of education are most effective, through those intervening variables, at increasing the average life expectancy. 
-
-### Some Ethical Considerations:
-
-This analyse would obviously benefit countries seeking effective methods to increase the average health (as measured by life expectancy) of their citizens, as well as the citizens who would benefit from both increased education and health. However, if countries or NGO's (non-Governmental Organizations) were to take this analysis and increase spending on education, since it is a known quantity, and reduce the spending on research into curing HIV, since this is more uncertain, then this could obviously hurt those already living with HIV. Although it would decrease the number of people with HIV since it would reduce the amount getting it in the future, this would still negatively affect the lives of those already infected. 
-
-
-
-
-
-
-## Andrew Duffy Individual Question:
-
-### Subquestion: 
-
-Does urban population growth have an effect on hiv rate in Africa? That is, is there a correlation between female HIV rate and urban population growth?
-
-Null Hypothesis: There is no correlation between female HIV rate and urban population growth in Africa.
-
-Alternate Hypothesis: There is a significant correlation between female HIV rate and urban population growth in Africa.
-
-
-
-Start off with extracting a data frame from the large set of data we cleaned up. 
-
-```{r}
-urbanHIV <- cleaned %>% select(Country,year, HIV=`Women's share of population ages 15+ living with HIV (%)`, Urban = `Urban population growth (annual %)`)
-
-urbanHIV <- urbanHIV %>% mutate(year=as.double(year), HIV=as.double(HIV), Urban = as.double(Urban))
-```
-
-
-First, lets graph findings, for both worldwide and for a country that is devastated by aids, as well as a country not devastated by aids.
-
-```{r}
-ggplot(data = urbanHIV) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("Worldwide Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
-
-#we have already seen the worldwide hiv rate graph, but here it is again for good measure
-
-ggplot(data = urbanHIV) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Worldwide rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
-
-```
-
-As you can see, on a global scale there seems to be no correlation whatsoever between urban population growth and female HIV rate.
-
-Now, lets test France and Mongolia.
-
-```{r}
-mongolia <- urbanHIV %>% filter(Country == "Mongolia")
-
-ggplot(data = mongolia) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("Mongolia's Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
-
-ggplot(data = mongolia) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("Mongolia's rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
-```
-
-Visually, one can see that the graphs seem to have a similar path up until 2005-2006. Then the graphs become reciprocal of each other.
-
-```{r}
-Fr <- urbanHIV %>% filter(Country == "France")
-
-ggplot(data = Fr) + geom_smooth(mapping = aes(x = year, y = Urban), se = FALSE) + ggtitle("France Urban Population growth") + labs(x = "Year", y = "Urban Population Growth, %")
-
-
-ggplot(data = Fr) + geom_smooth(mapping = aes(x = year, y = HIV), se = FALSE) + ggtitle("France's rate of Women with HIV") + labs(x = "Year", y = "Female HIV rate")
-```
-
-As you can see, the graphs are similar in function to those of Mongolia
-
-
-Now we will perform the permutation correlation test to see if there is any correlation between the two. We will run this with a sample of a few African countries then compare to France, since France seemed to have a surprisingly similar trend line for urban population growth and HIV rate. I will do the test up to 2006 because that is where HIV seems to be stop being a very life-threatening disease due to modern medicine and political acts, such as President George Bush's push to move high quantities of new HIV medication into Africa in 2003.
-
-```{r}
-AFsample <- urbanHIV %>% filter(year <= "2006") %>% filter(Country == "South Africa" | Country == "Mongolia" | Country == "Central African Republic" | Country == "Ethiopia")
-
-AFRresults <- perm_cor(perms = 1000, AFsample$Urban, AFsample$HIV)
-
-FRresults <- perm_cor(perms = 1000, Fr$Urban, Fr$HIV)
-
-#AFRresults
-#FRresults
-```
-
-in order to compare these results, we must find a single number to compare them with. I'll use the mean of the 1000 results for each, to compare the two. 
-
-```{r}
-afrmean <- mean(AFRresults)
-frmean <- mean(FRresults)
-```
-
-The mean of the African sample test is:
-
-```{r}
-afrmean
-```
-
-The mean of the France test is:
-
-```{r}
-frmean
-```
-
-These results show that there is actually a greater correlation between HIV rate and urban population growth in France than in the sample of African countries. This is very surprising, but even more surprising is the fact that there seems to be a negative correlation in the African sample test. 
-
-
-Both of these correlation results are extremely close to 0, so the null hypothesis would not be rejected anyways, but the fact that the correlation for the African sample is negative means there is no way to reject the null hypothesis.
-
-These findings mean that there is no correlation between urban population growth and female HIV rate in Africa.
-
-
-
-
-## Ahyo Falick Individual Section:
-
-### Question:
-Does unemployment rate have a correlation to HIV rate?
-
-### Importance:
-This is an important question because it can lead to important findings in the relationship between development and a deadly disease. If there is found to be a clear correlation between the unemployment rate and the HIV rate, the findings can be combined with other similar questions to emphasize the importance of global employment.
-
-### Hypotheses:
-Null Hypothesis: There is no correlation between female HIV rate and unemployment rate globally
-
-Alternate Hypothesis: There is a significant correlation between female HIV rate and unemployment rate globally.
-
-```{r}
-# Cleaning data
-handu <- cleaned %>% select("Country", "year", UILO = `Unemployment, total (% of total labor force) (modeled ILO estimate)`, UNE = `Unemployment, total (% of total labor force) (national estimate)`, HIV = `Women's share of population ages 15+ living with HIV (%)`)
-
-# Add a column called average with the average of both unemployment rates
-handu <- handu %>% mutate(year = as.double(year), UILO = as.double(UILO), UNE = as.double(UNE), HIV = as.double(HIV)) %>% mutate("Average" = (UILO + UNE)/2)
-```
-
-
-```{r}
-# A plot of the global HIV rate with respect to time
-ggplot(data = handu) + geom_jitter(mapping = aes(x = year, y = HIV)) + geom_smooth(mapping = aes(x = year, y = HIV), size = 2, se = FALSE)
-
-ggplot(data = handu) + geom_jitter(mapping = aes(x = year, y = UILO)) + geom_smooth(mapping = aes(x = year, y = UILO), color = "red", size = 2, se = FALSE)
-```
-
-The first plot hopes to provide insight into the trend of HIV globally between 1995 and 2019. It is clear that there is an upward trend. I will now test if that trend has any correlation to unemployment rate. The second plot shows the unemployment rate over time. It is clear from this graph that unemployment has remained fairly constant since 1995 with a slight downward trend. The next step is to plot the two together to see if there are any difinitive trends.
-
-```{r}
-# A plot of the Unemployment Rate vs. the HIV Rate
-ggplot(data = handu) + geom_jitter(mapping = aes(x = UILO, y = HIV)) + geom_smooth(mapping = aes(x = UILO, y = HIV), size = 2, color = "red", se = FALSE) + geom_smooth(mapping = aes(x = UNE, y = HIV), size = 2, color = "orange", se = FALSE) + labs(title = "Unemployment Rate vs. HIV Rate", x = "Unemployment (%)", y = "HIV (%)")
-```
-
-From this graph alone there does not seem to be a clear correlation betwee Unemployment and HIV, although there is a slight trend downward as can be seen from the geom_smooth plots. To see if there really is a clearcut correlation beteen unemployment and HIV, we need to go one step further and perform a permuted correlation test.
-
-```{r}
-# Permuted correlation test between the two
-pc<-tibble(results = perm_cor(1000, handu$Average, handu$HIV))
-cc<-cor(handu$Average,handu$HIV,use="pairwise.complete.obs")
-```
-The correlation between unemployment and HIV rate is found to be:
-```{r}
-cc
-```
-
-```{r}
-# Plot of correlations with vline at real correlation
-ggplot(data = pc) + geom_histogram(mapping = aes(results, fill = (results < quantile(pc$results, probs=.025)[[1]] | results > quantile(pc$results, probs=.975)[[1]]))) + geom_vline(xintercept = cc) + labs(title = "Permuted Correlation Betwee Unemployment and HIV", x = "Correlations", fill = "Tails")
-```
-### Findings:
-It is clear from this data that while the acctual correlation coefficient is towards the very end of the histogram plot, there can not be a difinitive rejection of the null hypothesis. Although there may be a relationship between Unemployment and Female HIV rate, it is impossible to tell if that relationship is statistically significant. This means that without further data, there is no clear way to prove or disprove either of these hypotheses.
-
-
-
-
-## Braden Griebel Individial Section:
-
-
-### Question:
-What is the relationship between Literacy and Life expectancy when accounting for the GDP per capita of the countries?
-
-### Importance:
-This question is important to consider because it reflects the relationship between education (using the proxy of literacy rate) and the average life expectancy of the citizens of a country. It is important to understand this because it can illuminate unexpected benefits that education might have. Of course, both literacy and Life expectancy are correlated with GDP per capita, so in order to avoid just making the obvious conclusion that GDP has these correaltions, I used lienar models to control for this fact. It is important to understand this relationship, because it offers a way for countries to increase the health of their citizens, which can improve their economies directly from increased education, as well as healthier workers. 
-
-### New Tools:
-I used linear modeling to remove the obvious relationship between GDP and life expectancy so I could explore the relationship between literacy and life expectancy without having to worry about this intermediate variable. Then I used a permutation test to see if there was a difference in literacy between the top and bottom halves of the countries by life expectancy to see if literacy was related to life expectancy. I further used a permutation correlation test to test to see if there was a correlation. 
-
-
-### Using Linear Models to Gain Insight
-
-```{r}
-bdata<-tdata%>%select(-HIV)
-
-bmodel<-lm(Life_exp~GDPpc,data=bdata)
-bdata<-add_residuals(bdata,model=bmodel,var="resid_le")
-bdata
-
-ggplot(bdata,aes(x=Literacy,y=Life_exp,color=log(GDPpc,base = 10)))+geom_point()+geom_smooth(se=F,color="red")+labs(title="Literacy, Life Expectancy and GDP per capita",
-                                                                                                    x="Literacy Rate",
-                                                                                                    y="Life Expectancy",
-                                                                                                    color="Base 10 Log of GDP",
-                                                                                                    caption="Log used to show order of magnitude since it spans many orders of magnitude")                                                                                                    
-
-ggplot(bdata,aes(x=Literacy,y=resid_le))+geom_jitter()+geom_smooth(se=F,color="red")+labs(title="Literacy and Residuals of Life Expectancy",
-                                                                              caption="Residuals Generated After removing effect of GDP per Capita",
-                                                                              x="Literacy Rate",y="Residuals")
-
-ggplot(bdata,aes(x=Literacy,y=resid_le))+geom_jitter()+geom_smooth(se=F,color="red")+xlim(85,100)+labs(title="Literacy and Residuals of Life Expectancy", subtitle = "Zoomed into 85-100% Literacy",
-                                                                              caption="Residuals Generated After removing effect of GDP per Capita",
-                                                                              x="Literacy Rate",y="Residuals")
-
-
-bmodel2<-lm(Life_exp~GDPpc+Literacy,data=bdata)
-print("Coefficients of Linear Model Including Per Capita GDP and Literacty Rate")
-tibble(Measurement=c("Intercept","GDP per Capita", "Literacy Rate"),"Coefficient Value"= coef(bmodel2))
-```
-
-
-
-### Is there a difference in the literacy rates between the highest 50% of Life Expectancy, and the Lowest 50%?
-
-$H_0:\mu_{Literacy\ rate\ in\ countries\ in\ top \ 50 \% \ of\ life\ expectancy }-\mu_{Literacy\ rate\ in\ countries\ in\ bottom \ 50 \% \ of\ life\ expectancy } =0$                       
-$H_1:\mu_{Literacy\ rate\ in\ countries\ in\ top \ 50 \% \ of\ life\ expectancy }-\mu_{Literacy\ rate\ in\ countries\ in\ bottom \ 50 \% \ of\ life\ expectancy } \neq 0$
-
-```{r}
-high_le<-bdata%>%filter(Life_exp>median(bdata$Life_exp,na.rm=T))
-low_le<-bdata%>%filter(Life_exp<=median(bdata$Life_exp,na.rm=T))
-c_mean_diff<-mean(high_le$Literacy,na.rm=T)-mean(low_le$Literacy,na.rm=T)
-
-
-permuted_means<-tibble(lit_mean_diff=perm_mean(perms=1000,all_values = c(low_le$Literacy,high_le$Literacy),n_A=nrow(high_le)))
-
-p2.5<-quantile(permuted_means$lit_mean_diff, probs=.025)[[1]]
-p97.5<-quantile(permuted_means$lit_mean_diff, probs=.975)[[1]]
-
-ggplot(data=permuted_means,aes(lit_mean_diff,fill=(lit_mean_diff<p2.5|lit_mean_diff>p97.5)))+geom_histogram()+geom_vline(xintercept = c_mean_diff)+
-  labs(title="Permuted Difference of Means",fill="Tails",x="Difference of the Means of Literacy")
-
-percentile<-nrow(filter(permuted_means,lit_mean_diff<c_mean_diff))/nrow(permuted_means)
-
-print(paste("The Computed difference of Means is in the ",percentile*100,"th percentile",sep = ""))
-
-```
-
-
-### Is there a correlation between Literacy and the Calculated Residuals?
-
-$H_0:$ Correlation Between Literacy rate and the residuals is 0               
-$H_1:$ Correlation Between Literacy rate and the residuals is not 0    
-
-
-```{r}
-resids<-bdata$resid_le
-lit<-bdata$Literacy
-calculated_correlation<-cor(lit,resids,use="pairwise.complete.obs")
-permuted_correlations<-tibble(correlations=perm_cor(perms=1000,lit,resids))
-p2.5<-quantile(permuted_correlations$correlations, probs=.025)[[1]]
-p97.5<-quantile(permuted_correlations$correlations, probs=.975)[[1]]
-
-ggplot(data=permuted_correlations,aes(correlations,fill=(correlations<p2.5|correlations>p97.5)))+geom_histogram()+geom_vline(xintercept = calculated_correlation)+
-  labs(title="Permuted Correlations Between Literacy and Life Expectancy",x="Correlations",fill="Tails")
-
-percentile<-nrow(filter(permuted_correlations,correlations<calculated_correlation))/nrow(permuted_correlations)
-
-print(paste("The Computed Correlation is in the ",percentile*100,"th percentile",sep = ""))
-
-```
-
-### Findings:
-From the initial graph two things are apparent, the first is that literacy and life expectancy seem to be correlated, and second, so do life expectancy and GDP per capita. From the zoomed in graph it can also be seen that these relationships seem to be less important one you reach the high literacy rates of 90-100%. 
-As can be seen from the linear models above, after removing the relationship between life expectancy and GDP per capita, the residuals that remain are correlated with literacy rate. From the first permutation test it can be seen that literacy rate is different between the highest and lowest countries by life expectancy. This indicates that there is some relationship between literacy and life expectancy. The correlation permutation test also showed a clear correlation between literacy and the residuals. From all of this it is very clear that even when accounting for GDP per capita, the literacy rate is still correalted with life expectancy. 
-
-
-### Answer:
-Thus even when accounting for GDP per capita, literacy and life expectancy are clearly correlated.This is important for the main question, because it shows that GDP per capita is not what is causing the relationship that was found in the team question, and literacy actually correlated outside of the effect of GDP. Additionally, since GDP per capita is clearly correlated with life expectancy, this question shows another aspect that is important to consider when looking at life expectancy and what affects it. 
-
-### Ethical Implications:
-
-This could help countries trying to improve the overall health of their citizens. An important place for them to spend money would be in increasing access to education. This would also help people who are trying to set up schools, by hopefully increasing the money available for building schools. However, ultimate it might hurt countries that are trying to take advantage of this, since it would encourage them to spend money trying to increase access to education and dishonest people could take advantage of this to take some of this money for themselves.  
-
-
-## Luke Fanning Individual Section
-
-### Individual Question: 
-```{r}
-(ldata <- tdata %>% filter(year == 2018) %>% filter(!is.na(Life_exp))%>% arrange(desc(Life_exp)) %>% group_by(Life_exp, Country) %>% head(10)) %>% select("Country", "Life_exp")
-```
-
-The tibble above shows the top ten countries in terms of Life expectancy in 2018, the most recent year in which life expectancy data is available in this dataset. We can also view each of these countries life expectancies over time, as seen below.
-```{r}
-l2data <- tdata %>% filter(Country %in% c("Hong Kong SAR, China", "Japan", "Macao SAR, China", "Switzerland", "Spain", "Italy", "Singapore", "Channel Islands", "Luxemborg", "Korea, Rep.")) %>% filter(!is.na(Life_exp)) %>% group_by(Life_exp, Country)
-
-ggplot(l2data, aes(x = year, y = Life_exp, color = Country)) + geom_point() + labs(x = "Year", y = "Life Expectancy, in years", title = "Life Expectancy over time for top ten countries in 2018")
-```
-
-From the above graph, we see that the two countries with the most dramatic change in life expectancy over the time period included in the dataset are The Republic of Korea, more commonly referred to as South Korea, and Singapore. Obviously, it is fantastic that these countries have made such great improvements in their life expectancies over the last 23 years, but is this indicative of a greater trend, or are these countries outliers in terms of their improvements? 
-In other words, is the change in life expectancy in these countries between 1995 and 2018(the scope of the data) expected when compared to the average change in life expectancy for all countries in this time period, or are these changes statistically significant? 
-This question is important primarily due to the implications behind these countries being statistically significant in their changes, as if they are, it is important that we further explore exactly what policies and societal changes these countries have made in order to improve their life expectancy so dramatically up to world leading levels. These changes could then be implemented in other countries around the globe in order to allow for similar increases and lead to a longer living populace overall. 
-
-### Analysis
-```{r, include = F}
-ldata1995 <- tdata %>% filter(year %in% c(1995))%>% filter(!is.na(Life_exp)) %>% select("Country", "Life_exp")
-ldata2018 <- tdata %>% filter(year %in% c(2018))%>% filter(!is.na(Life_exp)) %>% select("Country", "Life_exp")
-
-(l3data <- full_join(ldata1995, ldata2018, by = "Country") %>% mutate(Life_exp_difference = Life_exp.y - Life_exp.x)) %>% select("Country", "Life_exp_difference")
-
-```
-```{r, include = F}
-real_diff_Singapore_Korea <- l3data %>% filter(Country %in% c("Singapore", "Korea, Rep."))
-diff_singapore <- real_diff_Singapore_Korea %>% filter(Country == "Singapore") %>% pull(Life_exp_difference)
-diff_S_Korea <- real_diff_Singapore_Korea %>% filter(Country == "Korea, Rep.") %>% pull(Life_exp_difference)
-```
-
-```{r}
-ggplot(l3data, aes(x = Life_exp_difference)) + geom_histogram(binwidth = 1)+ geom_vline(xintercept = diff_S_Korea) + geom_vline(xintercept = diff_singapore) + labs(x = "Difference in Life expectancy in years", y = "Count", title = "Change in Life Expectancy between 1995 and 2018")
-```
-
-Clearly, from the above graph, it can be seen that these two differences are not overwhelmingly different from a lot of the changes in life expectancy around the world for the given time period. However, it can be noted that these changes both occured in Asian countries, and in fact, most of the highest life expectancy countries are in Asia, which then leads us to a second question worth evaluating: Is the difference in mean life expectancy change from 1995 to 2018 between Asian countries and the rest of the world statistically significant? 
-Again. this question is important to evaluate, as it can be indicative of a continent making correct societal and lifestyle choices compared to the rest of the world. 
-In this test, we will consider the null hypothesis to be that there is no difference in mean change in life expectancy from 1995 to 2018 between Asian countries and the rest of the world, and the alternative hypothesis to be that there is.
-
-```{r, eval = F, include = F}
-
-perm_mean <- function(perms = 1000, all_values, n_A)
-{
-  permuted_mean_differences <- numeric(perms)
-  for (i in c(1:perms))
-  {
-    rand_vector <- sample(all_values) #shuffles all values as a vector
-    group_A <- rand_vector[1:n_A]
-    group_B <- rand_vector[(n_A+1):length(rand_vector)]
-    mean_A <- mean(group_A)
-    mean_B <- mean(group_B)
-    difference <- mean_A - mean_B
-    permuted_mean_differences[i] <- difference
-  }
-  return(permuted_mean_differences)
-}
-```
-
-```{r}
-l4data <- l3data %>% filter(!is.na(Life_exp_difference))
-l3data_Asia <- l3data %>% filter(Country %in% c("China", "India", "Indonesia", "Pakistan", "Bangladesh", "Japan", "Philippines", "Vietnam", "Turkey", "Iran, Islamic Rep.", "Thailand", "Myanmar", "Korea, Rep.", "Iraq", "Afghanistan", "Saudi Arabia", "Uzbekistan", "Malaysia", "Yemen, Rep.", "Nepal", "Sri Lanka", "Korea, Dem. People’s Rep.", "Kazakhstan", "Syrian Arab Republic", "Cambodia", "Jordan", "Azerbaijan", "United Arab Emirates", "Tajikistan", "Israel", "Lao PDR", "Lebanon", "Kyrgyz Republic", "Turkmenistan", "Singapore", "Oman", "Kuwait", "Georgia", "Mongolia", "Armenia", "Qatar", "Bahrain"))
-l3data_rest <- l3data %>% filter(!Country %in% c("China", "India", "Indonesia", "Pakistan", "Bangladesh", "Japan", "Philippines", "Vietnam", "Turkey", "Iran, Islamic Rep.", "Thailand", "Myanmar", "Korea, Rep.", "Iraq", "Afghanistan", "Saudi Arabia", "Uzbekistan", "Malaysia", "Yemen, Rep.", "Nepal", "Sri Lanka", "Korea, Dem. People’s Rep.", "Kazakhstan", "Syrian Arab Republic", "Cambodia", "Jordan", "Azerbaijan", "United Arab Emirates", "Tajikistan", "Israel", "Lao PDR", "Lebanon", "Kyrgyz Republic", "Turkmenistan", "Singapore", "Oman", "Kuwait", "Georgia", "Mongolia", "Armenia", "Qatar", "Bahrain"))
-real_mean_diff <- mean(l3data_Asia$Life_exp_difference) - mean(l3data_rest$Life_exp_difference)
-permuted_means <- perm_mean(1000, l4data$Life_exp_difference, 100)
-percentile_Asia_vs._World <- length(permuted_means[permuted_means < real_mean_diff])/1000
-
-tibble(val = permuted_means) %>% ggplot(., aes(val)) + geom_histogram(binwidth = 0.1) + geom_vline(xintercept = real_mean_diff) + labs(x = "Mean Change in life expectancy", y = "Count", title = "Mean Changes in life expectancy difference from 1995 to 2018 around the world")
-
-```
-
-When compared to the rest of the world, the mean difference in life expectancy change from 1995 to 2018 in Asia is actually -0.30, putting it in the 32nd percentile of all life expectancy changes. Therefore, the null hypothesis can be accepted. Clearly, while life expectancies in many Asian countries are higher, on average, there is no statistical evidence to suggest that they have increased more in the past 23 years compared to the rest of the world. This then suggests that while these countries are doing some things right in terms of societal choices and lifestyle changes, these choices and changes are not significant in affecting life expectancy compared to the choices and changes made across the rest of the world. While this may be discouraging in the sense that there is no one true answer to raising life expectancy, this is actually encouraging, as it suggests that the world overall is making the correct choices to increasing life expectancy and that we just need to be patient and continue to work on technology and improvement in our spheres of life. The data simply suggests that there is not one true answer, but rather a large number of answers for increasing life expectancy depending on the culture and society of the country currently working to fix that problem or improve their already high expectancy. 
-
-
-
-## Reflections:
-### Team Reflection:
-
-In the beggining of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
-
-We feel that we have met that goal and feel comfortbale representing large amounts of data visually and with certain statistic tests to get desired results. There isn't really any aspects of our goal that we feel we didn't meet.     
-
-If we could time travel, and decided to use this epic power simply to communicate with ourselves of the past, we would tell ourselves to be better about communicating which aspects of the assignments we are working on so everyone has a better idea of what needs to get done. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Braden Reflection:
-At the start of the semester my six month goal was "to be in grad school, I don’t know specifically for what, but hopeully something related to statistics." and my five year post graduation goal was "I hope to be working on epidemiology for the CDC".My goals really haven't changed that much. Mostly what I learned in this class was ways to deal with data, and ways to answer questions I have about that data. One thing that I think that is especially valuable that I learned was how to explore the data, and see what kind of questions I should be asking. As I move forward, I will learn different ways of answering these questions, but it will always be important to figure out exactly what questions to ask.     
-As far as advice for myself at the beggining of the semester, I would tell myself to take notes when reading the book since it would be much easier to go back to those rather than having to search through the book itself. I would also tell myself to keep starting the labs early so I have plenty of time to work on them, and don't have to rush through all the work. I would tell myself to stop only doing the readings right before the assesments, and try and start them earlier so I didn't have to read so many chapters so quickly.  
-
-### Ahyo Reflection:
-My 6 month goal at the beginning of the semester was to be in graduate school working on a master's degree. I still wish to pursue this goal and enroll in a graduate program, although I am still not sure in exactly what field. My 5 year goal was to have a steady income and be involved in an exciting career path. This goal is also still something I would like to keep reaching for. Although it is fairly vague at the moment, I think it is important to keep my options open. In this course I learned how to do all sorts of things with large sets of data. Learning the applications of R studio was confusing and stressful at times, but in the end I feel confident in my abilities to transform data into whatever I want. If I could give myself at the beginning of the semester it would be to stay on top of the R4DS readings in order to help my lab group out more in the TRATs. Doing the readings on time would also allow me to understand the material better and create more effective code. Additionally, I would tell myself to stop procrastinating to reduce my stress levels and not scare my lab group as much.
-
-### Andrew Reflection:
-At the beginning of the semester my goals were to work in Europe after graduation to see what it is like to live in another country besides America. My long term goals were to have a comfortable job where I have the financial freedom to enjoy my hobbies, and to own my own consulting company in the very long term. I wouldn't say that my goals have changed, but there are some more things I would like to see out of my life. Something I would add is use my potential knowledge of statistics and data to better the world around me the best way that I can. I learned a lot in this course, an extremely valuable base knowledge of how to visually represent data and perform different tests on large groups of data via computing. If I could give myself any advice it would be to complete the labs earlier!
-
-### Luke's Reflection:
-Obviously, my goals have changed a lot from the start of the semester to now, as I have once again changed my major. While I did really want to be in a sports-related field working with statistics and data, I realize now that sports and sports statistics are more of a hobby for me rather than a career interest. I have chnaged my life around a lot and am continuing to explore my own passions and career aspirations, but I think college is the time to do this, and through my self-exploration and pursuit of knowledge, I will come out a better and more well-rounded person. Therefore, while my 6 month and 5 year goals are more up in the air now than they were at the beginning of the semester, I feel that leaving these more open to exploration is a better path. Therefore, my new 5 year goal is to simply be a more learned, knowledgeable, and well-rounded person than I am now. Overall, I feel like I have learnt a lot from this course with reagards to the R programming language, and I feel this knowledge will be incredibly helpful for me moving forward. If I could give any advice to myself at the start of the semester, it would be to take detailed notes on each and every chapter and exercise in the book, as these will come to be incredibly helpful when working through each and every lab.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Individual Contributions:
-
-I, Braden Griebel, ran the permutation tests for the team question and displayed the results in a histogram which I colored (using the fill aesthetic) to make it clear where the tails of the data are. For my individual subquestion I investigated a possibly confounding variable between life expectancy and literacy rate, namely GDP. I used linear models, and permutation tests to test whether literacy rate was still correlated with life expectancy even when controlling for GDP per capita, in order to see whether GDP was what was causing the relationship between Life expectancy and literacy. I also used a permutation test to see if there was a difference in literacy rate between the top and bottom half of countries by life expectancy to see if it was reasonable to think there was a correlation. I then used a correlation test to make this correaltion very clear. I displayed the results in histograms with colored tails to show that the calculated values were indeed statistically significant. I finally calculated the percentiles to give a numerical representation of the results. I added labels to all the graphs in order to make them easier to understand and read. 
 
 I, Ahyo Falick, purusued the question of whether unemployment had an affect on the HIV rates of females. In order to do this, I first had to clean and tidy the data in order to select only the variables I needed. I then created linear plots of the data I was going to analyze in order to get a better understanding of their trends across time. To do this, I created two plots: the first of the HIV rate with respect to time and the second of the unemployment rate with respect to time. Next, I graphed the two variabels against eachother to see if I could find any clear trends between the two. Finally, I ran a permutation correlation test to see if the null hypothesis could be rejected. When the data from the permutation test was plotted on a histogram, it became clear that while there was some correaltion between the two, more data was needed in order to prove the two are statistically significant.
 
->>>>>>> master
+
