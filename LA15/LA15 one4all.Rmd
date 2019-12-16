@@ -382,17 +382,6 @@ These findings mean that there is no correlation between urban population growth
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 ## Braden Griebel Individial Section:
 
 
@@ -492,7 +481,7 @@ print(paste("The Computed Correlation is in the ",percentile*100,"th percentile"
 
 In the beggining of the semester our team goal was to "To learn techniques to explore and understand data, as well as being able to present that data in an clear, attractive and intriguing way".
 
-
+We feel that we have met that goal and feel comfortbale representing large amounts of data visually and with certain statistic tests to get desired results.
 
 
 
@@ -508,5 +497,8 @@ In the beggining of the semester our team goal was to "To learn techniques to ex
 how have your six-month or 5-year goals changed? What did you learn/accomplish in this course? If you could give yourself advice at the beginning of the semester, what would you tell yourself to keep doing, stop doing, and start doing?
 ### Braden Reflection:
 At the start of the semester my six month goal was "to be in grad school, I don’t know specifically for what, but hopeully something related to statistics." and my five year post graduation goal was "I hope to be working on epidemiology for the CDC".
->>>>>>> master
+
+###Andrew Reflection:
+At the beginning of the semester my goals were to work in Europe after graduation to see what it is like to live in another country besides America. My long term goals were to have a comfortable job where I have the financial freedom to enjoy my hobbies, and to own my own consulting company in the very long term. I wouldn't say that my goals have changed, but there are some more things I would like to see out of my life. Something I would add is use my potential knowledge of statistics and data to better the world around me the best way that I can. I learned a lot in this course, an extremely valuable base knowledge of how to visually represent data and perform different tests on large groups of data via computing. If I could give myself any advice it would be to complete the labs earlier!
+
 
