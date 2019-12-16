@@ -2,6 +2,11 @@
 title: "LA15 one4all"
 output: html_document
 ---
+Andrew Duffy, Braden Griebel, Luke Fanning, Ahyo Falick.
+
+### This dataset comes from data.worldbank.org. 
+It is a very large selection of statistics with a domain of almost every country, worldwide. It ranges from years 1995-2019.
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -45,9 +50,25 @@ for(i in 1:length(countries)){
 
 
 cleaned
-
-
 ```
+
+# Team Question:
+
+Does female HIV rate have a correlation with the rate of women making their own informed decisions regarding sexual relations, GDP per capita, and life expectancy?
+
+*note: measuring female stastics because male data for such topics is limited or NA.
+
+
+
+
+
+
+
+## Andrew Duffy Individual Section
+
+
+
+
 
 
 
