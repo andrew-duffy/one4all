@@ -70,7 +70,20 @@ Does female HIV rate have a correlation with the rate of women making their own 
 
 
 
+```{r}
+colnames(cleaned)
+```
 
+```{r}
+tdata<-cleaned%>%select(Country,year,GDPpc=`GDP per capita (current US$)`,Literacy= `Literacy rate, adult total (% of people ages 15 and above)`,Life_exp=`Life expectancy at birth, total (years)`,
+                        HIV=`Women's share of population ages 15+ living with HIV (%)`)
+
+tdata<-tdata%>%mutate(year=as.double(year),GDPpc=as.double(GDPpc),Literacy=as.double(Literacy),Life_exp=as.double(Life_exp),HIV=as.double(HIV))
+
+tdata
+
+
+```
 
 
 
